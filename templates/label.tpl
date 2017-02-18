@@ -1,0 +1,4 @@
+<label>
+	{{ title }}
+	{{ field }}
+</label>
