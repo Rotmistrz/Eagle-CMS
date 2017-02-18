@@ -179,10 +179,9 @@ try {
 	$content .= $ContentManager->getErrorMessage($E->getMessage());
 }
 
+$TemplateManager->addTemplate('title', 'EagleCMS');
 $TemplateManager->addTemplate('content', $content);
 
 echo $TemplateManager->get();
-
-
 
 ?>
