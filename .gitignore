@@ -47,4 +47,6 @@ Temporary Items
 .apdisk
 
 /sftp-config.json
+/eagle-config.php
 /vendor/
+/.sass-cashe/

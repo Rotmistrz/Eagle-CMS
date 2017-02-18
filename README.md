@@ -1,3 +1,3 @@
 ## Eagle CMS
 
-Simply, adjustable CMS
+Simple adjustable CMS
