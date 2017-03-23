@@ -50,3 +50,5 @@ Temporary Items
 /eagle-config.php
 /vendor/
 /.sass-cashe/
+/.gitignore
+/.gitattributes
