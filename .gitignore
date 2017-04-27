@@ -47,7 +47,6 @@ Temporary Items
 .apdisk
 
 /sftp-config.json
-/eagle-cms/eagle-config.php
 /eagle-cms/vendor/
 /.sass-cashe/
 /.gitignore
