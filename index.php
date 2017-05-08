@@ -14,9 +14,6 @@ try {
 	$type = (isset($_GET['type'])) ? $_GET['type'] : null;
 
 	$content = '';
-	$correctMessage = '';
-	$errorMessage = '';
-	$errorOccured = 0;
 
 	$ContentManager = new ContentManager();
 	$ContentManager->lang = Language::PL;

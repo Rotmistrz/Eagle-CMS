@@ -60,6 +60,7 @@ class ItemsCollection implements Viewable {
 		foreach($this->items as $item) {
 			$contents[$i]['id'] = $item->getId();
 			$contents[$i]['type'] = $this->type;
+			$contents[$i]['parent_id'] = $item->parentId;
 			$contents[$i]['order'] = $item->order;
 			$contents[$i]['visible'] = $item->visible;
 

@@ -3,4 +3,6 @@
 		<p>
 		{{ item.content_1 }}
 		</p>
+		<img src="/uploads/1/{{ item.id }}.jpg" alt="" />
+
 		{% endfor %}

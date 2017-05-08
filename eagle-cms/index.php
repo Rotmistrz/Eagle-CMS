@@ -69,7 +69,7 @@ try {
 			$correctMessage = "Poprawnie edytowano element.";
 			$baseErrorMessage = "Wystąpiły problemy podczas edycji elementu.";
 		} else if($module == 'add') {
-			$item = new Item(null, $type, null);
+			$item = Item::create($type);
 			$correctMessage = "Poprawnie dodano element.";
 			$baseErrorMessage = "Wystąpiły problemy podczas dodawania elementu.";
 		}
@@ -92,7 +92,7 @@ try {
 			}
 
 			$FileUploader = new FileUploader();
-			$FileUploader->path = "/uploads/";
+			$FileUploader->path = ROOT . "/uploads/";
 			$FileUploader->addFile('file_1', '1/' . $item->id, 'jpg', 1000000);
 
 			$errorOccured = 0;
@@ -146,7 +146,7 @@ try {
 			$content .= $FormManager->get();
 		}
 	} else if($module == 'delete') {
-		$item = Item::create($id);
+		$item = Item::load($id);
 
 		if($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['accepted'] == 1) {
 			$correctMessage = "Poprawnie usunięto element.";
@@ -172,6 +172,31 @@ try {
 
 			$content .= $ChoiceForm->get();
 		}
+	} else if($module == 'top') {
+		if(is_null($id)) {
+			throw new Exception("Proszę podać id elementu.");
+		}
+
+		$current = Item::load($id);
+
+		$earlier = $current->getEarlierOne();
+
+		if(get_class($earlier) == 'NoItem') {
+			InformationManager::set(new Information(Information::CORRECT, "Element jest już pierwszy w kolejności."));
+			header('Location: index.php?module=pages');
+		}
+
+		$tmp = $current->order;
+		$current->order = $earlier->order;
+		$earlier->order = $tmp;
+
+		if($current->save() && $earlier->save()) {
+			InformationManager::set(new Information(Information::CORRECT, "Poprawnie zmieniono kolejność."));
+		} else {
+			InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności elementów."));
+		}
+
+		header('Location: index.php?module=pages');
 	} else {
 		$content .= ContentManager::getTitle('It works! Hello EagleCMS!');
 	}

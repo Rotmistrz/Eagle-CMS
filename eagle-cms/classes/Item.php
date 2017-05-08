@@ -3,6 +3,7 @@
 class Item {
 	public $id;
 	public $type;
+	public $parentId;
 	private $category;
 	public $order;
 	public $visible;
@@ -30,6 +31,7 @@ class Item {
 		$this->order = $order;
 		$this->category = null;
 		$this->visible = 1;
+		$this->parentId = 0;
 
 		$this->contents = new Contents();
 	}
@@ -79,51 +81,19 @@ class Item {
 		$category_id;
 
 		$query = '';
-		$updating = false;
 
 		$pdo = DataBase::getInstance();
 
-		if(!empty($this->id) && $this->id > 0) {
-			$query .= "UPDATE " . ITEMS_TABLE . " SET type = :type, category = :category, sort = :sort";
+		$query .= "UPDATE " . ITEMS_TABLE . " SET type = :type, category = :category";
 
-			for($i = 0; $i < $languages_length; $i++) {
-				for($j = 0; $j < $fields_length; $j++) {
-					$current = self::getDatabaseFieldname($fields[$j], $languages[$i]);
-					$query .= ", " . $current . " = :" . $current;
-				}
+		for($i = 0; $i < $languages_length; $i++) {
+			for($j = 0; $j < $fields_length; $j++) {
+				$current = self::getDatabaseFieldname($fields[$j], $languages[$i]);
+				$query .= ", " . $current . " = :" . $current;
 			}
-
-			$query .= " WHERE id = :id";
-
-			$updating = true;
-		} else {
-			$gettingSortQuery = "SELECT MAX(sort) as recent FROM " . ITEMS_TABLE;
-			$gettingSort = $pdo->query($gettingSortQuery);
-			$sort = $gettingSort->fetch();
-			$this->order = $sort['recent'];
-
-			$content .= $this->order;
-
-			$query .= "INSERT INTO " . ITEMS_TABLE . " (type, category, sort";
-
-			for($i = 0; $i < $languages_length; $i++) {
-				for($j = 0; $j < $fields_length; $j++) {
-					$current = self::getDatabaseFieldname($fields[$j], $languages[$i]);
-					$query .= ", " . $current;
-				}
-			}
-
-			$query .= ") VALUES(:type, :category, :sort";
-
-			for($i = 0; $i < $languages_length; $i++) {
-				for($j = 0; $j < $fields_length; $j++) {
-					$current = self::getDatabaseFieldname($fields[$j], $languages[$i]);
-					$query .= ", :" . $current;
-				}
-			}
-
-			$query .= ")";
 		}
+
+		$query .= " WHERE id = :id";
 
 		if(!is_null($this->category)) {
 			$category_id = $this->category->getId();
@@ -131,16 +101,10 @@ class Item {
 			$category_id = 0;
 		}
 
-		
 		$loading = $pdo->prepare($query);
-
-		if($updating) {
-			$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
-		}
-
+		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':category', $category_id, PDO::PARAM_INT);
-		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
 
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {
@@ -171,6 +135,38 @@ class Item {
 		}
 	}
 
+	public function getEarlierOne() {
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort < :sort ORDER BY sort DESC";
+
+		$pdo = DataBase::getInstance();
+		$loading = $pdo->prepare($query);
+		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
+		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+		$loading->execute();
+
+		if($row = $loading->fetch()) {
+			return self::createFromDatabaseRow($row);
+		} else {
+			return new NoItem();
+		}
+	}
+
+	public function getLaterOne() {
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort < :sort ORDER BY sort DESC";
+
+		$pdo = DataBase::getInstance();
+		$loading = $pdo->prepare($query);
+		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
+		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+		$loading->execute();
+
+		if($row = $loading->fetch()) {
+			return self::createFromDatabaseRow($row);
+		} else {
+			return new NoItem();
+		}
+	}
+
 	public static function load($id) {
 		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE id = :id";
 
@@ -181,27 +177,7 @@ class Item {
 		if($loading->execute()) {
 			$result = $loading->fetch();
 
-			$fields = self::$fields;
-			$languages = self::$languages;
-			$languages_length = count($languages);
-			$fields_length = count($fields);
-
-			$id = $result['id'];
-			$type = $result['type'];
-			$category = $result['category'];
-			$order = $result['sort'];
-			$visible = $result['visible'];
-
-			$item = new self($id, $type, $order);
-
-			for($i = 0; $i < $languages_length; $i++) {
-				for($j = 0; $j < $fields_length; $j++) {
-					$field = $fields[$j] . "_" . $languages[$i];
-					if(isset($result[$field])) {
-						$item->setContent($languages[$i], $fields[$j], $result[$field]);
-					}
-				}
-			}
+			$item = self::createFromDatabaseRow($result);
 
 			return $item;
 		} else {
@@ -209,10 +185,54 @@ class Item {
 		}
 	}
 
-	public static function create() {
-		$query = "INSERT INTO " . ITEMS_TABLE . " (id) VALUES(NULL)";
-
+	public static function create($type) {
 		$pdo = DataBase::getInstance();
+
+		$gettingSortQuery = "SELECT MAX(sort) as recent FROM " . ITEMS_TABLE . " WHERE type = :type";
+		$gettingSort = $pdo->prepare($gettingSortQuery);
+		$gettingSort->bindValue(':type', $type, PDO::PARAM_INT);
+		$gettingSort->execute();
+		$result = $gettingSort->fetch();
+		$order = $result['recent'] + 10;
+
+		$query = "INSERT INTO " . ITEMS_TABLE . " (id, type, sort) VALUES(NULL, :type, :sort)";
+		$creating = $pdo->prepare($query);
+		$creating->bindValue(':type', $type, PDO::PARAM_INT);
+		$creating->bindValue(':sort', $order, PDO::PARAM_INT);
+		$creating->execute();
+
+		$id = $pdo->lastInsertId();
+
+		return new self($id, $type, $order);
+	}
+
+	public static function createFromDatabaseRow($row) {
+		$fields = self::$fields;
+		$languages = self::$languages;
+		$languages_length = count($languages);
+		$fields_length = count($fields);
+
+		$id = $row['id'];
+		$parent_id = $row['parent_id'];
+		$type = $row['type'];
+		$category = $row['category'];
+		$order = $row['sort'];
+		$visible = $row['visible'];
+
+		$item = new self($id, $type, $order);
+		$item->parentId = $parent_id;
+		$item->visible = $visible;
+
+		for($i = 0; $i < $languages_length; $i++) {
+			for($j = 0; $j < $fields_length; $j++) {
+				$field = $fields[$j] . "_" . $languages[$i];
+				if(isset($row[$field])) {
+					$item->setContent($languages[$i], $fields[$j], $row[$field]);
+				}
+			}
+		}
+
+		return $item;
 	}
 
 	public static function getFields() {

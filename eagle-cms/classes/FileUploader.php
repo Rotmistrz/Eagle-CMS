@@ -18,7 +18,13 @@ class FileUploader {
 		return $this->errors;
 	}
 
+	public function clear() {
+		$this->errors = [];
+	}
+
 	public function upload() {
+		$this->clear();
+
 		for($i = 0; $i < count($this->files); $i++) {
 			if(isset($_FILES[$this->files[$i]['fieldname']])) {
 				$fieldname = $this->files[$i]['fieldname'];

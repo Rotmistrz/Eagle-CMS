@@ -12,7 +12,7 @@ class DataBase
 
     static public function getInstance()
     {
-        if (self::$instance === null) {
+        if(self::$instance === null) {
             try {
                 $dsn = "mysql:host=".self::$host.";dbname=".self::$name;
                 self::$instance = new PDO($dsn, self::$user, self::$password, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8"));
@@ -20,8 +20,10 @@ class DataBase
             } catch(PDOException $e) {
                 return false;
             }
+
             return self::$instance;
         }
+        
         return self::$instance;
     }
 }
