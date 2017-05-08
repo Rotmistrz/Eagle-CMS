@@ -172,7 +172,7 @@ try {
 
 			$content .= $ChoiceForm->get();
 		}
-	} else if($module == 'top') {
+	} else if($module == 'item-up') {
 		if(is_null($id)) {
 			throw new Exception("Proszę podać id elementu.");
 		}
@@ -183,17 +183,43 @@ try {
 
 		if(get_class($earlier) == 'NoItem') {
 			InformationManager::set(new Information(Information::CORRECT, "Element jest już pierwszy w kolejności."));
-			header('Location: index.php?module=pages');
+		} else {
+			$tmp = $current->order;
+			$current->order = $earlier->order;
+			$earlier->order = $tmp;
+
+			echo $current;
+			echo $earlier;
+
+			if($current->save() && $earlier->save()) {
+				InformationManager::set(new Information(Information::CORRECT, "Poprawnie zmieniono kolejność."));
+			} else {
+				InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności elementów."));
+			}
 		}
 
-		$tmp = $current->order;
-		$current->order = $earlier->order;
-		$earlier->order = $tmp;
+		header('Location: index.php?module=pages');
+	} else if($module == 'item-down') {
+		if(is_null($id)) {
+			throw new Exception("Proszę podać id elementu.");
+		}
 
-		if($current->save() && $earlier->save()) {
-			InformationManager::set(new Information(Information::CORRECT, "Poprawnie zmieniono kolejność."));
+		$current = Item::load($id);
+
+		$later = $current->getLaterOne();
+
+		if(get_class($later) == 'NoItem') {
+			InformationManager::set(new Information(Information::CORRECT, "Element jest już ostatni w kolejności."));
 		} else {
-			InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności elementów."));
+			$tmp = $current->order;
+			$current->order = $later->order;
+			$later->order = $tmp;
+
+			if($current->save() && $later->save()) {
+				InformationManager::set(new Information(Information::CORRECT, "Poprawnie zmieniono kolejność."));
+			} else {
+				InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności elementów."));
+			}
 		}
 
 		header('Location: index.php?module=pages');

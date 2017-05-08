@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Button' => $baseDir . '/classes/Button.php',
+    'CategoriesCollection' => $baseDir . '/classes/CategoriesCollection.php',
     'Catgeory' => $baseDir . '/classes/Category.php',
     'ChoiceForm' => $baseDir . '/classes/ChoiceForm.php',
     'ContentManager' => $baseDir . '/classes/ContentManager.php',
@@ -25,6 +26,7 @@ return array(
     'ItemsCollection' => $baseDir . '/classes/ItemsCollection.php',
     'Label' => $baseDir . '/classes/Label.php',
     'Language' => $baseDir . '/classes/Language.php',
+    'NoItem' => $baseDir . '/classes/NoItem.php',
     'Select' => $baseDir . '/classes/Select.php',
     'TemplateManager' => $baseDir . '/classes/TemplateManager.php',
     'Textarea' => $baseDir . '/classes/Textarea.php',

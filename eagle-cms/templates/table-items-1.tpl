@@ -13,7 +13,9 @@
 				<td class="title">{{ item.header_1 }}</td>
 				<td class="operations">
 					<a href="index.php?module=edit&amp;type={{ item.type }}&amp;id={{ item.id }}">Edytuj</a>
-					<a href="index.php?module=delete&amp;type={{ item.type }}&amp;id={{ item.id }}">Usuń</a>
+					<a href="index.php?module=delete&amp;type={{ item.type }}&amp;id={{ item.id }}">Usuń</a><br />
+					<a href="index.php?module=item-up&amp;id={{ item.id }}">W górę</a>
+					<a href="index.php?module=item-down&amp;id={{ item.id }}">W dół</a>
 				</td>
 
 				{% set i = i + 1 %}

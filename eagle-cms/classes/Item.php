@@ -4,7 +4,7 @@ class Item {
 	public $id;
 	public $type;
 	public $parentId;
-	private $category;
+	private CategoriesList $categories;
 	public $order;
 	public $visible;
 
@@ -84,7 +84,7 @@ class Item {
 
 		$pdo = DataBase::getInstance();
 
-		$query .= "UPDATE " . ITEMS_TABLE . " SET type = :type, category = :category";
+		$query .= "UPDATE " . ITEMS_TABLE . " SET type = :type, category = :category, sort = :sort";
 
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {
@@ -95,8 +95,8 @@ class Item {
 
 		$query .= " WHERE id = :id";
 
-		if(!is_null($this->category)) {
-			$category_id = $this->category->getId();
+		if(!is_null($this->categories)) {
+			$category_id = $this->categories;
 		} else {
 			$category_id = 0;
 		}
@@ -105,6 +105,7 @@ class Item {
 		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':category', $category_id, PDO::PARAM_INT);
+		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
 
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {
@@ -136,10 +137,11 @@ class Item {
 	}
 
 	public function getEarlierOne() {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort < :sort ORDER BY sort DESC";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort DESC";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
+		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
 		$loading->execute();
@@ -152,10 +154,11 @@ class Item {
 	}
 
 	public function getLaterOne() {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort < :sort ORDER BY sort DESC";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort >= :sort AND id != :id ORDER BY sort ASC";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
+		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
 		$loading->execute();
@@ -252,7 +255,7 @@ class Item {
 	}
 
 	public function __toString() {
-		return "#" . $this->id . "[" . $this->type . " - ". $this->getContent('header_1') . "]";
+		return "#" . $this->id . "[" . $this->type . " - ". $this->getContent(Language::PL, 'header_1') . " (" . $this->order . ")]";
 	}
 }
 

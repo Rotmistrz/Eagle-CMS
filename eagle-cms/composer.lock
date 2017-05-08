@@ -4,7 +4,6 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "147d86083ca624744a540ace836e1fb7",
     "content-hash": "1912e270afa1c0556039c8e6ad46c435",
     "packages": [
         {
@@ -67,7 +66,7 @@
             "keywords": [
                 "templating"
             ],
-            "time": "2017-04-20 17:39:48"
+            "time": "2017-04-20T17:39:48+00:00"
         }
     ],
     "packages-dev": [],

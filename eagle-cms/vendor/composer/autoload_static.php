@@ -22,6 +22,7 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
 
     public static $classMap = array (
         'Button' => __DIR__ . '/../..' . '/classes/Button.php',
+        'CategoriesCollection' => __DIR__ . '/../..' . '/classes/CategoriesCollection.php',
         'Catgeory' => __DIR__ . '/../..' . '/classes/Category.php',
         'ChoiceForm' => __DIR__ . '/../..' . '/classes/ChoiceForm.php',
         'ContentManager' => __DIR__ . '/../..' . '/classes/ContentManager.php',
@@ -40,6 +41,7 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'ItemsCollection' => __DIR__ . '/../..' . '/classes/ItemsCollection.php',
         'Label' => __DIR__ . '/../..' . '/classes/Label.php',
         'Language' => __DIR__ . '/../..' . '/classes/Language.php',
+        'NoItem' => __DIR__ . '/../..' . '/classes/NoItem.php',
         'Select' => __DIR__ . '/../..' . '/classes/Select.php',
         'TemplateManager' => __DIR__ . '/../..' . '/classes/TemplateManager.php',
         'Textarea' => __DIR__ . '/../..' . '/classes/Textarea.php',

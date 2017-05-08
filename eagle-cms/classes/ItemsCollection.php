@@ -83,7 +83,7 @@ class ItemsCollection implements Viewable {
 	}
 
 	public static function create($type) {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type ORDER BY sort ASC";
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
 		$loading->bindValue(':type', $type, PDO::PARAM_INT);
