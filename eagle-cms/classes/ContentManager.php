@@ -15,6 +15,12 @@ class ContentManager {
 		return $this->twig->render($this->template, array('itemsCollection' => $items->getContentsByLanguage($this->lang)));
 	}
 
+	public function getAllCategoriesByType($id) {
+		$categories = CategoriesCollection::create($id);
+
+		return $this->twig->render($this->template, array('categoriesCollection' => $categories->getContentsByLanguage($this->lang)));
+	}
+
 	public static function getTitle($title) {
 		return "<h3>" . $title . "</h3>";
 	}

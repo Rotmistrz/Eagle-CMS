@@ -3,6 +3,7 @@
 session_start();
 
 define('ITEMS_TABLE', 'eagle_items');
+define('CATEGORIES_TABLE', 'eagle_categories');
 
 define('DB_HOST', 'localhost');
 define('DB_NAME', 'dbname');

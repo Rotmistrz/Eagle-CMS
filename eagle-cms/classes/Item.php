@@ -1,10 +1,10 @@
 <?php
 
-class Item {
+class Item implements Languagable {
 	public $id;
 	public $type;
 	public $parentId;
-	private CategoriesList $categories;
+	private $categories; // CategoriesList
 	public $order;
 	public $visible;
 
@@ -23,13 +23,13 @@ class Item {
 
 	private static $languages = [Language::PL, Language::EN];
 
-	private $contents;
+	private $contents; // Contents
 
 	public function __construct($id, $type, $order) {
 		$this->id = $id;
 		$this->type = $type;
 		$this->order = $order;
-		$this->category = null;
+		$this->category = new NoCategory();
 		$this->visible = 1;
 		$this->parentId = 0;
 
@@ -48,8 +48,8 @@ class Item {
 		return $this->visible;
 	}
 
-	public function setCategory(Category $category) {
-		$this->category = $category;
+	public function setCategories(CategoriesList $categories) {
+		$this->categories = $categories;
 	}
 
 	public function setOrder($order) {
@@ -78,13 +78,13 @@ class Item {
 		$languages_length = count($languages);
 		$fields_length = count($fields);
 		$current;
-		$category_id;
+		$categories;
 
 		$query = '';
 
 		$pdo = DataBase::getInstance();
 
-		$query .= "UPDATE " . ITEMS_TABLE . " SET type = :type, category = :category, sort = :sort";
+		$query .= "UPDATE " . ITEMS_TABLE . " SET parent_id = :parent_id, type = :type, category = :category, sort = :sort";
 
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {
@@ -95,14 +95,15 @@ class Item {
 
 		$query .= " WHERE id = :id";
 
-		if(!is_null($this->categories)) {
-			$category_id = $this->categories;
+		if(is_null($this->categories)) {
+			$categories = 0;
 		} else {
-			$category_id = 0;
+			$categories = $this->categories->getDatabaseFormat();
 		}
 
 		$loading = $pdo->prepare($query);
 		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
+		$loading->bindValue(':parent_id', $this->parentId, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':category', $category_id, PDO::PARAM_INT);
 		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
@@ -218,17 +219,18 @@ class Item {
 		$id = $row['id'];
 		$parent_id = $row['parent_id'];
 		$type = $row['type'];
-		$category = $row['category'];
+		$categories = CategoriesList::createFromDatabaseFormat($row['category']);
 		$order = $row['sort'];
 		$visible = $row['visible'];
 
 		$item = new self($id, $type, $order);
 		$item->parentId = $parent_id;
 		$item->visible = $visible;
+		$item->setCategories($categories);
 
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {
-				$field = $fields[$j] . "_" . $languages[$i];
+				$field = self::getDatabaseFieldname($fields[$j], $languages[$i]);
 				if(isset($row[$field])) {
 					$item->setContent($languages[$i], $fields[$j], $row[$field]);
 				}

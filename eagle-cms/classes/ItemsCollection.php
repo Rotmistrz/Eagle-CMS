@@ -1,51 +1,18 @@
 <?php
 
-class ItemsCollection implements Viewable {
+class ItemsCollection implements LanguagableCollection {
 	private $items = [];
-	private $type;
-	private $i;
 
-	const DEFAULT_TEMPLATE = 'default_items_';
-	const TABLE_TEMPLATE = 'table_items_';
+	public function __construct() {
 
-	public function __construct($type) {
-		$this->type = $type;
-		$this->i = 0;
 	}
 
-	public function addItem(Item $item) {
+	public function add(Item $item) {
 		$this->items[] = $item;
 	}
 
 	public function size() {
 		return count($this->items);
-	}
-
-	public function decrement() {
-		$this->i--;
-
-		return $this->i;
-	}
-
-	public function increment() {
-		$this->i++;
-
-		return $this->i;
-	}
-
-	public function reset() {
-		$this->i = 0;
-	}
-
-	public function get() {
-		if($this->i >= $this->size()) {
-			return false;
-		}
-
-		$current = $this->items[$this->i];
-		$this->i++;
-
-		return $current;
 	}
 
 	public function getItems() {
@@ -59,7 +26,7 @@ class ItemsCollection implements Viewable {
 
 		foreach($this->items as $item) {
 			$contents[$i]['id'] = $item->getId();
-			$contents[$i]['type'] = $this->type;
+			$contents[$i]['type'] = $item->type;
 			$contents[$i]['parent_id'] = $item->parentId;
 			$contents[$i]['order'] = $item->order;
 			$contents[$i]['visible'] = $item->visible;
@@ -74,14 +41,6 @@ class ItemsCollection implements Viewable {
 		return $contents;
 	}
 
-	public function getDefault(Twig_Environment $twig, $lang) {
-		return $twig->render(self::DEFAULT_TEMPLATE . $this->type . "." . TEMPLATE_EXTENSION, array('itemsCollection' => $this->getContentsByLanguage($lang)));
-	}
-
-	public function getTable(Twig_Environment $twig, $lang) {
-		return $twig->render(self::TABLE_TEMPLATE . $this->type . "." . TEMPLATE_EXTENSION, array('itemsCollection' => $this->getContentsByLanguage($lang)));
-	}
-
 	public static function create($type) {
 		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type ORDER BY sort ASC";
 		$pdo = DataBase::getInstance();
@@ -90,10 +49,10 @@ class ItemsCollection implements Viewable {
 		$loading->execute();
 
 		if($loading->rowCount() == 0) {
-			return false;
+			return new self();
 		}
 
-		$collection = new self($type);
+		$collection = new self();
 
 		$fields = Item::getFields();
 		$languages = Item::getLanguages();
@@ -101,24 +60,9 @@ class ItemsCollection implements Viewable {
 		$fields_length = count($fields);
 
 		while($result = $loading->fetch()) {
-			$id = $result['id'];
-			$type = $result['type'];
-			$category = $result['category'];
-			$order = $result['sort'];
-			$visible = $result['visible'];
+			$item = Item::createFromDatabaseRow($result);
 
-			$item = new Item($id, $type, $order);
-
-			for($i = 0; $i < $languages_length; $i++) {
-				for($j = 0; $j < $fields_length; $j++) {
-					$field = $fields[$j] . "_" . $languages[$i];
-					if(isset($result[$field])) {
-						$item->setContent($languages[$i], $fields[$j], $result[$field]);
-					}
-				}
-			}
-
-			$collection->addItem($item);
+			$collection->add($item);
 		}
 
 		return $collection;

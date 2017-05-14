@@ -20,6 +20,7 @@
 					<ul>
 						<li><a href="{{ path }}/">Home</a></li>
 						<li><a href="{{ path }}/index.php?module=pages">Strony</a></li>
+						<li><a href="{{ path }}/index.php?module=categories">Kategorie</a></li>
 						<li><a href="{{ path }}/index.php?module=data">Dane</a></li>
 						<li><a href="{{ path }}/index.php?module=settings">Ustawienia</a></li>
 					</ul>

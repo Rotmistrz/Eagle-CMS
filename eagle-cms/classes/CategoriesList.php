@@ -11,7 +11,11 @@ class CategoriesList {
 		$this->categories[] = $category_id;
 	}
 
-	public function getDataBaseFormat() {
+	public static function createFromDatabaseFormat($string) {
+		return new self(explode(',', $string));
+	}
+
+	public function getDatabaseFormat() {
 		return implode(',', $this->categories);
 	}
 
