@@ -149,6 +149,11 @@ try {
 					$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_1, Language::PL), 'Nagłówek 1', $item->getContent(Language::PL, Item::HEADER_1));
 					$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_2, Language::PL), 'Nagłówek 2', $item->getContent(Language::PL, Item::HEADER_2));
 					$FormManager->addTextarea(Item::getDatabaseFieldname(Item::CONTENT_1, Language::PL), 'Treść 1', $item->getContent(Language::PL, Item::CONTENT_1));
+
+					$FormManager->addCategories(1, [1]);
+
+					//$FormManager->addCheckboxesGroup('category', 'Kategoria', [1 => 'Lorem ipsum', 2 => 'Dolor sit amet', 3 => 'Libera et impera']);
+
 					$FormManager->addFileField('file_1', 'Obrazek główny');
 				}
 
@@ -191,7 +196,7 @@ try {
 
 			$earlier = $current->getEarlierOne();
 
-			if(get_class($earlier) == 'NoItem') {
+			if(get_class($earlier) == 'NoSuchItem') {
 				InformationManager::set(new Information(Information::CORRECT, "Element jest już pierwszy w kolejności."));
 			} else {
 				$tmp = $current->order;
@@ -215,7 +220,7 @@ try {
 
 			$later = $current->getLaterOne();
 
-			if(get_class($later) == 'NoItem') {
+			if(get_class($later) == 'NoSuchItem') {
 				InformationManager::set(new Information(Information::CORRECT, "Element jest już ostatni w kolejności."));
 			} else {
 				$tmp = $current->order;
@@ -255,7 +260,7 @@ try {
 
 		$ContentManager->template = 'table-categories-1.tpl';
 
-		$content .= ContentManager::getTitle("Sekcja 1");
+		$content .= ContentManager::getTitle("Kategorie 1");
 		$content .= $ContentManager->getAllCategoriesByType(1);
 	} 
 
@@ -317,6 +322,77 @@ try {
 				$FormManager->addButton('Zatwierdź');
 				$content .= $FormManager->get();
 			}
+		} else if($operation == 'delete') {
+			$category = Category::load($id);
+
+			if($_SERVER['REQUEST_METHOD'] == 'POST' && $_POST['accepted'] == 1) {
+				$correctMessage = "Poprawnie usunięto kategorię.";
+				$errorMessage = "Wystąpiły problemy podczas usuwania kategorii.";
+
+				if($category->delete()) {
+					InformationManager::set(new Information(Information::CORRECT, $correctMessage));
+				} else {
+					InformationManager::set(new Information(Information::ERROR, $errorMessage));
+				}
+
+				header('Location: index.php?module=categories');
+			} else {
+				$ChoiceForm = new ChoiceForm($twig);
+				$ChoiceForm->id = "delete-form";
+				$ChoiceForm->action = "index.php?module=" . $module . "&amp;operation=delete&amp;id=" . $id;
+				$ChoiceForm->title = "Czy na pewno chcesz usunąć tę kategorię?";
+				$ChoiceForm->back = "index.php?module=categories";
+
+				$content .= $ChoiceForm->get();
+			}
+		} else if($operation == 'category-up') {
+			if(is_null($id)) {
+				throw new Exception("Proszę podać id kategorii.");
+			}
+
+			$current = Category::load($id);
+
+			$earlier = $current->getEarlierOne();
+
+			if(get_class($earlier) == 'NoSuchCategory') {
+				InformationManager::set(new Information(Information::CORRECT, "Kategoria jest już pierwsza w kolejności."));
+			} else {
+				$tmp = $current->order;
+				$current->order = $earlier->order;
+				$earlier->order = $tmp;
+
+				if($current->save() && $earlier->save()) {
+					InformationManager::set(new Information(Information::CORRECT, "Poprawnie zmieniono kolejność."));
+				} else {
+					InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności kategorii."));
+				}
+			}
+
+			header('Location: index.php?module=categories');
+		} else if($operation == 'category-down') {
+			if(is_null($id)) {
+				throw new Exception("Proszę podać id kategorii.");
+			}
+
+			$current = Category::load($id);
+
+			$later = $current->getLaterOne();
+
+			if(get_class($later) == 'NoSuchCategory') {
+				InformationManager::set(new Information(Information::CORRECT, "Kategoria jest już ostatnia w kolejności."));
+			} else {
+				$tmp = $current->order;
+				$current->order = $later->order;
+				$later->order = $tmp;
+
+				if($current->save() && $later->save()) {
+					InformationManager::set(new Information(Information::CORRECT, "Poprawnie zmieniono kolejność."));
+				} else {
+					InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności kategorii."));
+				}
+			}
+
+			header('Location: index.php?module=categories');
 		}
 	} else {
 		$content .= ContentManager::getTitle('It works! Hello EagleCMS!');

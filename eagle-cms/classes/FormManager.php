@@ -7,6 +7,24 @@ class FormManager extends Form {
 		$this->items[] = $item;
 	}
 
+	public function addCategories($type, $current) {
+		$collection = CategoriesCollection::create($type);
+		$categories = $collection->getAsKeyValueArray(Language::PL);
+		$checkboxesGroup = new CheckboxesGroup('category', 'Kategoria');
+
+		foreach($categories as $value => $description) {
+			$checkbox = new Checkbox('category', $value, $description);
+			
+			if(in_array($value, $current)) {
+				$checkbox->setChecked(true);
+			}
+
+			$checkboxesGroup->addValue($checkbox);
+		}
+
+		$this->addItem($checkboxesGroup);
+	}
+
 	public function addInput($id, $title, $value) {
 		$input = new Input();
 		$input->id = $id;

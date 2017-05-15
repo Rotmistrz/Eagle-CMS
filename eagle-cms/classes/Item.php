@@ -1,6 +1,6 @@
 <?php
 
-class Item implements Languagable {
+class Item implements Languagable, Orderable {
 	public $id;
 	public $type;
 	public $parentId;
@@ -150,7 +150,7 @@ class Item implements Languagable {
 		if($row = $loading->fetch()) {
 			return self::createFromDatabaseRow($row);
 		} else {
-			return new NoItem();
+			return new NoSuchItem();
 		}
 	}
 
@@ -167,7 +167,7 @@ class Item implements Languagable {
 		if($row = $loading->fetch()) {
 			return self::createFromDatabaseRow($row);
 		} else {
-			return new NoItem();
+			return new NoSuchItem();
 		}
 	}
 

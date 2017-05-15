@@ -251,6 +251,21 @@ button {
     padding: 25px 20px; }
   .form .form__title {
     padding: 0 0 40px 0; }
+  .form .form__checkboxes-group {
+    padding: 0 0 30px 0; }
+    .form .form__checkboxes-group .form__field-container {
+      padding: 0;
+      margin: 0; }
+  .form .form__checkbox {
+    overflow: hidden; }
+    .form .form__checkbox .form__checkbox-field {
+      display: none; }
+      .form .form__checkbox .form__checkbox-field:checked ~ .form__checkbox-description {
+        background: #36802d;
+        color: #fff; }
+    .form .form__checkbox .form__checkbox-description {
+      display: block;
+      padding: 10px; }
 
 .choice-form {
   width: 600px;
@@ -322,56 +337,57 @@ button {
   text-align: center;
   text-transform: uppercase; }
 
+/**
 .checkbox {
-  overflow: hidden;
-  width: auto;
-  text-align: left;
-  float: none;
-  display: block;
-  padding: 0 0 0 35px !important;
-  position: relative; }
-
+overflow: hidden;
+width: auto;
+text-align: left;
+float: none;
+display: block;
+padding: 0 0 0 35px !important;
+position: relative;
+}
 input[type="checkbox"] {
-  display: none; }
-
+display: none;
+}
 input[type="checkbox"] + div {
-  display: inline-block;
-  float: left;
-  width: 20px;
-  height: 20px;
-  vertical-align: middle;
-  margin: 0 15px 0 0;
-  background: #fff;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.25);
-  -moz-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.25);
-  box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.25);
-  border-top: 1px solid rgba(0, 0, 0, 0.25);
-  position: absolute;
-  top: 0;
-  left: 0; }
-
+display: inline-block;
+float: left;
+width: 20px;
+height: 20px;
+vertical-align: middle;
+margin: 0 15px 0 0;
+background: #fff;
+-webkit-border-radius: 3px;
+-moz-border-radius: 3px;
+border-radius: 3px;
+-webkit-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.25);
+-moz-box-shadow: inset 0px 0px 2px 0px rgba(0,0,0,0.25);
+box-shadow: inset 0px 1px 1px 0px rgba(0,0,0,0.25);
+border-top: 1px solid rgba(0,0,0,0.25);
+position: absolute;
+top: 0;
+left: 0;
+}
 input[type="checkbox"] + div span {
-  display: block;
-  width: 20px;
-  height: 20px;
-  background: #c4c4c4;
-  display: none; }
-
+display: block;
+width: 20px;
+height: 20px;
+background: #c4c4c4;
+display: none;
+}
 input[type="checkbox"] ~ p {
-  display: block;
-  vertical-align: middle;
-  font-size: 16px;
-  letter-spacing: 2px;
-  line-height: 24px;
-  width: auto;
-  padding: 0; }
-
+display: block;
+vertical-align: middle;
+font-size: 16px;
+letter-spacing: 2px;
+line-height: 24px;
+width: auto;
+padding: 0;
+}
 input[type="checkbox"]:checked + div span {
-  display: block; }
-
+display: block;
+}**/
 .choise-list {
   cursor: pointer;
   position: relative; }

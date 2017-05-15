@@ -32,6 +32,16 @@ class CategoriesCollection implements LanguagableCollection {
 		return $contents;
 	}
 
+	public function getAsKeyValueArray($lang) {
+		$array = [];
+
+		foreach($this->categories as $category) {
+			$array[$category->getId()] = $category->getContent($lang, Category::HEADER_1);
+		}
+
+		return $array;
+	}
+
 	public static function create($type) {
 		$query = "SELECT * FROM " . CATEGORIES_TABLE . " WHERE type = :type ORDER BY sort ASC";
 		$pdo = DataBase::getInstance();

@@ -1,6 +1,6 @@
 <?php
 
-class Category implements Languagable {
+class Category implements Languagable, Orderable {
 	public $id;
 	public $parentId;
 	public $type;
@@ -80,6 +80,54 @@ class Category implements Languagable {
 		}
 	}
 
+	public function delete() {
+		$query = "DELETE FROM " . CATEGORIES_TABLE . " WHERE id = :id";
+
+		$pdo = DataBase::getInstance();
+		$deleting = $pdo->prepare($query);
+		$deleting->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+		if($deleting->execute()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function getEarlierOne() {
+		$query = "SELECT * FROM " . CATEGORIES_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort DESC";
+
+		$pdo = DataBase::getInstance();
+		$loading = $pdo->prepare($query);
+		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
+		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
+		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+		$loading->execute();
+
+		if($row = $loading->fetch()) {
+			return self::createFromDatabaseRow($row);
+		} else {
+			return new NoSuchCategory();
+		}
+	}
+
+	public function getLaterOne() {
+		$query = "SELECT * FROM " . CATEGORIES_TABLE . " WHERE type = :type AND sort >= :sort AND id != :id ORDER BY sort ASC";
+
+		$pdo = DataBase::getInstance();
+		$loading = $pdo->prepare($query);
+		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
+		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
+		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+		$loading->execute();
+
+		if($row = $loading->fetch()) {
+			return self::createFromDatabaseRow($row);
+		} else {
+			return new NoSuchCategory();
+		}
+	}
+
 	public static function load($id) {
 		$query = "SELECT * FROM " . CATEGORIES_TABLE . " WHERE id = :id";
 
@@ -105,7 +153,6 @@ class Category implements Languagable {
 		$gettingSort = $pdo->prepare($gettingSortQuery);
 		$gettingSort->bindValue(':type', $type, PDO::PARAM_INT);
 		$gettingSort->execute();
-		$result = $gettingSort->fetch();
 
 		if($result = $gettingSort->fetch()) {
 			$order = $result['recent'] + 10;

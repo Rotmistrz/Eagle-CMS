@@ -418,6 +418,33 @@ padding: 0;
 	.form__title {
 	padding: 0 0 40px 0;
 	}
+
+	.form__checkboxes-group {
+	padding: 0 0 30px 0;
+
+		.form__field-container {
+		padding: 0;
+		margin: 0;
+		}
+	}
+
+	.form__checkbox {
+	overflow: hidden;
+
+		.form__checkbox-field {
+		display: none;
+
+			&:checked ~ .form__checkbox-description {
+			background: $medium-color;
+			color: $light-color;
+			}
+		}
+
+		.form__checkbox-description {
+		display: block;
+		padding: 10px;
+		}
+	}
 }
 
 .choice-form {
@@ -497,6 +524,7 @@ text-transform: none;
    text-transform: uppercase;
 }
 
+/**
 .checkbox {
 overflow: hidden;
 width: auto;
@@ -546,7 +574,7 @@ padding: 0;
 }
 input[type="checkbox"]:checked + div span {
 display: block;
-}
+}**/
 
 .choise-list {
 cursor: pointer;
