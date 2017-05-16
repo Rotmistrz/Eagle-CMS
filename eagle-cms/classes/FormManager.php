@@ -8,7 +8,7 @@ class FormManager extends Form {
 	}
 
 	public function addCategories($type, $current) {
-		$collection = CategoriesCollection::create($type);
+		$collection = CategoriesCollection::load($type);
 		$categories = $collection->getAsKeyValueArray(Language::PL);
 		$checkboxesGroup = new CheckboxesGroup('category', 'Kategoria');
 

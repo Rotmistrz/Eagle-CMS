@@ -19,6 +19,10 @@ class CategoriesList {
 		return implode(',', $this->categories);
 	}
 
+	public function get() {
+		return $this->categories;
+	}
+
 	public function getClassString() {
 		$class = '';
 

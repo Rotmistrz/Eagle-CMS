@@ -10,13 +10,19 @@ class ContentManager {
 	}
 
 	public function getAllItemsByType($id) {
-		$items = ItemsCollection::create($id);
+		$items = ItemsCollection::load($id);
+
+		return $this->twig->render($this->template, array('itemsCollection' => $items->getContentsByLanguage($this->lang)));
+	}
+
+	public function getAllItemsByCategory($category) {
+		$items = ItemsCollection::loadByCategory($category);
 
 		return $this->twig->render($this->template, array('itemsCollection' => $items->getContentsByLanguage($this->lang)));
 	}
 
 	public function getAllCategoriesByType($id) {
-		$categories = CategoriesCollection::create($id);
+		$categories = CategoriesCollection::load($id);
 
 		return $this->twig->render($this->template, array('categoriesCollection' => $categories->getContentsByLanguage($this->lang)));
 	}

@@ -20,7 +20,7 @@ try {
 	$ContentManager->twig = $twig;
 
 	$ContentManager->template = 'items-1.tpl';
-	$TemplateManager->addTemplate('items_1', $ContentManager->getAllItemsByType(1));
+	$TemplateManager->addTemplate('items_1', $ContentManager->getAllItemsByCategory(5));
 
 } catch(Exception $E) {
 	$content .= $E->getMessage();

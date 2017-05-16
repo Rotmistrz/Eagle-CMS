@@ -42,7 +42,7 @@ class CategoriesCollection implements LanguagableCollection {
 		return $array;
 	}
 
-	public static function create($type) {
+	public static function load($type) {
 		$query = "SELECT * FROM " . CATEGORIES_TABLE . " WHERE type = :type ORDER BY sort ASC";
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);

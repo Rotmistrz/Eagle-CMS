@@ -85,6 +85,14 @@ try {
 					$item = Item::create($type);
 				}
 
+				if(isset($_POST['category'])) {
+					$categories = new CategoriesList($_POST['category']);
+				} else {
+					$categories = new NoCategory();
+				}
+
+				$item->setCategories($categories);
+
 				$fields = Item::getFields();
 				$languages = Item::getLanguages();
 				$value;
@@ -150,9 +158,7 @@ try {
 					$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_2, Language::PL), 'Nagłówek 2', $item->getContent(Language::PL, Item::HEADER_2));
 					$FormManager->addTextarea(Item::getDatabaseFieldname(Item::CONTENT_1, Language::PL), 'Treść 1', $item->getContent(Language::PL, Item::CONTENT_1));
 
-					$FormManager->addCategories(1, [1]);
-
-					//$FormManager->addCheckboxesGroup('category', 'Kategoria', [1 => 'Lorem ipsum', 2 => 'Dolor sit amet', 3 => 'Libera et impera']);
+					$FormManager->addCategories(1, $item->getCategoriesArray());
 
 					$FormManager->addFileField('file_1', 'Obrazek główny');
 				}

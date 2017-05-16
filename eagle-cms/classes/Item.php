@@ -95,8 +95,8 @@ class Item implements Languagable, Orderable {
 
 		$query .= " WHERE id = :id";
 
-		if(is_null($this->categories)) {
-			$categories = 0;
+		if(get_class($this->categories) == 'NoCategory') {
+			$categories = null;
 		} else {
 			$categories = $this->categories->getDatabaseFormat();
 		}
@@ -105,7 +105,7 @@ class Item implements Languagable, Orderable {
 		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':parent_id', $this->parentId, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
-		$loading->bindValue(':category', $category_id, PDO::PARAM_INT);
+		$loading->bindValue(':category', $categories, PDO::PARAM_INT);
 		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
 
 		for($i = 0; $i < $languages_length; $i++) {
@@ -254,6 +254,10 @@ class Item implements Languagable, Orderable {
 
 	public function getId() {
 		return $this->id;
+	}
+
+	public function getCategoriesArray() {
+		return $this->categories->get();
 	}
 
 	public function __toString() {
