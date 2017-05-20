@@ -20,9 +20,8 @@ try {
 	$errorMessage = '';
 	$errorOccured = 0;
 
-	$ContentManager = new ContentManager();
+	$ContentManager = new ContentManager($twig);
 	$ContentManager->lang = Language::PL;
-	$ContentManager->twig = $twig;
 
 	if($information = InformationManager::get()) {
 		if($information->type == Information::CORRECT) {
@@ -238,6 +237,34 @@ try {
 				} else {
 					InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas zmiany kolejności elementów."));
 				}
+			}
+
+			header('Location: index.php?module=pages');
+		} else if($operation == 'hide') {
+			if(is_null($id)) {
+				throw new Exception("Proszę podać id elementu.");
+			}
+
+			$item = Item::load($id);
+
+			if($item->hide()) {
+				InformationManager::set(new Information(Information::CORRECT, "Poprawnie ukryto element."));
+			} else {
+				InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas ukrywania elementu."));
+			}
+
+			header('Location: index.php?module=pages');
+		} else if($operation == 'show') {
+			if(is_null($id)) {
+				throw new Exception("Proszę podać id elementu.");
+			}
+
+			$item = Item::load($id);
+
+			if($item->show()) {
+				InformationManager::set(new Information(Information::CORRECT, "Poprawnie uwidoczniono element."));
+			} else {
+				InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas uwidaczniania elementu."));
 			}
 
 			header('Location: index.php?module=pages');

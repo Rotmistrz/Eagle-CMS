@@ -1,18 +1,12 @@
 <?php
 
-class Category implements Languagable, Orderable {
-	public $id;
+class Category extends Component implements Languagable, Orderable {
 	public $parentId;
 	public $type;
-	public $order;
 
 	const HEADER_1 = 'header_1';
 
-	private static $fields = [self::HEADER_1];
-
-	private static $languages = [Language::PL, Language::EN];
-
-	private $contents; // Contents
+	protected static $fields = [self::HEADER_1];
 
 	public function __construct($id, $type, $order) {
 		$this->id = $id;
@@ -25,18 +19,6 @@ class Category implements Languagable, Orderable {
 
 	public function getId() {
 		return $this->id;
-	}
-
-	public function setContent($lang, $field, $value) {
-		$this->contents->set($lang, $field, $value);
-	}
-
-	public function getContent($lang, $field) {
-		return $this->contents->get($lang, $field);
-	}
-
-	public function getContentsByLanguage($lang) {
-		return $this->contents->getContentsByLanguage($lang);
 	}
 
 	public function save() {
@@ -196,18 +178,6 @@ class Category implements Languagable, Orderable {
 		}
 
 		return $category;
-	}
-
-	public static function getFields() {
-		return self::$fields;
-	}
-
-	public static function getDatabaseFieldname($field, $lang) {
-		return $field . '_' . $lang;
-	}
-
-	public static function getLanguages() {
-		return self::$languages;
 	}
 }
 

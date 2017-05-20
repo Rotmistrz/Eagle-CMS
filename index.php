@@ -15,12 +15,11 @@ try {
 
 	$content = '';
 
-	$ContentManager = new ContentManager();
+	$ContentManager = new ContentManager($twig);
 	$ContentManager->lang = Language::PL;
-	$ContentManager->twig = $twig;
 
 	$ContentManager->template = 'items-1.tpl';
-	$TemplateManager->addTemplate('items_1', $ContentManager->getAllItemsByCategory(5));
+	$TemplateManager->addTemplate('items_1', $ContentManager->getAllItemsByCategory(1));
 
 } catch(Exception $E) {
 	$content .= $E->getMessage();

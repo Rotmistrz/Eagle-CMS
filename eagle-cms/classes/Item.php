@@ -1,12 +1,8 @@
 <?php
 
-class Item implements Languagable, Orderable {
-	public $id;
-	public $type;
+class Item extends Component implements Languagable, Orderable {
 	public $parentId;
 	private $categories; // CategoriesList
-	public $order;
-	public $visible;
 
 	const HEADER_1 = 'header_1';
 	const HEADER_2 = 'header_2';
@@ -18,12 +14,8 @@ class Item implements Languagable, Orderable {
 	const CONTENT_2 = 'content_2';
 	const CONTENT_3 = 'content_3';
 
-	private static $fields = [self::HEADER_1, self::HEADER_2, self::HEADER_3, self::HEADER_4, self::HEADER_5,
+	protected static $fields = [self::HEADER_1, self::HEADER_2, self::HEADER_3, self::HEADER_4, self::HEADER_5,
 	                   self::CONTENT_1, self::CONTENT_2, self::CONTENT_3];
-
-	private static $languages = [Language::PL, Language::EN];
-
-	private $contents; // Contents
 
 	public function __construct($id, $type, $order) {
 		$this->id = $id;
@@ -36,40 +28,8 @@ class Item implements Languagable, Orderable {
 		$this->contents = new Contents();
 	}
 
-	public function setVisible($visible) {
-		if(is_bool($visible)) {
-			$this->visible = (bool) $visible;
-		} else {
-			throw new Exception("Item::setVisible() must receive boolean value.");
-		}
-	}
-
-	public function getVisible() {
-		return $this->visible;
-	}
-
 	public function setCategories(CategoriesList $categories) {
 		$this->categories = $categories;
-	}
-
-	public function setOrder($order) {
-		if(is_number($order)) {
-			$this->order = $order;
-		} else {
-			throw new Exception("Item::setOrder() must receive integer value.");
-		}
-	}
-
-	public function setContent($lang, $field, $value) {
-		$this->contents->set($lang, $field, $value);
-	}
-
-	public function getContent($lang, $field) {
-		return $this->contents->get($lang, $field);
-	}
-
-	public function getContentsByLanguage($lang) {
-		return $this->contents->getContentsByLanguage($lang);
 	}
 
 	public function save() {
@@ -131,6 +91,34 @@ class Item implements Languagable, Orderable {
 		$deleting->bindValue(':id', $this->id, PDO::PARAM_INT);
 
 		if($deleting->execute()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function hide() {
+		$query = "UPDATE " . ITEMS_TABLE . " SET visible = 0 WHERE id = :id";
+
+		$pdo = DataBase::getInstance();
+		$hiding = $pdo->prepare($query);
+		$hiding->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+		if($hiding->execute()) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public function show() {
+		$query = "UPDATE " . ITEMS_TABLE . " SET visible = 1 WHERE id = :id";
+
+		$pdo = DataBase::getInstance();
+		$showing = $pdo->prepare($query);
+		$showing->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+		if($showing->execute()) {
 			return true;
 		} else {
 			return false;
@@ -238,22 +226,6 @@ class Item implements Languagable, Orderable {
 		}
 
 		return $item;
-	}
-
-	public static function getFields() {
-		return self::$fields;
-	}
-
-	public static function getDatabaseFieldname($field, $lang) {
-		return $field . '_' . $lang;
-	}
-
-	public static function getLanguages() {
-		return self::$languages;
-	}
-
-	public function getId() {
-		return $this->id;
 	}
 
 	public function getCategoriesArray() {

@@ -5,8 +5,9 @@ class ContentManager {
 	public $template;
 	public $twig;
 
-	public function __construct() {
-
+	public function __construct($twig) {
+		$this->twig = $twig;
+		$this->lang = Language::PL;
 	}
 
 	public function getAllItemsByType($id) {
