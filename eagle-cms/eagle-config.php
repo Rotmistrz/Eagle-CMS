@@ -1,11 +1,5 @@
 <?php
 
-session_start();
-
-if(isset($_SESSION['user'])) {
-	$U = new User($_SESSION['user']['id'], $_SESSION['user']['login'], $_SESSION['user']['email']);
-}
-
 define('ITEMS_TABLE', 'eagle_items');
 define('CATEGORIES_TABLE', 'eagle_categories');
 define('USERS_TABLE', 'eagle_users');

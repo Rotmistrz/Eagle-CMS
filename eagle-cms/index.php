@@ -1,6 +1,12 @@
 <?php
 
+session_start();
+
 require 'vendor/autoload.php';
+
+if(isset($_SESSION['user'])) {
+	$U = new User($_SESSION['user']['id'], $_SESSION['user']['login'], $_SESSION['user']['email']);
+}
 
 try {
 	$loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);
@@ -9,23 +15,29 @@ try {
 	$TemplateManager = new TemplateManager($twig);
 	$TemplateManager->addTemplate('title', 'EagleCMS');
 	$TemplateManager->addTemplate('path', '/eagle-cms');
+
+	$ContentManager = new ContentManager($twig);
+	$ContentManager->lang = Language::PL;
+	$ContentManager->setLoadHiddenItems(true);
+
+	$content = "";
+
+	if($crosssideInformation = InformationManager::get()) {
+		if($crosssideInformation->type == Information::CORRECT) {
+			$information = $ContentManager->getCorrectMessage($crosssideInformation->content);
+		} else if($crosssideInformation->type == Information::ERROR) {
+			$information = $ContentManager->getErrorMessage($crosssideInformation->content);
+		}
+
+		$content .= $information;
+
+		InformationManager::clear();
+	}
 } catch(Exception $e) {
 	echo $ContentManager->getErrorMessage($e->getMessage());
 	exit();
 	// wyswietlenie strony błędu
 }
-
-if($crosssideInformation = InformationManager::get()) {
-	if($crosssideInformation->type == Information::CORRECT) {
-		$information = $ContentManager->getCorrectMessage($crosssideInformation->content);
-	} else if($crosssideInformation->type == Information::ERROR) {
-		$information = $ContentManager->getErrorMessage($crosssideInformation->content);
-	}
-
-	InformationManager::clear();
-}
-
-$content = "";
 
 if(isset($U)) {
 	try {
@@ -40,12 +52,6 @@ if(isset($U)) {
 		$correctMessage = '';
 		$errorMessage = '';
 		$errorOccured = 0;
-
-		$ContentManager = new ContentManager($twig);
-		$ContentManager->lang = Language::PL;
-		$ContentManager->setLoadHiddenItems(true);
-
-		
 
 		if($module == 'pages') {
 			$FormManager = new FormManager($twig);
@@ -451,8 +457,14 @@ if(isset($U)) {
 } else {
 	$TemplateManager->filename = 'login.tpl';
 	
-	if(isset($information)) {
-		$content .= $information;
+	if($_SERVER['REQUEST_METHOD'] == 'POST') {
+		if($U = User::login($_POST['login'], $_POST['password'])) {
+			InformationManager::set(new Information(Information::CORRECT, "Zalogowano poprawnie."));
+		} else {
+			InformationManager::set(new Information(Information::ERROR, "Niepoprawny login lub hasło."));
+		}
+
+		header("Location: index.php");
 	}
 
 	$FormManager = new FormManager($twig);
