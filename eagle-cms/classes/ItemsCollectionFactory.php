@@ -11,10 +11,14 @@ class ItemsCollectionFactory {
 
 	public function setDescendingOrder() {
 		$this->orderType = Order::DESC;
+
+		return $this;
 	}
 
 	public function setAscendingOrder() {
-		$this->orderType = self::ASC;
+		$this->orderType = Order::ASC;
+
+		return $this;
 	}
 
 	public function load($type) {
@@ -57,14 +61,16 @@ class ItemsCollectionFactory {
 		$caseC = "%," . $type;
 		$caseD = "%," . $type . ",%";
 
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE category LIKE :caseA
-													   OR category LIKE :caseB
-													   OR category LIKE :caseC 
-													   OR category LIKE :caseD";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE ";
 
 		if(!$this->loadHiddenItems) {
-			$query .= " AND visible != 0";
+			$query .= "visible != 0 AND ";
 		}
+
+		$query .= "(category LIKE :caseA
+			    OR category LIKE :caseB
+			    OR category LIKE :caseC 
+			    OR category LIKE :caseD)";
 
 		$query .= " ORDER BY sort " . $this->orderType;
 

@@ -8,6 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'Button' => $baseDir . '/classes/Button.php',
     'CategoriesCollection' => $baseDir . '/classes/CategoriesCollection.php',
+    'CategoriesCollectionFactory' => $baseDir . '/classes/CategoriesCollectionFactory.php',
     'CategoriesList' => $baseDir . '/classes/CategoriesList.php',
     'Category' => $baseDir . '/classes/Category.php',
     'Checkbox' => $baseDir . '/classes/Checkbox.php',
@@ -42,5 +43,7 @@ return array(
     'Select' => $baseDir . '/classes/Select.php',
     'TemplateManager' => $baseDir . '/classes/TemplateManager.php',
     'Textarea' => $baseDir . '/classes/Textarea.php',
+    'User' => $baseDir . '/classes/User.php',
+    'UserRegisterException' => $baseDir . '/classes/UserRegisterException.php',
     'Viewable' => $baseDir . '/interfaces/Viewable.php',
 );

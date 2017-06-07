@@ -8,7 +8,8 @@ class FormManager extends Form {
 	}
 
 	public function addCategories($type, $current) {
-		$collection = CategoriesCollection::load($type);
+		$categoriesFactory = new CategoriesCollectionFactory();
+		$collection = $categoriesFactory->load($type);
 		$categories = $collection->getAsKeyValueArray(Language::PL);
 		$checkboxesGroup = new CheckboxesGroup('category', 'Kategoria');
 
@@ -29,6 +30,19 @@ class FormManager extends Form {
 		$input = new Input();
 		$input->id = $id;
 		$input->type = 'text';
+		$input->value = $value;
+
+		$label = new Label();
+		$label->title = $title;
+		$label->setField($input);
+
+		$this->addItem($label);
+	}
+
+	public function addInputPassword($id, $title, $value) {
+		$input = new Input();
+		$input->id = $id;
+		$input->type = 'password';
 		$input->value = $value;
 
 		$label = new Label();

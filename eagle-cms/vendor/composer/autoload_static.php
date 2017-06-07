@@ -10,6 +10,20 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         '0fd030c8ad534ff01a70126bad46847e' => __DIR__ . '/../..' . '/eagle-config.php',
     );
 
+    public static $prefixLengthsPsr4 = array (
+        'T' => 
+        array (
+            'Twig\\' => 5,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'Twig\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/twig/twig/src',
+        ),
+    );
+
     public static $prefixesPsr0 = array (
         'T' => 
         array (
@@ -23,6 +37,7 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
     public static $classMap = array (
         'Button' => __DIR__ . '/../..' . '/classes/Button.php',
         'CategoriesCollection' => __DIR__ . '/../..' . '/classes/CategoriesCollection.php',
+        'CategoriesCollectionFactory' => __DIR__ . '/../..' . '/classes/CategoriesCollectionFactory.php',
         'CategoriesList' => __DIR__ . '/../..' . '/classes/CategoriesList.php',
         'Category' => __DIR__ . '/../..' . '/classes/Category.php',
         'Checkbox' => __DIR__ . '/../..' . '/classes/Checkbox.php',
@@ -57,12 +72,16 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'Select' => __DIR__ . '/../..' . '/classes/Select.php',
         'TemplateManager' => __DIR__ . '/../..' . '/classes/TemplateManager.php',
         'Textarea' => __DIR__ . '/../..' . '/classes/Textarea.php',
+        'User' => __DIR__ . '/../..' . '/classes/User.php',
+        'UserRegisterException' => __DIR__ . '/../..' . '/classes/UserRegisterException.php',
         'Viewable' => __DIR__ . '/../..' . '/interfaces/Viewable.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731::$prefixDirsPsr4;
             $loader->prefixesPsr0 = ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731::$prefixesPsr0;
             $loader->classMap = ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731::$classMap;
 
