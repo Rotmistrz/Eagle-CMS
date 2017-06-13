@@ -4,10 +4,6 @@ session_start();
 
 require 'vendor/autoload.php';
 
-if(isset($_SESSION['user'])) {
-	$U = new User($_SESSION['user']['id'], $_SESSION['user']['login'], $_SESSION['user']['email']);
-}
-
 try {
 	$loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);
 	$twig = new Twig_Environment($loader, array('autoescape' => false));
@@ -39,7 +35,7 @@ try {
 	// wyswietlenie strony błędu
 }
 
-if(isset($U)) {
+if($U = User::getInstance()) {
 	try {
 		$TemplateManager->filename = 'index.tpl';
 
@@ -52,6 +48,9 @@ if(isset($U)) {
 		$correctMessage = '';
 		$errorMessage = '';
 		$errorOccured = 0;
+
+		$username = $U->getLogin();
+		$TemplateManager->addTemplate('username', $username);
 
 		if($module == 'pages') {
 			$FormManager = new FormManager($twig);
@@ -458,7 +457,7 @@ if(isset($U)) {
 	$TemplateManager->filename = 'login.tpl';
 	
 	if($_SERVER['REQUEST_METHOD'] == 'POST') {
-		if($U = User::login($_POST['login'], $_POST['password'])) {
+		if(User::login($_POST['login'], $_POST['password'])) {
 			InformationManager::set(new Information(Information::CORRECT, "Zalogowano poprawnie."));
 		} else {
 			InformationManager::set(new Information(Information::ERROR, "Niepoprawny login lub hasło."));

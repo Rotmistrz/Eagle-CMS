@@ -27,7 +27,7 @@
 				</nav>
 
 				<p class="loged-as">
-				Zalogowany jako <span class="username">admin</span> (<a href="{{ path }}/logout.php">wyloguj</a>)
+				Zalogowany jako <span class="username">{{ username }}</span> (<a href="{{ path }}/logout.php">wyloguj</a>)
 				</p>
 			</section>
 

@@ -23,6 +23,21 @@ class User {
 		return $this->email;
 	}
 
+	public function logout() {
+		if(!isset($_SESSION['user'])) {
+			throw new NoUserLoginingOutException("Aby się wylogować, musisz się uprzednio zalogować.");
+		}
+
+		unset($_SESSION['user']);
+		session_destroy();	
+		
+		if(!isset($_SESSION['user'])) {
+			return true;
+		} else {
+			return false;	
+		}
+	}
+
 	public static function register($login, $email, $password) {
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare("SELECT id, login, email FROM " . USERS_TABLE . " WHERE login = :login");
@@ -70,6 +85,14 @@ class User {
 			} else {
 				return false;
 			}
+		} else {
+			return false;
+		}
+	}
+
+	public static function getInstance() {
+		if(isset($_SESSION['user'])) {
+			return new self($_SESSION['user']['id'], $_SESSION['user']['login'], $_SESSION['user']['email']);
 		} else {
 			return false;
 		}
