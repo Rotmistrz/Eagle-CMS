@@ -1,126 +1,6 @@
-$main-color: #000;
-$dark-color: #000;
-$dark-color-02: #777;
-$dark-color-03: #234d20;
+@import 'variables';
 
-$medium-color: #36802d;
-$medium-color-02: #448a3b;
-$green: #419d34;
-$red: #b10a0a;
-
-$light-color: #fff;
-$light-color-00: #fff;
-$light-color-01: #fafafa;
-$light-color-02: #eee;
-$light-color-03: #c4c4c4;
-
-$dark-bg-color: #000;
-
-$medium-bg-color: #ddd;
-$medium-bg-color-02: #f5f5f5;
-$medium-bg-color-03: #f9f9f9;
-
-$light-bg-color: #fff;
-$button-bg-color: #ddd;
-
-$main-font-family: Lato, Verdana, sans-serif;
-$main-font-size: 13px;
-$main-font-size-rwd1200: 14px;
-$main-font-size-rwd650: 12px;
-
-$second-font-family: Heuristica, 'Times New Roman', serif;
-$second-font-size: 20px;
-
-$huge-font-size: 48px;
-$huge-font-size-rwd1200: 42px;
-$huge-font-size-rwd650: 36px;
-
-$extralarge-font-size: 24px;
-$extralarge-font-size-rwd1050: 20px;
-$extralarge-font-size-rwd768: 18px;
-$extralarge-font-size-rwd480: 16px;
-
-$large-font-size: 18px;
-$large-font-size-rwd1200: 16px;
-$large-font-size-rwd650: 14px;
-
-$small-font-size: 12px;
-$small-font-size-rwd1200: 12px;
-$small-font-size-rwd650: 12px;
-
-$extrasmall-font-size: 11px;
-
-$button-font-size: 14px;
-$button-font-size-rwd1200: 12px;
-
-$download-button-font-size: 24px;
-$download-button-font-size-rwd950: 20px;
-
-$gallery-header-font-size: 30px;
-$gallery-header-font-size-rwd1200: 22px;
-$gallery-header-font-size-rwd850: 18px;
-
-$site-title-font-size: 42px;
-$site-subtitle-font-size: 12px;
-
-$header-01-font-size: 24px;
-$header-01-font-size-rwd480: 20px;
-
-$header-02-font-size: 50px;
-$header-02-font-size-rwd1200: 42px;
-$header-02-font-size-rwd768: 36px;
-$header-02-font-size-rwd650: 32px;
-$header-02-font-size-rwd550: 28px;
-$header-02-font-size-rwd480: 24px;
-
-$header-03-font-size: 18px;
-$header-03-font-size-rwd1200: 16px;
-$header-03-font-size-rwd650: 16px;
-
-$symbol-cross-size: 12px;
-
-@mixin transition($transition) {
-	-webkit-transition: $transition;
-	-moz-transition: $transition;
-	-o-transition: $transition;
-	transition: $transition;
-}
-
-@mixin box-sizing($box-sizing) {
-	-webkit-box-sizing: $box-sizing;
-	-moz-box-sizing: $box-sizing;
-	box-sizing: $box-sizing;
-}
-
-@mixin border-radius($radius) {
-	-webkit-border-radius: $radius;
-	-moz-border-radius: $radius;
-	border-radius: $radius;
-}
-
-@mixin transform($transform) {
-	-webkit-transform: $transform;
-	-moz-transform: $transform;
-	transform: $transform;
-}
-
-@mixin bg-gradient-downwards($color-01, $start, $color-02, $end) {
-background-image: -ms-linear-gradient(top, $color-01 $start, $color-02 $end);
-background-image: -moz-linear-gradient(top, $color-01 $start, $color-02 $end);
-background-image: -o-linear-gradient(top, $color-01 $start, $color-02 $end);
-background-image: -webkit-gradient(linear, left top, left bottom, color-stop($start, $color-01), color-stop($end, $color-02));
-background-image: -webkit-linear-gradient(top, $color-01 $start, $color-02 $end);
-background-image: linear-gradient(to bottom, $color-01 $start, $color-02 $end);
-}
-
-@mixin bg-gradient-eastwards($color-01, $start, $color-02, $end) {
-background-image: -ms-linear-gradient(left, $color-01 $start, $color-02 $end);
-background-image: -moz-linear-gradient(left, $color-01 $start, $color-02 $end);
-background-image: -o-linear-gradient(left, $color-01 $start, $color-02 $end);
-background-image: -webkit-gradient(linear, left top, right top, color-stop($start, $color-01), color-stop($end, $color-02));
-background-image: -webkit-linear-gradient(left, $color-01 $start, $color-02 $end);
-background-image: linear-gradient(to right, $color-01 $start, $color-02 $end);
-}
+@import 'mixins';
 
 * {
 margin: 0;
@@ -382,7 +262,7 @@ padding: 0;
 	margin: 5px 0 0 0;
 	-webkit-appearance: none;
 	border: 1px solid $light-color-03;
-	background: none;
+	background: none !important;
 	@include transition(all .2s linear);
 	@include box-sizing(border-box);
 	@include border-radius(5px);
@@ -393,6 +273,10 @@ padding: 0;
 	background: none;
 	border-color: $dark-color-02;
 	}
+	input:-webkit-autofill {
+	background: none;
+	}
+
 	textarea {
 	height: 140px;
 	}
@@ -415,8 +299,9 @@ padding: 0;
 	padding: 25px 20px;
 	}
 
-	.form__title {
-	padding: 0 0 40px 0;
+	.form__header {
+	padding: 0 0 30px 0;
+	text-align: center;
 	}
 
 	.form__checkboxes-group {
@@ -445,6 +330,15 @@ padding: 0;
 		padding: 10px;
 		}
 	}
+}
+
+.form-login {
+width: 460px;
+margin: 0 auto;
+background: $light-color;
+border: 1px solid $light-color-03;
+padding: 60px 40px;
+@include border-radius(5px);
 }
 
 .choice-form {
@@ -621,7 +515,7 @@ border-collapse: collapse;
 
 	td,
 	th {
-	padding: 3px 10px;
+	padding: 8px 10px;
 	border: 1px solid $dark-color-02;
 	@include box-sizing(border-box);
 	}
@@ -638,10 +532,23 @@ border-collapse: collapse;
 	text-align: right;
 	}
 	.title {
-	width: 75%;
+	width: 68%;
+
+		.fa {
+		margin: 0 7px 0 0;
+		}
 	}
 	.operations {
-	width: 18%;
+	width: 25%;
+
+		a {
+		display: inline-block;
+		margin: 0 5px 0 0;
+
+			&:hover {
+			color: $green;
+			}
+		}
 	}
 
 	.header-row {

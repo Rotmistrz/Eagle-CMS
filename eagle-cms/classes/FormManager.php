@@ -1,10 +1,13 @@
 <?php
 
 class FormManager extends Form {
+	public $title;
 	private $items = [];
 
 	public function addItem(FormItem $item) {
 		$this->items[] = $item;
+
+		return $this;
 	}
 
 	public function addCategories($type, $current) {
@@ -24,6 +27,8 @@ class FormManager extends Form {
 		}
 
 		$this->addItem($checkboxesGroup);
+
+		return $this;;
 	}
 
 	public function addInput($id, $title, $value) {
@@ -37,6 +42,8 @@ class FormManager extends Form {
 		$label->setField($input);
 
 		$this->addItem($label);
+
+		return $this;
 	}
 
 	public function addInputPassword($id, $title, $value) {
@@ -50,6 +57,8 @@ class FormManager extends Form {
 		$label->setField($input);
 
 		$this->addItem($label);
+
+		return $this;
 	}
 
 	public function addInputHidden($id, $value) {
@@ -59,6 +68,8 @@ class FormManager extends Form {
 		$input->value = $value;
 
 		$this->addItem($input);
+
+		return $this;
 	}
 
 	public function addTextarea($id, $title, $value) {
@@ -71,6 +82,8 @@ class FormManager extends Form {
 		$label->setField($textarea);
 
 		$this->addItem($label);
+
+		return $this;
 	}
 
 	public function addFileField($id, $title) {
@@ -82,6 +95,8 @@ class FormManager extends Form {
 		$label->setField($filefield);
 
 		$this->addItem($label);
+
+		return $this;
 	}
 
 	public function addSelect($title, Select $select) {
@@ -90,6 +105,8 @@ class FormManager extends Form {
 		$label->setField($select);
 
 		$this->addItem($label);
+
+		return $this;
 	}
 
 	public function addButton($value) {
@@ -98,6 +115,14 @@ class FormManager extends Form {
 		$button->value = $value;
 
 		$this->addItem($button);
+
+		return $this;
+	}
+
+	public function setTitle($title) {
+		$this->title = $title;
+
+		return $this;
 	}
 
 	public function get() {
@@ -107,7 +132,7 @@ class FormManager extends Form {
 			$content .= $item->get($this->twig);
 		}
 
-		return $this->twig->render('form.tpl', ['id' => $this->id, 'class' => $this->class, 'action' => $this->action, 'method' => $this->method, 'content' => $content]);
+		return $this->twig->render('form.tpl', ['id' => $this->id, 'class' => $this->class, 'action' => $this->action, 'method' => $this->method, 'title' => $this->title, 'content' => $content]);
 	}
 }
 

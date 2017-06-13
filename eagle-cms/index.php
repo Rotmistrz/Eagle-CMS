@@ -470,10 +470,9 @@ if($U = User::getInstance()) {
 	$FormManager->id = "form-login";
 	$FormManager->action = "index.php";
 	$FormManager->method = "post";
-	$FormManager->class = "form";
+	$FormManager->class = "form form-login";
 
-	$FormManager->addInput('login', 'Login', '');
-	$FormManager->addInputPassword('password', 'Hasło', '');
+	$FormManager->setTitle("Logowanie")->addInput('login', 'Login', '')->addInputPassword('password', 'Hasło', '');
 
 	$FormManager->addButton('Zaloguj');
 	$content .= $FormManager->get();

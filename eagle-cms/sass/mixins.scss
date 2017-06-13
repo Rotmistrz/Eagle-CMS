@@ -1,0 +1,42 @@
+@mixin transition($transition) {
+	-webkit-transition: $transition;
+	-moz-transition: $transition;
+	-o-transition: $transition;
+	transition: $transition;
+}
+
+@mixin box-sizing($box-sizing) {
+	-webkit-box-sizing: $box-sizing;
+	-moz-box-sizing: $box-sizing;
+	box-sizing: $box-sizing;
+}
+
+@mixin border-radius($radius) {
+	-webkit-border-radius: $radius;
+	-moz-border-radius: $radius;
+	border-radius: $radius;
+}
+
+@mixin transform($transform) {
+	-webkit-transform: $transform;
+	-moz-transform: $transform;
+	transform: $transform;
+}
+
+@mixin bg-gradient-downwards($color-01, $start, $color-02, $end) {
+background-image: -ms-linear-gradient(top, $color-01 $start, $color-02 $end);
+background-image: -moz-linear-gradient(top, $color-01 $start, $color-02 $end);
+background-image: -o-linear-gradient(top, $color-01 $start, $color-02 $end);
+background-image: -webkit-gradient(linear, left top, left bottom, color-stop($start, $color-01), color-stop($end, $color-02));
+background-image: -webkit-linear-gradient(top, $color-01 $start, $color-02 $end);
+background-image: linear-gradient(to bottom, $color-01 $start, $color-02 $end);
+}
+
+@mixin bg-gradient-eastwards($color-01, $start, $color-02, $end) {
+background-image: -ms-linear-gradient(left, $color-01 $start, $color-02 $end);
+background-image: -moz-linear-gradient(left, $color-01 $start, $color-02 $end);
+background-image: -o-linear-gradient(left, $color-01 $start, $color-02 $end);
+background-image: -webkit-gradient(linear, left top, right top, color-stop($start, $color-01), color-stop($end, $color-02));
+background-image: -webkit-linear-gradient(left, $color-01 $start, $color-02 $end);
+background-image: linear-gradient(to right, $color-01 $start, $color-02 $end);
+}

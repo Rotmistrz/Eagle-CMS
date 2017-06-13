@@ -4,6 +4,7 @@
 		<meta charset="utf-8" />
 
 		<link rel="stylesheet" href="{{ path }}/css/main.css" type="text/css" />
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
 
 		<title>{{ title }}</title>
 	</head>
