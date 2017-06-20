@@ -101,6 +101,41 @@ class ItemsCollectionFactory {
 
 		return $collection;
 	}
+
+	public function loadByParent($type, $parent) {
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND parent_id = :parent_id";
+
+		if(!$this->loadHiddenItems) {
+			$query .= " AND visible != 0";
+		}
+
+		$query .= " ORDER BY sort " . $this->orderType;
+
+		$pdo = DataBase::getInstance();
+		$loading = $pdo->prepare($query);
+		$loading->bindValue(':type', $type, PDO::PARAM_INT);
+		$loading->bindValue(':parent_id', $parent, PDO::PARAM_INT);
+		$loading->execute();
+
+		$collection = new ItemsCollection();
+
+		if($loading->rowCount() == 0) {
+			return $collection;
+		}
+
+		$fields = Item::getFields();
+		$languages = Item::getLanguages();
+		$languages_length = count($languages);
+		$fields_length = count($fields);
+
+		while($result = $loading->fetch()) {
+			$item = Item::createFromDatabaseRow($result);
+
+			$collection->add($item);
+		}
+
+		return $collection;
+	}
 }
 
 ?>

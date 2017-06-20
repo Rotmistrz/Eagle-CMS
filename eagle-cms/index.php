@@ -42,8 +42,14 @@ if($U = User::getInstance()) {
 		$module = (isset($_GET['module'])) ? $_GET['module'] : null;
 		$operation = (isset($_GET['operation'])) ? $_GET['operation'] : null;
 
-		$id = (isset($_GET['id'])) ? $_GET['id'] : null;
-		$type = (isset($_GET['type'])) ? $_GET['type'] : null;
+		$id = (isset($_GET['id']) && !empty($_GET['id'])) ? $_GET['id'] : null;
+		$type = (isset($_GET['type']) && !empty($_GET['type'])) ? $_GET['type'] : null;
+		$parentId = (isset($_GET['parent_id']) && !empty($_GET['parent_id'])) ? $_GET['parent_id'] : 0;
+
+		if($type == null && $parentId != 0) {
+			$current = Item::load($parentId);
+			$type = $current->type;
+		}
 
 		$correctMessage = '';
 		$errorMessage = '';
@@ -64,7 +70,6 @@ if($U = User::getInstance()) {
 			$select->id = "type";
 			$select->addOption(1, "typ 1");
 			$select->addOption(2, "typ 2");
-			$select->addOption(3, "typ 3");
 
 			$FormManager->addInputHidden('module', 'item');
 			$FormManager->addInputHidden('operation', 'add');
@@ -79,11 +84,42 @@ if($U = User::getInstance()) {
 
 			$content .= ContentManager::getTitle("Sekcja 2");
 			$content .= $ContentManager->getAllItemsByType(2);
-
-		} 
+		}
 
 		else if($module == 'item') {
-			if($operation == 'edit' || $operation == 'add') {
+			if($operation == 'show') {
+				$content .= ContentManager::getTitle("Item " . $parentId);
+
+				$FormManager = new FormManager($twig);
+				$FormManager->id = "select-new-element-form";
+				$FormManager->class = "form";
+				$FormManager->title = "Dodaj nowy element";
+				$FormManager->action = "index.php";
+				$FormManager->method = "get";
+
+				$select = new Select();
+				$select->id = "type";
+
+				if($type == 1) {	
+					$select->addOption(3, "typ 3");
+				}
+
+				$FormManager->addInputHidden('parent_id', $parentId);
+				$FormManager->addInputHidden('module', 'item');
+				$FormManager->addInputHidden('operation', 'add');
+				$FormManager->addSelect('Wybierz typ', $select);
+				$FormManager->addButton('Zatwierdź');
+				$content .= $FormManager->get();
+
+				$ContentManager->template = 'table-items-1.tpl';
+
+				if($type == 1) {
+					$content .= ContentManager::getTitle("Sekcja 3");
+					$content .= $ContentManager->getAllItemsByParent(3, $parentId);
+				}
+			}
+
+			else if($operation == 'edit' || $operation == 'add') {
 				$correctMessage;
 				$baseErrorMessage;
 				$item;
@@ -109,7 +145,10 @@ if($U = User::getInstance()) {
 						$categories = new NoCategory();
 					}
 
+					$parentId = (isset($_POST['parent_id']) && !empty($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
+
 					$item->setCategories($categories);
+					$item->parentId = $parentId;
 
 					$fields = Item::getFields();
 					$languages = Item::getLanguages();
@@ -129,7 +168,10 @@ if($U = User::getInstance()) {
 
 					$FileUploader = new FileUploader();
 					$FileUploader->path = ROOT . "/uploads/";
-					$FileUploader->addFile('file_1', '1/' . $item->id, 'jpg', 1000000);
+
+					if($type == 1) {
+						$FileUploader->addFile('file_1', '1/' . $item->getId(), 'jpg', 1000000);
+					}
 
 					$errorOccured = 0;
 					$errorMessage = '';
@@ -163,13 +205,19 @@ if($U = User::getInstance()) {
 						InformationManager::set(new Information(Information::ERROR, $errorMessage));
 					}
 
-					header('Location: index.php?module=pages');
+					if($parentId != 0) {
+						header('Location: index.php?module=item&operation=show&parent_id=' . $parentId);
+					} else {
+						header('Location: index.php?module=pages');
+					}
+					
 				} else {
 					$FormManager = new FormManager($twig);
 					$FormManager->id = "item-edit";
 					$FormManager->action = "index.php?module=" . $module . "&amp;operation=" . $operation . "&amp;type=" . $type . "&amp;id=" . $id;
 					$FormManager->method = "post";
 					$FormManager->class = "form";
+					$FormManager->addInputHidden('parent_id', $parentId);
 
 					if($type == 1) {
 						$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_1, Language::PL), 'Nagłówek 1', $item->getContent(Language::PL, Item::HEADER_1));
@@ -179,6 +227,16 @@ if($U = User::getInstance()) {
 						$FormManager->addCategories(1, $item->getCategoriesArray());
 
 						$FormManager->addFileField('file_1', 'Obrazek główny');
+					}
+
+					if($type == 2) {
+						$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_1, Language::PL), 'Tytuł 1', $item->getContent(Language::PL, Item::HEADER_1));
+						$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_2, Language::PL), 'Tytuł 2', $item->getContent(Language::PL, Item::HEADER_2));
+					}
+
+					if($type == 3) {
+						$FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_1, Language::PL), 'Nagłówek', $item->getContent(Language::PL, Item::HEADER_1));
+						$FormManager->addTextarea(Item::getDatabaseFieldname(Item::CONTENT_1, Language::PL), 'Treść', $item->getContent(Language::PL, Item::CONTENT_1));
 					}
 
 					$FormManager->addButton('Zatwierdź');

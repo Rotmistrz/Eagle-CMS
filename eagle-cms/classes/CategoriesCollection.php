@@ -19,7 +19,7 @@ class CategoriesCollection implements LanguagableCollection {
 		foreach($this->categories as $category) {
 			$contents[$i]['id'] = $category->getId();
 			$contents[$i]['type'] = $category->type;
-			$contents[$i]['parent_id'] = $category->parentId;
+			$contents[$i]['parentId'] = $category->parentId;
 			$contents[$i]['order'] = $category->order;
 
 			if($current = $category->getContentsByLanguage($lang)) {
