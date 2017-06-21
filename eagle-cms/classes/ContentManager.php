@@ -38,9 +38,9 @@ class ContentManager {
 		return $this->twig->render($this->template, array('itemsCollection' => $items->getContentsByLanguage($this->lang)));
 	}
 
-	public function getAllItemsByParent($id, $parent) {
+	public function getAllItemsByParent($parent, $id) {
 		$itemsFactory = new ItemsCollectionFactory($this->loadHiddenItems);
-		$items = $itemsFactory->loadByParent($id, $parent);
+		$items = $itemsFactory->loadByParent($parent, $id);
 
 		return $this->twig->render($this->template, array('itemsCollection' => $items->getContentsByLanguage($this->lang)));
 	}

@@ -102,7 +102,7 @@ class ItemsCollectionFactory {
 		return $collection;
 	}
 
-	public function loadByParent($type, $parent) {
+	public function loadByParent($parent, $type) {
 		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND parent_id = :parent_id";
 
 		if(!$this->loadHiddenItems) {

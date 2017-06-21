@@ -87,7 +87,7 @@ if($U = User::getInstance()) {
 		}
 
 		else if($module == 'item') {
-			if($operation == 'show') {
+			if($operation == 'showcase') {
 				$content .= ContentManager::getTitle("Item " . $parentId);
 
 				$FormManager = new FormManager($twig);
@@ -115,7 +115,7 @@ if($U = User::getInstance()) {
 
 				if($type == 1) {
 					$content .= ContentManager::getTitle("Sekcja 3");
-					$content .= $ContentManager->getAllItemsByParent(3, $parentId);
+					$content .= $ContentManager->getAllItemsByParent($parentId, 3);
 				}
 			}
 
@@ -206,7 +206,7 @@ if($U = User::getInstance()) {
 					}
 
 					if($parentId != 0) {
-						header('Location: index.php?module=item&operation=show&parent_id=' . $parentId);
+						header('Location: index.php?module=item&operation=showcase&parent_id=' . $parentId);
 					} else {
 						header('Location: index.php?module=pages');
 					}
@@ -259,7 +259,11 @@ if($U = User::getInstance()) {
 						InformationManager::set(new Information(Information::ERROR, $errorMessage));
 					}
 
-					header('Location: index.php?module=pages');
+					if($parentId != 0) {
+						header('Location: index.php?module=item&operation=showcase&parent_id=' . $parentId);
+					} else {
+						header('Location: index.php?module=pages');
+					}
 				} else {
 					$ChoiceForm = new ChoiceForm($twig);
 					$ChoiceForm->id = "delete-form";
@@ -292,7 +296,11 @@ if($U = User::getInstance()) {
 					}
 				}
 
-				header('Location: index.php?module=pages');
+				if($parentId != 0) {
+					header('Location: index.php?module=item&operation=showcase&parent_id=' . $parentId);
+				} else {
+					header('Location: index.php?module=pages');
+				}
 			} else if($operation == 'item-down') {
 				if(is_null($id)) {
 					throw new Exception("Proszę podać id elementu.");
@@ -316,7 +324,11 @@ if($U = User::getInstance()) {
 					}
 				}
 
-				header('Location: index.php?module=pages');
+				if($parentId != 0) {
+					header('Location: index.php?module=item&operation=showcase&parent_id=' . $parentId);
+				} else {
+					header('Location: index.php?module=pages');
+				}
 			} else if($operation == 'hide') {
 				if(is_null($id)) {
 					throw new Exception("Proszę podać id elementu.");
@@ -330,7 +342,11 @@ if($U = User::getInstance()) {
 					InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas ukrywania elementu."));
 				}
 
-				header('Location: index.php?module=pages');
+				if($parentId != 0) {
+					header('Location: index.php?module=item&operation=showcase&parent_id=' . $parentId);
+				} else {
+					header('Location: index.php?module=pages');
+				}
 			} else if($operation == 'show') {
 				if(is_null($id)) {
 					throw new Exception("Proszę podać id elementu.");
@@ -344,7 +360,11 @@ if($U = User::getInstance()) {
 					InformationManager::set(new Information(Information::ERROR, "Wystąpiły problemy podczas uwidaczniania elementu."));
 				}
 
-				header('Location: index.php?module=pages');
+				if($parentId != 0) {
+					header('Location: index.php?module=item&operation=showcase&parent_id=' . $parentId);
+				} else {
+					header('Location: index.php?module=pages');
+				}
 			}
 		} 
 

@@ -17,7 +17,7 @@
 					<i class="fa fa-toggle-off" aria-hidden="true"></i>
 					{% endif %}
 
-					<a href="index.php?module=item&amp;operation=show&amp;type={{ item.type }}&amp;parent_id={{ item.id }}" title="Wyświetl">{{ item.header_1 }}</a>
+					<a href="index.php?module=item&amp;operation=showcase&amp;type={{ item.type }}&amp;parent_id={{ item.id }}" title="Wyświetl">{{ item.header_1 }}</a>
 				</td>
 				<td class="operations">
 					<a href="index.php?module=item&amp;operation=edit&amp;type={{ item.type }}&amp;id={{ item.id }}&amp;parent_id={{ item.parentId }}" title="Edytuj"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edytuj</a>
