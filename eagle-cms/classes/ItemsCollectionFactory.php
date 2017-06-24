@@ -1,6 +1,9 @@
 <?php
 
 class ItemsCollectionFactory {
+	public $after = -1;
+	public $limit = -1;
+
 	public $loadHiddenItems = false; // boolean
 	private $orderType;
 
@@ -29,6 +32,12 @@ class ItemsCollectionFactory {
 		}
 
 		$query .= " ORDER BY sort " . $this->orderType;
+
+		if($this->after > -1 && $this->limit > -1) {
+			$query .= " LIMIT " . $this->after . ", " . $this->limit;
+		} else if($this->limit > -1) {
+			$query .= " LIMIT " . $this->limit;
+		}
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
@@ -74,6 +83,12 @@ class ItemsCollectionFactory {
 
 		$query .= " ORDER BY sort " . $this->orderType;
 
+		if($this->after > -1 && $this->limit > -1) {
+			$query .= " LIMIT " . $this->after . ", " . $this->limit;
+		} else if($this->limit > -1) {
+			$query .= " LIMIT " . $this->limit;
+		}
+
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
 		$loading->bindValue(':caseA', $caseA, PDO::PARAM_STR);
@@ -111,6 +126,12 @@ class ItemsCollectionFactory {
 
 		$query .= " ORDER BY sort " . $this->orderType;
 
+		if($this->after > -1 && $this->limit > -1) {
+			$query .= " LIMIT " . $this->after . ", " . $this->limit;
+		} else if($this->limit > -1) {
+			$query .= " LIMIT " . $this->limit;
+		}
+		
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
 		$loading->bindValue(':type', $type, PDO::PARAM_INT);
