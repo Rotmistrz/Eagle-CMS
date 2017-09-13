@@ -3,7 +3,11 @@
 	<head>
 		<meta charset="utf-8" />
 
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="{{ path }}/js/velocity.js"></script>
+
 		<link rel="stylesheet" href="{{ path }}/css/main.css" type="text/css" />
+		<link rel="stylesheet" href="{{ path }}/css/fonts.css" type="text/css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
 
 		<title>{{ title }}</title>
@@ -44,6 +48,18 @@
 				</aside>
 
 				<section class="content">
+					<section id="correct-message" class="message correct">
+						<p>
+						
+						</p>
+					</section>
+
+					<section id="error-message" class="message error">
+						<p>
+						
+						</p>
+					</section>
+
 					{{ content }}
 				</section>
 			</div>
@@ -52,5 +68,22 @@
 		<footer class="site-footer">
 		Copyright 2017 by <a href="http://www.filipmarkiewicz.pl">Filip Markiewicz</a>
 		</footer>
+
+		<section id="overlayer" class="overlayer">
+			<div class="overlayer__inner">
+				<section class="overlayer__content">
+
+				</section>
+
+				<div class="overlayer__close">
+					<div class="icon-cross icon-cross--rotated">
+						<div></div>
+						<div></div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<script src="{{ path }}/js/main.js"></script>
 	</body>
 </html>

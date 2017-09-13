@@ -1,5 +1,5 @@
-<article class="message {{ class }}">
+<section class="message {{ class }}">
 	<p>
 	{{ message }}
 	</p>
-</article>
+</section>

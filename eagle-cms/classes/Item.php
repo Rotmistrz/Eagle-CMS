@@ -21,7 +21,7 @@ class Item extends Component implements Languagable, Orderable {
 		$this->id = $id;
 		$this->type = $type;
 		$this->order = $order;
-		$this->category = new NoCategory();
+		$this->categories = new NoCategory();
 		$this->visible = 1;
 		$this->parentId = 0;
 
@@ -226,6 +226,23 @@ class Item extends Component implements Languagable, Orderable {
 		}
 
 		return $item;
+	}
+
+	public function getContentsByLanguage($lang) {
+		$current;
+		$contents = [];
+
+		$contents['id'] = $this->getId();
+		$contents['type'] = $this->type;
+		$contents['parentId'] = $this->parentId;
+		$contents['order'] = $this->order;
+		$contents['visible'] = $this->visible;
+
+		if($current = $this->contents->getContentsByLanguage($lang)) {
+			$contents = array_merge($contents, $current);
+		}
+
+		return $contents;
 	}
 
 	public function getCategoriesArray() {

@@ -54,7 +54,7 @@ class ContentManager {
 
 		$items = $itemsFactory->load($type);
 
-		return $this->twig->render($this->template, array('itemsCollection' => $items->getContentsByLanguage($this->lang)));
+		return $this->twig->render($this->template, array('type' => $type, 'itemsCollection' => $items->getContentsByLanguage($this->lang)));
 	}
 
 	public function getItemsByParent($parent, $type, $after, $limit) {

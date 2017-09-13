@@ -61,7 +61,7 @@ if($U = User::getInstance()) {
 		if($module == 'pages') {
 			$FormManager = new FormManager($twig);
 			$FormManager->id = "select-new-element-form";
-			$FormManager->class = "form";
+			$FormManager->class = "form request-form";
 			$FormManager->title = "Dodaj nowy element";
 			$FormManager->action = "index.php";
 			$FormManager->method = "get";
@@ -70,9 +70,12 @@ if($U = User::getInstance()) {
 			$select->id = "type";
 			$select->addOption(1, "typ 1");
 			$select->addOption(2, "typ 2");
+			$select->addOption(4, "typ 4");
 
+			$FormManager->addInputHidden('id', 0);
 			$FormManager->addInputHidden('module', 'item');
-			$FormManager->addInputHidden('operation', 'add');
+			$FormManager->addInputHidden('parent_id', 0);
+			$FormManager->addInputHidden('operation', 'prepare-add');
 			$FormManager->addSelect('Wybierz typ', $select);
 			$FormManager->addButton('Zatwierdź');
 			$content .= $FormManager->get();

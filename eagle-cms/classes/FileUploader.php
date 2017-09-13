@@ -37,7 +37,11 @@ class FileUploader {
 				$fileSize = $_FILES[$fieldname]['size'];
 				$fileTmp = $_FILES[$fieldname]['tmp_name'];
 				$fileType = $_FILES[$fieldname]['type'];
-				$fileExt = strtolower(end(explode('.',$fileName)));
+				
+				$array = explode('.', $fileName);
+                $last = count($array) - 1;
+
+                $fileExt = strtolower($array[$last]);
 
 				if($fileExt != $this->files[$i]['type']) {
 					$this->errors[] = $fileName . ": Niepoprawny format pliku";
