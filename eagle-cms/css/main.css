@@ -986,14 +986,13 @@ button {
 
 .choice-form {
   width: 600px;
-  margin: 20px auto;
+  margin: 0 auto;
   padding: 20px;
   border: 1px solid #c4c4c4;
   background: #fafafa;
-  text-align: center;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px; }
+  text-align: center; }
+  .choice-form .button-group {
+    padding: 20px 0; }
 
 .button-group--horizontal .button {
   margin: 0 10px; }
@@ -1147,12 +1146,17 @@ display: block;
     display: block;
     clear: both; }
   .items-table__row {
-    font-size: 13px; }
+    font-size: 13px;
+    position: relative; }
     .items-table__row .items-table__order-number {
       text-align: right; }
     .items-table__row .item-visibility--visible {
       display: inline-block; }
     .items-table__row .item-visibility--hidden {
+      display: none; }
+    .items-table__row .item-visibility-toggler--hide {
+      display: inline-block; }
+    .items-table__row .item-visibility-toggler--show {
       display: none; }
   .items-table__header-row {
     font-size: 13px;
@@ -1160,6 +1164,10 @@ display: block;
   .items-table__row--hidden .item-visibility--visible {
     display: none; }
   .items-table__row--hidden .item-visibility--hidden {
+    display: inline-block; }
+  .items-table__row--hidden .item-visibility-toggler--hide {
+    display: none; }
+  .items-table__row--hidden .item-visibility-toggler--show {
     display: inline-block; }
   .items-table__order-number {
     width: 7%; }
@@ -1326,6 +1334,34 @@ section.medium, footer.medium {
   .overlayer .overlayer__content {
     display: none; }
 
+.simple-overlayer {
+  position: fixed;
+  display: none;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 7000;
+  background: rgba(0, 0, 0, 0.8);
+  color: #000;
+  overflow-y: auto;
+  padding: 0; }
+  .simple-overlayer .simple-overlayer__spinner-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 6900;
+    display: none;
+    font-size: 48px; }
+  .simple-overlayer .simple-overlayer__inner {
+    margin: 0 auto;
+    position: relative;
+    padding: 0;
+    background: #eee;
+    display: inline-block; }
+
 /***** SYMBOLS *****/
 .symbol.cross {
   width: 12px;
@@ -1449,6 +1485,7 @@ section.medium, footer.medium {
   display: inline-block;
   margin: 0;
   color: #000;
+  font-family: Lato, Verdana, sans-serif;
   text-align: center;
   font-weight: 500;
   letter-spacing: 0;

@@ -349,12 +349,16 @@ padding: 60px 40px;
 
 .choice-form {
 width: 600px;
-margin: 20px auto;
+margin: 0 auto;
 padding: 20px;
 border: 1px solid $light-color-03;
 background: $light-color-01;
 text-align: center;
-@include border-radius(10px);
+//@include border-radius(10px);
+
+	.button-group {
+	padding: 20px 0;
+	}
 }
 
 .button-group {
@@ -536,7 +540,8 @@ border-collapse: collapse;
 
 	&__row {
 	font-size: $small-font-size;
-
+	position: relative;
+	
 		.items-table__order-number {
 		text-align: right;
 		}
@@ -546,6 +551,14 @@ border-collapse: collapse;
 		}
 
 		.item-visibility--hidden {
+		display: none;
+		}
+
+		.item-visibility-toggler--hide {
+		display: inline-block;
+		}
+
+		.item-visibility-toggler--show {
 		display: none;
 		}
 	}
@@ -561,6 +574,14 @@ border-collapse: collapse;
 		}
 
 		.item-visibility--hidden {
+		display: inline-block;
+		}
+
+		.item-visibility-toggler--hide {
+		display: none;
+		}
+
+		.item-visibility-toggler--show {
 		display: inline-block;
 		}
 	}
@@ -784,6 +805,43 @@ padding: 0;
 	}
 }
 
+.simple-overlayer {
+position: fixed;
+display: none;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+z-index: 7000;
+background: rgba(0, 0, 0, .8);
+color: #000;
+overflow-y: auto;
+padding: 0;
+
+	.simple-overlayer__spinner-layer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 6900;
+	display: none;
+	font-size: $huge-font-size;
+	}
+
+	.simple-overlayer__inner {
+	margin: 0 auto;
+	position: relative;
+	padding: 0;
+	background: $light-color-02;
+	display: inline-block;
+	}
+
+	.simple-overlayer__content {
+	
+	}
+}
+
 /***** SYMBOLS *****/
 
 .symbol.cross {
@@ -919,6 +977,7 @@ border-color: $medium-color;
 display: inline-block;
 margin: 0;
 color: $main-color;
+font-family: $main-font-family;
 text-align: center;
 font-weight: 500;
 letter-spacing: 0;

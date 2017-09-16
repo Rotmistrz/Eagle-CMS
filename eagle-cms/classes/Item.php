@@ -126,7 +126,7 @@ class Item extends Component implements Languagable, Orderable {
 	}
 
 	public function getEarlierOne() {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort DESC";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort ASC";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);

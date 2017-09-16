@@ -5,8 +5,8 @@
 		<h1 class="form__title">{{ title }}</h1>
 
 		<div class="button-group button-group--horizontal">
-			<button class="button" type="submit">Tak</button>
-			<a class="button" href="{{ back }}">Nie</a>
+			<button class="button choice-form__accept" type="submit">Tak</button>
+			<span class="button choice-form__cancel">Nie</span>
 		</div>
 	</fieldset>
 </form>

@@ -84,6 +84,18 @@
 			</div>
 		</section>
 
+		<section id="simple-overlayer" class="simple-overlayer">
+			<div class="wrapper">
+				<div>
+					<div class="simple-overlayer__inner">
+						<section class="simple-overlayer__content">
+
+						</section>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<script src="{{ path }}/js/main.js"></script>
 	</body>
 </html>

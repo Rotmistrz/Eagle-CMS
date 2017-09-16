@@ -163,6 +163,103 @@ try {
             $json['html'] = $FormManager->get();
 
             echo json_encode($json);
+        } else if($operation == 'delete') {
+            header('Content-type: application/json');
+
+            $item = Item::load($id);
+
+            if($item->delete()) {
+                $json['message'] = "Poprawnie usunięto element.";
+            } else {
+                $json['error'] = true;
+                $json['message'] = "Wystąpiły problemy podczas usuwania elementu.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'prepare-delete') {
+            header('Content-type: application/json');
+                $ChoiceForm = new ChoiceForm($twig);
+                $ChoiceForm->id = "delete-form";
+                $ChoiceForm->action = "/ajax.php";
+                $ChoiceForm->title = "Czy na pewno chcesz usunąć ten element?";
+                $ChoiceForm->back = "";
+
+                $json['html'] = $ChoiceForm->get();
+            echo json_encode($json);
+        } else if($operation == 'hide') {
+            header('Content-type: application/json');
+
+            $item = Item::load($id);
+
+            if($item->hide()) {
+                $json['message'] = "Poprawnie ukryto element.";
+            } else {
+                $json['error'] = true;
+                $json['message'] = "Wystąpiły problemy podczas ukrywania elementu.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'show') {
+            header('Content-type: application/json');
+
+            $item = Item::load($id);
+
+            if($item->show()) {
+                $json['message'] = "Poprawnie uwidoczniono element.";
+            } else {
+                $json['error'] = true;
+                $json['message'] = "Wystąpiły problemy podczas uwidaczniania elementu.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'item-up') {
+            header('Content-type: application/json');
+            
+            $current = Item::load($id);
+
+            $earlier = $current->getEarlierOne();
+
+            if(get_class($earlier) == "NoSuchItem") {
+                $json['message'] = "Element jest już pierwszy w kolejności.";
+            } else {
+                $tmp = $current->order;
+                $current->order = $earlier->order;
+                $earlier->order = $tmp;
+
+                if($current->save() && $earlier->save()) {
+                    $json['item']['earlier'] = $earlier->getId();
+                    $json['message'] = "Poprawnie zmieniono kolejność.";
+                } else {
+                    $json['error'] = true;
+                    $json['message'] = "Wystąpiły problemy podczas zmiany kolejności elementów.";
+                }
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'item-down') {
+            header('Content-type: application/json');
+
+            $current = Item::load($id);
+
+            $later = $current->getLaterOne();
+
+            if(get_class($later) == 'NoSuchItem') {
+                $json['message'] = "Element jest już ostatni w kolejności.";
+            } else {
+                $tmp = $current->order;
+                $current->order = $later->order;
+                $later->order = $tmp;
+
+                if($current->save() && $later->save()) {
+                    $json['item']['later'] = $later->getId();
+                    $json['message'] = "Poprawnie zmieniono kolejność.";
+                } else {
+                    $json['error'] = true;
+                    $json['message'] = "Wystąpiły problemy podczas zmiany kolejności elementów.";
+                }
+            }
+
+            echo json_encode($json);
         }
     }
 } catch(Exception $E) {
