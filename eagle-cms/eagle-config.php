@@ -13,7 +13,9 @@ define('DB_PASSWORD', '');
 
 define('ROOT', $_SERVER['DOCUMENT_ROOT']);
 
-define('UPLOAD_DIR', '/uploads/');
+define('UPLOADS_DIR', 'uploads');
+define('ITEMS_DIR', 'uploads/items')
+define('GALLERIES_DIR', 'uploads/galleries');
 define('TEMPLATES_DIR', 'templates');
 
 define('TEMPLATE_EXTENSION', 'tpl');

@@ -3,6 +3,9 @@
 class FileType {
     const JPG = "image/jpeg";
     const PNG = "image/png";
+    const GIF = "image/gif";
+
+    const UNDEFINED = "undefined";
 
     public static function getExtension($type) {
         $extension;
@@ -16,8 +19,12 @@ class FileType {
                 $extension = "png";
             break;
 
+            case self::GIF:
+                $extension = "gif";
+            break;
+
             default:
-                $extension = "und";
+                $extension = self::UNDEFINED;
             break;
         }
 

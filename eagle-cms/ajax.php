@@ -73,8 +73,7 @@ try {
                 }
             }
 
-            $FileUploader = new FileUploader();
-            $FileUploader->path = ROOT . "/uploads/";
+            $FileUploader = new FileUploader(ROOT . '/' . ITEMS_DIR . '/');
 
             if($type == 1) {
                 $FileUploader->addFile('file_1', '1/' . $item->getId(), 'jpg', 1000000);

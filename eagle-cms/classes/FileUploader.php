@@ -5,9 +5,11 @@ class FileUploader {
 	private $files;
 	private $errors;
 
-	public function __construct() {
+	public function __construct($path) {
 		$this->files = [];
 		$this->errors = [];
+
+		$this->path = $path;
 	}
 
 	public function addFile($fieldname, $path, $type, $maxsize) {

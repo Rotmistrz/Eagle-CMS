@@ -8,7 +8,7 @@ try {
 	$loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);
 	$twig = new Twig_Environment($loader, array('autoescape' => false));
 
-	$TemplateManager = new TemplateManager($twig);
+	$TemplateManager = new TwigTemplateManager($twig);
 	$TemplateManager->addTemplate('title', 'EagleCMS');
 	$TemplateManager->addTemplate('path', '/eagle-cms');
 
@@ -169,9 +169,10 @@ if($U = User::getInstance()) {
 						}
 					}
 
-					$FileUploader = new FileUploader();
-					$FileUploader->path = ROOT . "/uploads/";
+					$uploadsPath = ROOT . '/' . UPLOADS_DIR . '/';
 
+					$FileUploader = new FileUploader($uploadsPath);
+					
 					if($type == 1) {
 						$FileUploader->addFile('file_1', '1/' . $item->getId(), 'jpg', 1000000);
 					}
