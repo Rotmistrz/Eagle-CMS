@@ -136,7 +136,7 @@ $(document).ready(function() {
                 type: "POST",
                 url: "/eagle-cms/ajax.php",
                 dataType: "json",
-                data: { module: request.module, operation: request.operation, id: item.id, type: item.type, parent_id: item.parentId },
+                data: { module: request.module, operation: request.operation, item_id: request.itemId, id: item.id, type: item.type, parent_id: item.parentId },
                 success: function(result) {
                     console.log(result);
 
@@ -285,6 +285,13 @@ $(document).ready(function() {
                                         that.correctMessage.show();
                                     }
                                 break;
+
+                                case 'prepare-add-gallery-picture':
+                                case 'prepare-edit-gallery-picture':
+                                    that.layer.setContent(result.html);
+                                    that.layer.show();
+                                    that.refreshDependencies();
+                                break;
                             }
                         }
                     } else {
@@ -311,11 +318,6 @@ $(document).ready(function() {
             that.errorMessage.hide();
 
             var formdata = new FormData(form);
-            console.log($(form).find('[name="id"]').val());
-            console.log($(form).find('[name="module"]').val());
-            console.log($(form).find('[name="operation"]').val());
-            console.log($(form).find('[name="parent_id"]').val());
-            console.log($(form).find('[name="type"]').val());
 
             $.ajax({
                 type: "POST",
@@ -359,10 +361,6 @@ $(document).ready(function() {
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
 
-                                        console.log(result.item.type);
-                                        console.log(result.item.id);
-                                        console.log($('[data-item-type=' + result.item.type + '][data-item-id=' + result.item.id + ']'));
-
                                         $('[data-item-type="' + result.item.type + '"][data-item-id="' + result.item.id + '"]')
                                             .find('.items-table__item-title')
                                             .velocity({ opacity: 0 }, {
@@ -376,6 +374,16 @@ $(document).ready(function() {
                                                 }
                                             });
                                             
+                                    break;
+
+                                    case 'add-gallery-picture':
+                                        that.correctMessage.setContent(result.message);
+                                        that.correctMessage.show();
+                                    break;
+
+                                    case 'edit-gallery-picture':
+                                        that.correctMessage.setContent(result.message);
+                                        that.correctMessage.show();
                                     break;
                                 }
                             }
@@ -432,8 +440,6 @@ $(document).ready(function() {
             this.requestLinks = $('.request-link');
             this.requestForms = $('.request-form');
 
-            console.log(this.requestForms);
-
             this.requestLinks.unbind('click').click(function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -443,8 +449,9 @@ $(document).ready(function() {
                 var id = $(this).attr('data-id');
                 var parent_id = $(this).attr('data-parent-id');
                 var type = $(this).attr('data-type');
+                var item_id = $(this).attr('data-item-id');
 
-                that.sendRequest({ module: module, operation: operation }, { id: id, parentId: parent_id, type: type });
+                that.sendRequest({ module: module, operation: operation, itemId: item_id }, { id: id, parentId: parent_id, type: type });
             });
 
             this.requestForms.unbind('submit').submit(function(e) {

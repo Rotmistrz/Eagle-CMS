@@ -14,7 +14,7 @@ define('DB_PASSWORD', '');
 define('ROOT', $_SERVER['DOCUMENT_ROOT']);
 
 define('UPLOADS_DIR', 'uploads');
-define('ITEMS_DIR', 'uploads/items')
+define('ITEMS_DIR', 'uploads/items');
 define('GALLERIES_DIR', 'uploads/galleries');
 define('TEMPLATES_DIR', 'templates');
 

@@ -5,13 +5,14 @@ class File {
     public $directory;
     public $filename;
 
-    public $title;
-    public $description;
-
     public function __construct($type, $directory, $filename) {
         $this->type = $type;
         $this->directory = $directory;
         $this->filename = $filename;
+
+        if(!file_exists($this->getPath())) {
+            throw new FileNotFoundException();
+        }
     }
 
     public function isPicture() {

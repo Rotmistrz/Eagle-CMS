@@ -15,7 +15,7 @@ class Gallery {
         $this->pictures[] = $picture;
     }
 
-    public function load($itemId) {
+    public static function load($itemId) {
         $query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id ORDER BY id ASC";
 
         $pdo = DataBase::getInstance();
@@ -23,9 +23,18 @@ class Gallery {
         $loading->bindValue(':item_id', $itemId, PDO::PARAM_INT);
         $loading->execute();
 
-        while($data = $loading->fetch()) {
+        $gallery = new self();
 
+        while($data = $loading->fetch()) {
+            try {
+                $picture = new File($data['type'], GALLERIES_TABLE, $data['id']);
+                $gallery->addPicture($picture);
+            } catch(Exception $e) {
+
+            }
         }
+
+        return $gallery;
     }
 }
 

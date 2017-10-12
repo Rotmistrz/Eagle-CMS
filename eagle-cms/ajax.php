@@ -5,17 +5,19 @@ require 'vendor/autoload.php';
 $debug = false;
 
 if($debug) {
+    $item_id = (isset($_GET['item_id'])) ? $_GET['item_id'] : 0;
     $id = (isset($_GET['id'])) ? $_GET['id'] : $_POST['id'];
     $parent_id = (isset($_GET['parent_id'])) ? $_GET['parent_id'] : $_POST['parent_id'];
     $module = (isset($_GET['module'])) ? $_GET['module'] : $_POST['module'];
     $operation = (isset($_GET['operation'])) ? $_GET['operation'] : $_POST['operation'];
     $type = (isset($_GET['type'])) ? $_GET['type'] : $_POST['type'];
 } else {
+    $item_id = (isset($_POST['item_id'])) ? $_POST['item_id'] : 0;
     $id = (isset($_POST['id'])) ? $_POST['id'] : 0;
     $parent_id = (isset($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
     $module = $_POST['module'];
     $operation = $_POST['operation'];
-    $type = $_POST['type'];
+    $type = (isset($_POST['type'])) ? $_POST['type'] : 0;
 }
 
 $json = array();
@@ -76,7 +78,7 @@ try {
             $FileUploader = new FileUploader(ROOT . '/' . ITEMS_DIR . '/');
 
             if($type == 1) {
-                $FileUploader->addFile('file_1', '1/' . $item->getId(), 'jpg', 1000000);
+                $FileUploader->addFile('file_1', '1/' . $item->getId(), array(FileType::JPG), 1000000);
             }
 
             $errorOccured = 0;
@@ -259,13 +261,70 @@ try {
             }
 
             echo json_encode($json);
+        } else if($operation == 'prepare-add-gallery-picture' || $operation == 'prepare-edit-gallery-picture') {
+            header('Content-type: application/json');
+
+            if($operation == 'prepare-edit-gallery-picture') {
+                $picture = GalleryPicture::load($id);
+                $nextOperation = "edit-gallery-picture";
+            } else {
+                $picture = new GalleryPicture(null, null, null);
+                $nextOperation = "add-gallery-picture";
+            }
+
+            $FormManager = new FormManager($twig);
+            $FormManager->id = "upload-gallery-picture";
+            $FormManager->action = "";
+            $FormManager->method = "post";
+            $FormManager->class = "form request-form";
+            $FormManager->addInputHidden('id', $picture->id);
+            $FormManager->addInputHidden('module', $module);
+            $FormManager->addInputHidden('operation', $nextOperation);
+            $FormManager->addInputHidden('item_id', $picture->itemId);
+
+            $FormManager->addInput('title', 'Tytuł', $picture->title);
+            $FormManager->addTextarea('description', 'Opis', $picture->description);
+            $FormManager->addFileField('gallery-picture', 'Obrazek główny');
+
+            $FormManager->addButton('Zatwierdź');
+
+            $json['html'] = $FormManager->get();
+
+            echo json_encode($json);
+        } else if($operation == 'edit-gallery-picture' || $operation == 'add-gallery-picture') {
+            header('Content-type: application/json');
+
+            if(!isset($_FILES['gallery-picture'])) {
+                throw new Exception("Proszę załączyć obrazek.");
+            }
+
+            if($operation == 'edit-gallery-picture') {
+                $picture = GalleryPicture::load($id);
+
+                $correctMessage = "Poprawnie edytowano zdjęcie.";
+                $errorMessage = "Wystąpiły problemy podczas edycji zdjęcia.";
+            } else {
+                $picture = GalleryPicture::create($item_id);
+
+                $correctMessage = "Poprawnie dodano zdjęcie.";
+                $errorMessage = "Wystąpiły problemy podczas dodawania zdjęcia.";
+            }
+
+            if($picture->save()) {
+                $json['message'] = $correctMessage;
+            } else {
+                $json['error'] = true;
+                $json['message'] = $errorMessage;
+            }
+
+            echo json_encode($json);
         }
     }
 } catch(Exception $E) {
     header('Content-type: application/json');
 
     $json['error'] = true;
-    $json['message'] = "Wystąpiły problemy techniczne. Proszę spróbować ponownie za chwilę.";
+    $json['message'] = "Wystąpiły problemy techniczne. Proszę spróbować ponownie za chwilę." . $E->getMessage();
 
     echo json_encode($json);
 }

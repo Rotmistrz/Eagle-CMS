@@ -12,12 +12,36 @@ class FileUploader {
 		$this->path = $path;
 	}
 
-	public function addFile($fieldname, $path, $type, $maxsize) {
-		$this->files[] = ['fieldname' => $fieldname, 'path' => $path, 'type' => $type, 'maxsize' => $maxsize];
+	/**
+	 *
+	 * $fieldname String
+	 * $path String
+	 * $type array[String - mime-type]
+	 * $maxsize Integer
+	 *
+	 **/
+	public function addFile($fieldname, $path, $type, $maxsize, $required = false) {
+		$this->files[] = ['fieldname' => $fieldname, 'path' => $path, 'type' => $type, 'maxsize' => $maxsize, 'required' => $required];
+
+		if(isset($_FILES[$fieldname]) && in_array($_FILES[$fieldname]['type'], $type)) {
+			return $_FILES[$fieldname]['type'];
+		} else {
+			return false;
+		}
 	}
 
 	public function getErrors() {
 		return $this->errors;
+	}
+
+	public function getErrorsAsString() {
+		$str = "";
+
+		foreach($this->errors as $error) {
+			$str .= $error . "<br />";
+		}
+
+		return $str;
 	}
 
 	public function clear() {
@@ -45,7 +69,7 @@ class FileUploader {
 
                 $fileExt = strtolower($array[$last]);
 
-				if($fileExt != $this->files[$i]['type']) {
+				if(!in_array($fileType, $this->files[$i]['type'])) {
 					$this->errors[] = $fileName . ": Niepoprawny format pliku";
 				}
 
@@ -58,6 +82,8 @@ class FileUploader {
 						$this->errors[] = $fileName . ": problem podczas przenoszenia pliku";
 					}
 				}
+		   } else if($this->files[$i]['required']) {
+		   		$this->errors[] = $this->files[$i]['filename'] . ": nie załączono pliku";
 		   }
 		}
 

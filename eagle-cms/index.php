@@ -114,6 +114,8 @@ if($U = User::getInstance()) {
 				$FormManager->addButton('Zatwierdź');
 				$content .= $FormManager->get();
 
+				$content .= "<button class=\"request-link\" data-id=\"0\" data-parent-id=\"0\" data-type=\"0\" data-module=\"item\" data-operation=\"prepare-add-gallery-picture\" data-item-id=\"" . $id . "\">Dodaj zdjęcie</button>";
+
 				$ContentManager->template = 'table-items-1.tpl';
 
 				if($type == 1) {
