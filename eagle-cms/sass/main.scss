@@ -842,6 +842,17 @@ padding: 0;
 	}
 }
 
+.spinner-overlayer {
+position: fixed;
+display: none;
+z-index: 9000;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+background: rgba(0, 0, 0, .3);
+}
+
 /***** SYMBOLS *****/
 
 .symbol.cross {
@@ -969,6 +980,11 @@ border-color: $light-color;
 }
 .icon.round.medium {
 border-color: $medium-color;
+}
+
+.spinner {
+font-size: 40px;
+color: #fff;
 }
 
 /***** BUTTONS *****/

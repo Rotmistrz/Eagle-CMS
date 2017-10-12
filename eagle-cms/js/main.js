@@ -120,6 +120,8 @@ $(document).ready(function() {
         this.layer = layer;
         this.simpleLayer = simpleLayer;
 
+        this.spinnerLayer = $('#spinner-overlayer');
+
         this.requestLinks;
         this.requestForms;
 
@@ -319,6 +321,8 @@ $(document).ready(function() {
 
             var formdata = new FormData(form);
 
+            that.spinnerLayer.show();
+
             $.ajax({
                 type: "POST",
                 url: "/eagle-cms/ajax.php",
@@ -399,7 +403,7 @@ $(document).ready(function() {
                     console.log(jqXHR + " " + textStatus + " " + errorThrown);
                 },
                 complete: function() {
-                    //spinner.hide();
+                    that.spinnerLayer.hide();
                 }
             });
 

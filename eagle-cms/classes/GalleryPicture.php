@@ -33,10 +33,17 @@ class GalleryPicture {
         $updating->bindValue(':id', $this->id, PDO::PARAM_INT);
 
         if($updating->execute()) {
+            $imageResizer = new \Eventviva\ImageResize(ROOT . $this->getPath());
+            $imageResizer->crop(200, 200)->save(ROOT . "/" . GALLERIES_DIR . "/" . $this->id . "-square." . FileType::getExtension($this->type));
+
             return true;
         } else {
             return false;
         }
+    }
+
+    public function getPath() {
+        return "/" . GALLERIES_DIR . "/" . $this->id . "." . FileType::getExtension($this->type);
     }
 
     public static function create($item_id) {

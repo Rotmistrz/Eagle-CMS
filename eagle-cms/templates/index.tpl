@@ -96,6 +96,18 @@
 			</div>
 		</section>
 
+		<section id="spinner-overlayer" class="spinner-overlayer">
+			<div class="wrapper">
+				<div>
+					<div class="spinner">
+						<div class="spinner__inner">
+							<i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
 		<script src="{{ path }}/js/main.js"></script>
 	</body>
 </html>
