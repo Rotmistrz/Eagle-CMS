@@ -90,11 +90,37 @@ class GalleryPicture extends Component {
     }
 
     public function getEarlierOne() {
+        $query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id AND sort <= :sort AND id != :id ORDER BY sort ASC LIMIT 1";
 
+        $pdo = DataBase::getInstance();
+        $loading = $pdo->prepare($query);
+        $loading->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $loading->bindValue(':item_id', $this->itemId, PDO::PARAM_INT);
+        $loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+        $loading->execute();
+
+        if($row = $loading->fetch()) {
+            return self::createFromDatabaseRow($row);
+        } else {
+            return new NoSuchGalleryPicture();
+        }
     }
 
     public function getLaterOne() {
+        $query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id AND sort >= :sort AND id != :id ORDER BY sort ASC LIMIT 1";
 
+        $pdo = DataBase::getInstance();
+        $loading = $pdo->prepare($query);
+        $loading->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $loading->bindValue(':item_id', $this->itemId, PDO::PARAM_INT);
+        $loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+        $loading->execute();
+
+        if($row = $loading->fetch()) {
+            return self::createFromDatabaseRow($row);
+        } else {
+            return new NoSuchGalleryPicture();
+        }
     }
 
     public function delete() {

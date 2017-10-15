@@ -334,7 +334,7 @@ try {
                if($picture->save()) {
                     $json['message'] = $correctMessage;
 
-                    $json['item']['row'] = $twig->render('manage-gallery-item.tpl', ['picture' => $picture->getContentsByLanguage(Language::PL)]);
+                    $json['item']['row'] = $twig->render('manage-gallery-item.tpl', ['time' => time(), 'picture' => $picture->getContentsByLanguage(Language::PL)]);
                 } else {
                     $json['error'] = true;
                     $json['message'] = $errorMessage;
@@ -366,6 +366,54 @@ try {
             } else {
                 $json['error'] = true;
                 $json['message'] = "Wystąpiły problemy podczas usuwania zdjęcia.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'gallery-picture-up') {
+            header('Content-type: application/json');
+            
+            $current = GalleryPicture::load($id);
+
+            $earlier = $current->getEarlierOne();
+
+            if(get_class($earlier) == "NoSuchGalleryPicture") {
+                $json['message'] = "Zdjęcie jest już pierwsze w kolejności.";
+            } else {
+                $tmp = $current->order;
+                $current->order = $earlier->order;
+                $earlier->order = $tmp;
+
+                if($current->save() && $earlier->save()) {
+                    $json['item']['earlier'] = $earlier->getId();
+                    $json['message'] = "Poprawnie zmieniono kolejność.";
+                } else {
+                    $json['error'] = true;
+                    $json['message'] = "Wystąpiły problemy podczas zmiany kolejności elementów.";
+                }
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'gallery-picture-down') {
+            header('Content-type: application/json');
+
+            $current = GalleryPicture::load($id);
+
+            $later = $current->getLaterOne();
+
+            if(get_class($later) == 'NoSuchGalleryPicture') {
+                $json['message'] = "Zdjęcie jest już ostatnie w kolejności.";
+            } else {
+                $tmp = $current->order;
+                $current->order = $later->order;
+                $later->order = $tmp;
+
+                if($current->save() && $later->save()) {
+                    $json['item']['later'] = $later->getId();
+                    $json['message'] = "Poprawnie zmieniono kolejność.";
+                } else {
+                    $json['error'] = true;
+                    $json['message'] = "Wystąpiły problemy podczas zmiany kolejności elementów.";
+                }
             }
 
             echo json_encode($json);

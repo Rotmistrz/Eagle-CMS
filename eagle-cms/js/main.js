@@ -452,7 +452,7 @@ $(document).ready(function() {
                                         row.hide();
 
                                         container.append(row);
-                                        row.velocity("slideDown");
+                                        row.velocity("fadeIn");
 
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
@@ -465,8 +465,23 @@ $(document).ready(function() {
 
                                 case 'edit-gallery-picture':
                                     var callback = function() {
+                                        var current = $('[data-picture-id="' + result.item.id + '"]');
+                                        
+                                        var row = $(result.item.row);
+                                        row.css({ opacity: 0 });
+
+                                        current.velocity({ opacity: 0 }, {
+                                            duration: 200,
+                                            complete: function() {
+                                                current.replaceWith(row);
+                                                row.velocity({ opacity: 1 });
+                                            }
+                                        });
+
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
+
+                                        that.refreshDependencies();
                                     }
 
                                     that.layer.hide(callback);
