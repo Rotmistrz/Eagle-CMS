@@ -12,7 +12,7 @@ if($debug) {
     $operation = (isset($_GET['operation'])) ? $_GET['operation'] : $_POST['operation'];
     $type = (isset($_GET['type'])) ? $_GET['type'] : $_POST['type'];
 } else {
-    $item_id = (isset($_POST['item_id'])) ? $_POST['item_id'] : 0;
+    $item_id = (isset($_POST['itemId'])) ? $_POST['itemId'] : 0;
     $id = (isset($_POST['id'])) ? $_POST['id'] : 0;
     $parent_id = (isset($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
     $module = $_POST['module'];
@@ -23,6 +23,7 @@ if($debug) {
 $json = array();
 $json['module'] = $module;
 $json['operation'] = $operation;
+$json['itemId'] = $item_id;
 $json['error'] = false;
 
 $json['item'] = array();
@@ -268,7 +269,7 @@ try {
                 $picture = GalleryPicture::load($id);
                 $nextOperation = "edit-gallery-picture";
             } else {
-                $picture = new GalleryPicture(null, null, null);
+                $picture = new GalleryPicture(null, $item_id, null, 0);
                 $nextOperation = "add-gallery-picture";
             }
 
@@ -280,10 +281,11 @@ try {
             $FormManager->addInputHidden('id', $picture->id);
             $FormManager->addInputHidden('module', $module);
             $FormManager->addInputHidden('operation', $nextOperation);
-            $FormManager->addInputHidden('item_id', $picture->itemId);
+            $FormManager->addInputHidden('itemId', $picture->itemId);
 
-            $FormManager->addInput('title', 'Tytuł', $picture->title);
-            $FormManager->addTextarea('description', 'Opis', $picture->description);
+            $FormManager->addInput(GalleryPicture::getDatabaseFieldname(GalleryPicture::TITLE, Language::PL), 'Tytuł', $picture->getContent(Language::PL, GalleryPicture::TITLE));
+            $FormManager->addTextarea(GalleryPicture::getDatabaseFieldname(GalleryPicture::DESCRIPTION, Language::PL), 'Opis', $picture->getContent(Language::PL, GalleryPicture::DESCRIPTION));
+
             $FormManager->addFileField('gallery-picture', 'Obrazek główny');
 
             $FormManager->addButton('Zatwierdź');
@@ -310,11 +312,60 @@ try {
                 $errorMessage = "Wystąpiły problemy podczas dodawania zdjęcia.";
             }
 
-            if($picture->save()) {
-                $json['message'] = $correctMessage;
+            $fields = GalleryPicture::getFields();
+            $languages = GalleryPicture::getLanguages();
+            $value;
+
+            foreach($languages as $lang) {
+                foreach($fields as $field) {
+                    if(isset($_POST[Item::getDatabaseFieldname($field, $lang)])) {
+                        $value = $_POST[Item::getDatabaseFieldname($field, $lang)];
+
+                        $json['item'][Item::getDatabaseFieldname($field, $lang)] = $value;
+                    } else {
+                        $value = null;
+                    }
+
+                    $picture->setContent($lang, $field, $value);
+                }
+            }
+
+            try {
+               if($picture->save()) {
+                    $json['message'] = $correctMessage;
+
+                    $json['item']['row'] = $twig->render('manage-gallery-item.tpl', ['picture' => $picture->getContentsByLanguage(Language::PL)]);
+                } else {
+                    $json['error'] = true;
+                    $json['message'] = $errorMessage;
+                } 
+            } catch(Exception $E) {
+                $json['error'] = true;
+                $json['message'] = $E->getMessage();
+            }
+            
+
+            echo json_encode($json);
+        } else if($operation == 'prepare-delete-gallery-picture') {
+            header('Content-type: application/json');
+                $ChoiceForm = new ChoiceForm($twig);
+                $ChoiceForm->id = "delete-form";
+                $ChoiceForm->action = "/ajax.php";
+                $ChoiceForm->title = "Czy na pewno chcesz usunąć to zdjęcie?";
+                $ChoiceForm->back = "";
+
+                $json['html'] = $ChoiceForm->get();
+            echo json_encode($json);
+        } else if($operation == 'delete-gallery-picture') {
+            header('Content-type: application/json');
+
+            $picture = GalleryPicture::load($id);
+
+            if($picture->delete()) {
+                $json['message'] = "Poprawnie usunięto zdjęcie.";
             } else {
                 $json['error'] = true;
-                $json['message'] = $errorMessage;
+                $json['message'] = "Wystąpiły problemy podczas usuwania zdjęcia.";
             }
 
             echo json_encode($json);

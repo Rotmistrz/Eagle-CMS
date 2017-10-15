@@ -1,4 +1,41 @@
 $(document).ready(function() {
+    function mergeObjects(mainObject, object) {
+        var result = {};
+
+        if(object === undefined) {
+            return mainObject;
+        }
+
+        for (var property in mainObject) {
+            if (mainObject.hasOwnProperty(property)) {
+                result[property] = (object.hasOwnProperty(property)) ? object[property] : mainObject[property];
+            }
+
+            //console.log("object." + property + ": " + result[property]);
+        }
+
+        return result;
+    }
+
+    function scrollTo(options) {
+        var defaultOptions = {
+            container: window,
+            anchor: '#top-anchor',
+            callback: function() {},
+            delay: 0,
+            duration: 800,
+            offset: 0
+        };
+
+        options = mergeObjects(defaultOptions, options);
+
+        setTimeout(function(){
+            $(options.container).scrollTo(options.anchor, options.duration, {'axis': 'y', 'offset': options.offset, onAfter: function() { options.callback(); } });
+        }, options.delay);
+
+        return this;
+    }
+
     function Information(container) {
         this.container = container;
 
@@ -127,18 +164,20 @@ $(document).ready(function() {
 
         this.correctMessage = new Information($('#correct-message'));
         this.errorMessage = new Information($('#error-message'));
+        this.overlayerErrorMessage = new Information($('#overlayer-error-message'));
 
         this.sendRequest = function(request, item) {
             var that = this;
 
             that.correctMessage.hide();
             that.errorMessage.hide();
+            that.overlayerErrorMessage.container.hide();
 
             $.ajax({
                 type: "POST",
                 url: "/eagle-cms/ajax.php",
                 dataType: "json",
-                data: { module: request.module, operation: request.operation, item_id: request.itemId, id: item.id, type: item.type, parent_id: item.parentId },
+                data: { module: request.module, operation: request.operation, itemId: request.itemId, id: item.id, type: item.type, parent_id: item.parentId },
                 success: function(result) {
                     console.log(result);
 
@@ -176,8 +215,6 @@ $(document).ready(function() {
                                         that.simpleLayer.hide();
                                     });
 
-                                    console.log(that.simpleLayer.layer.find('.choice-form'));
-
                                     var thisform = that.simpleLayer.layer.find('.choice-form').first();
 
                                     that.simpleLayer.layer.find('.choice-form').submit(function(e) {
@@ -191,26 +228,18 @@ $(document).ready(function() {
                                 break;
 
                                 case 'hide':
-                                    /**that.correctMessage.setContent(result.message);
-                                    that.correctMessage.show();**/
-
                                     var table = $('[data-table-type="' + result.item.type + '"]');
                                     var row = table.find('[data-item-id="' + result.item.id + '"]');
                                     row.addClass('items-table__row--hidden');
                                 break;
 
                                 case 'show':
-                                    /**that.correctMessage.setContent(result.message);
-                                    that.correctMessage.show();**/
-
                                     var table = $('[data-table-type="' + result.item.type + '"]');
                                     var row = table.find('[data-item-id="' + result.item.id + '"]');
                                     row.removeClass('items-table__row--hidden');
                                 break;
 
                                 case 'item-up':
-                                    console.log(result.message);
-
                                     if(result.item.earlier !== undefined) {
                                         var table = $('[data-table-type="' + result.item.type + '"]');
                                         var row = table.find('[data-item-id="' + result.item.id + '"]');
@@ -249,8 +278,6 @@ $(document).ready(function() {
                                 break;
 
                                 case 'item-down':
-                                    console.log(result.message);
-
                                     if(result.item.later !== undefined) {
                                         var table = $('[data-table-type="' + result.item.type + '"]');
                                         var row = table.find('[data-item-id="' + result.item.id + '"]');
@@ -294,6 +321,35 @@ $(document).ready(function() {
                                     that.layer.show();
                                     that.refreshDependencies();
                                 break;
+
+                                case 'delete-gallery-picture':
+                                    var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
+                                    var row = container.find('[data-picture-id="' + result.item.id + '"]');
+
+                                    console.log(container.find('[data-picture-id="' + result.item.id + '"]').length);
+                                    console.log(result.item.id);
+                                    
+                                    row.velocity("fadeOut");
+                                break;
+
+                                case 'prepare-delete-gallery-picture':
+                                    that.simpleLayer.setContent(result.html);
+                                    that.simpleLayer.show();
+                                    that.refreshDependencies();
+
+                                    that.simpleLayer.layer.find('.choice-form__cancel').click(function() {
+                                        that.simpleLayer.hide();
+                                    });
+
+                                    that.simpleLayer.layer.find('.choice-form').submit(function(e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        that.simpleLayer.hide();
+
+                                        that.sendRequest({ module: 'item', operation: 'delete-gallery-picture', itemId: result.itemId }, { id: item.id, parent_id: item.parent_id, type: item.type });
+                                    });
+                                break;
                             }
                         }
                     } else {
@@ -318,6 +374,7 @@ $(document).ready(function() {
 
             that.correctMessage.hide();
             that.errorMessage.hide();
+            that.overlayerErrorMessage.container.hide();
 
             var formdata = new FormData(form);
 
@@ -334,17 +391,17 @@ $(document).ready(function() {
                 success: function(result) {
                     console.log(result);
 
-                    var callback = function() {
-                        if(!result.error) {
-                            if(result.module == 'item') {
-                                switch(result.operation) {
-                                    case 'prepare-add':
-                                        that.layer.setContent(result.html);
-                                        that.layer.show();
-                                        that.refreshDependencies();
-                                    break;
+                    if(!result.error) {
+                        if(result.module == 'item') {
+                            switch(result.operation) {
+                                case 'prepare-add':
+                                    that.layer.setContent(result.html);
+                                    that.layer.show();
+                                    that.refreshDependencies();
+                                break;
 
-                                    case 'add':
+                                case 'add':
+                                    var callback = function() {
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
 
@@ -359,10 +416,16 @@ $(document).ready(function() {
 
                                         table.append(row);
                                         row.velocity("slideDown");
-                                    break;
 
-                                    case 'edit':
-                                        that.correctMessage.setContent(result.message);
+                                        that.refreshDependencies();
+                                    }
+                                    
+                                    that.layer.hide(callback);
+                                break;
+
+                                case 'edit':
+                                    var callback = function() {
+                                       that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
 
                                         $('[data-item-type="' + result.item.type + '"][data-item-id="' + result.item.id + '"]')
@@ -376,28 +439,45 @@ $(document).ready(function() {
                                                     duration: 200
                                                    }); 
                                                 }
-                                            });
-                                            
-                                    break;
+                                            }); 
+                                    }
+                                    
+                                    that.layer.hide(callback);
+                                break;
 
-                                    case 'add-gallery-picture':
+                                case 'add-gallery-picture':
+                                    var callback = function() {
+                                        var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
+                                        var row = $(result.item.row);
+                                        row.hide();
+
+                                        container.append(row);
+                                        row.velocity("slideDown");
+
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
-                                    break;
 
-                                    case 'edit-gallery-picture':
+                                        that.refreshDependencies();
+                                    }
+                                    
+                                    that.layer.hide(callback);
+                                break;
+
+                                case 'edit-gallery-picture':
+                                    var callback = function() {
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
-                                    break;
-                                }
+                                    }
+
+                                    that.layer.hide(callback);
+                                break;
                             }
-                        } else {
-                            that.errorMessage.setContent(result.message);
-                            that.errorMessage.show();
                         }
+                    } else {
+                        that.overlayerErrorMessage.setContent(result.message);
+                        that.overlayerErrorMessage.show();
+                        scrollTo({ container: that.layer.layer, anchor: '#overlayer-inner-anchor' });
                     }
-
-                    that.layer.hide(callback);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR + " " + textStatus + " " + errorThrown);
@@ -469,6 +549,7 @@ $(document).ready(function() {
         this.run = function() {
             this.correctMessage.hide();
             this.errorMessage.hide();
+            this.overlayerErrorMessage.hide();
 
             this.refreshDependencies();
         }

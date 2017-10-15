@@ -1,6 +1,6 @@
 <?php
 
-class Item extends Component implements Languagable, Orderable {
+class Item extends Component implements Hideable {
 	public $parentId;
 	private $categories; // CategoriesList
 
@@ -40,11 +40,9 @@ class Item extends Component implements Languagable, Orderable {
 		$current;
 		$categories;
 
-		$query = '';
-
 		$pdo = DataBase::getInstance();
 
-		$query .= "UPDATE " . ITEMS_TABLE . " SET parent_id = :parent_id, type = :type, category = :category, sort = :sort";
+		$query = "UPDATE " . ITEMS_TABLE . " SET parent_id = :parent_id, type = :type, category = :category, sort = :sort";
 
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {

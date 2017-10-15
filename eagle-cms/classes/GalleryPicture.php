@@ -1,40 +1,83 @@
 <?php
 
-class GalleryPicture {
+class GalleryPicture extends Component {
     public $id;
     public $itemId;
     public $type;
-    public $title;
-    public $description;
+    public $order;
 
-    public function __construct($id, $item_id, $type) {
+    const TITLE = 'title';
+    const DESCRIPTION = 'description';
+
+    protected static $fields = [self::TITLE, self::DESCRIPTION];
+
+    const THUMBNAIL = '-thumbnail';
+    const SQUARE = '-square';
+
+    public function __construct($id, $item_id, $type, $order) {
         $this->id = $id;
         $this->itemId = $item_id;
         $this->type = $type;
+        $this->order = $order;
+
+        $this->contents = new Contents();
     }
 
     public function save() {
         $FileUploader = new FileUploader(ROOT . '/' . GALLERIES_DIR . '/');
 
-        if(!$this->type = $FileUploader->addFile('gallery-picture', $this->id, array(FileType::JPG, FileType::PNG), 1000000)) {
-            throw new Exception("Incorrect file type.");
+        $requiredTypes = array(FileType::JPG, FileType::PNG);
+
+        $type = $FileUploader->addFile('gallery-picture', $this->id, $requiredTypes, 1000000);
+
+        if($type && !in_array($type, $requiredTypes)) {
+            throw new Exception("Plik powinien mieć rozszerzenie .jpg lub .png.");
         }
 
         if(!$FileUploader->upload()) {
             throw new Exception("There has been occured an error while uploading the picture: " . $FileUploader->getErrorsAsString());
         }
 
-        $query = "UPDATE " . GALLERIES_TABLE . " SET type = :type, title = :title, description = :description WHERE id = :id";
+        if(in_array($type, $requiredTypes)) {
+            $this->type = $type;
+        }
+
+        $fields = self::$fields;
+        $languages = self::$languages;
+        $languages_length = count($languages);
+        $fields_length = count($fields);
+        $current;
+
         $pdo = DataBase::getInstance();
+
+        $query = "UPDATE " . GALLERIES_TABLE . " SET type = :type, sort = :sort";
+
+        for($i = 0; $i < $languages_length; $i++) {
+            for($j = 0; $j < $fields_length; $j++) {
+                $current = self::getDatabaseFieldname($fields[$j], $languages[$i]);
+                $query .= ", " . $current . " = :" . $current;
+            }
+        }
+
+        $query .= " WHERE id = :id";
+
         $updating = $pdo->prepare($query);
-        $updating->bindValue(':type', $this->type, PDO::PARAM_STR);
-        $updating->bindValue(':title', $this->title, PDO::PARAM_STR);
-        $updating->bindValue(':description', $this->description, PDO::PARAM_STR);
         $updating->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $updating->bindValue(':type', $this->type, PDO::PARAM_INT);
+        $updating->bindValue(':sort', $this->order, PDO::PARAM_INT);
+
+        for($i = 0; $i < $languages_length; $i++) {
+            for($j = 0; $j < $fields_length; $j++) {
+                $current = $fields[$j] . "_" . $languages[$i];
+
+                $updating->bindValue(':' . $current, $this->contents->get($languages[$i], $fields[$j]), PDO::PARAM_STR);
+            }
+        }
 
         if($updating->execute()) {
-            $imageResizer = new \Eventviva\ImageResize(ROOT . $this->getPath());
-            $imageResizer->crop(200, 200)->save(ROOT . "/" . GALLERIES_DIR . "/" . $this->id . "-square." . FileType::getExtension($this->type));
+            $imageResizer = new \Eventviva\ImageResize($this->getPath());
+            $imageResizer->crop(200, 200)->save($this->getPath(self::SQUARE));
+            $imageResizer->crop(600, 400)->save($this->getPath(self::THUMBNAIL));
 
             return true;
         } else {
@@ -42,28 +85,71 @@ class GalleryPicture {
         }
     }
 
-    public function getPath() {
-        return "/" . GALLERIES_DIR . "/" . $this->id . "." . FileType::getExtension($this->type);
+    public function getPath($sufix = '') {
+        return ROOT . "/" . GALLERIES_DIR . "/" . $this->id . $sufix . "." . FileType::getExtension($this->type);
+    }
+
+    public function getEarlierOne() {
+
+    }
+
+    public function getLaterOne() {
+
+    }
+
+    public function delete() {
+        $query = "DELETE FROM " . GALLERIES_TABLE . " WHERE id = :id";
+
+        $pdo = DataBase::getInstance();
+        $deleting = $pdo->prepare($query);
+        $deleting->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+        if($deleting->execute() && unlink($this->getPath()) && unlink($this->getPath(self::SQUARE)) && unlink($this->getPath(self::THUMBNAIL))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getContentsByLanguage($lang) {
+        $current;
+        $contents = [];
+
+        $contents['id'] = $this->getId();
+        $contents['type'] = $this->type;
+        $contents['itemId'] = $this->itemId;
+        $contents['extension'] = FileType::getExtension($this->type);
+        $contents['order'] = $this->order;
+
+        if($current = $this->contents->getContentsByLanguage($lang)) {
+            $contents = array_merge($contents, $current);
+        }
+
+        return $contents;
     }
 
     public static function create($item_id) {
-        $query = "INSERT INTO " . GALLERIES_TABLE . " VALUES(NULL, :item_id, :type, :title, :description, :date)";
+        $pdo = DataBase::getInstance();
+
+        $gettingSortQuery = "SELECT MAX(sort) as recent FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id";
+        $gettingSort = $pdo->prepare($gettingSortQuery);
+        $gettingSort->bindValue(':item_id', $item_id, PDO::PARAM_INT);
+        $gettingSort->execute();
+        $result = $gettingSort->fetch();
+        $order = $result['recent'] + 10;
 
         $date = date('Y-m-d H:i:s');
 
-        $pdo = DataBase::getInstance();
+        $query = "INSERT INTO " . GALLERIES_TABLE . " (item_id, sort, date) VALUES(:item_id, :sort, :date)";
         $creating = $pdo->prepare($query);
         $creating->bindValue(':item_id', $item_id, PDO::PARAM_INT);
-        $creating->bindValue(':type', null, PDO::PARAM_STR);
-        $creating->bindValue(':title', null, PDO::PARAM_STR);
-        $creating->bindValue(':description', null, PDO::PARAM_STR);
-        $creating->bindValue(':date', $date, PDO::PARAM_STR);
+        $creating->bindValue(':sort', $order, PDO::PARAM_INT);
+        $creating->bindValue(':date', $date, PDO::PARAM_INT);
+        $creating->execute();
 
-        if(!$creating->execute()) {
-            throw new Exception("GalleryPicture: Inserting to database failed.");
-        }
+        $id = $pdo->lastInsertId();
 
-        return new self($pdo->lastInsertId(), $item_id, null);
+        return new self($id, $item_id, null, $order);
     }
 
     public static function load($id) {
@@ -72,17 +158,40 @@ class GalleryPicture {
         $pdo = DataBase::getInstance();
         $loading = $pdo->prepare($query);
         $loading->bindValue(':id', $id, PDO::PARAM_INT);
-        $loading->execute();
+        
+        if($loading->execute()) {
+            $result = $loading->fetch();
 
-        if($result = $loading->fetch()) {
-            $picture = new self($id, $data['item_id'], $data['type']);
-            $picture->title = $data['title'];
-            $picture->description = $data['description'];
-
-            return $picture;
+            return self::createFromDataBaseRow($result);
         } else {
             return new NoSuchGalleryPicture();
         }
+    }
+
+    public static function createFromDatabaseRow($row) {
+        $fields = self::$fields;
+        $languages = self::$languages;
+        $languages_length = count($languages);
+        $fields_length = count($fields);
+
+        $id = $row['id'];
+        $item_id = $row['item_id'];
+        $type = $row['type'];
+        $order = $row['sort'];
+
+        $picture = new self($id, $item_id, $type, $order);
+
+        for($i = 0; $i < $languages_length; $i++) {
+            for($j = 0; $j < $fields_length; $j++) {
+                $field = self::getDatabaseFieldname($fields[$j], $languages[$i]);
+
+                if(isset($row[$field])) {
+                    $picture->setContent($languages[$i], $fields[$j], $row[$field]);
+                }
+            }
+        }
+
+        return $picture;
     }
 }
 

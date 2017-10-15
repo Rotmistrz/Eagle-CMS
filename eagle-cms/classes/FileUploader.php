@@ -25,8 +25,10 @@ class FileUploader {
 
 		if(isset($_FILES[$fieldname]) && in_array($_FILES[$fieldname]['type'], $type)) {
 			return $_FILES[$fieldname]['type'];
-		} else {
+		} else if(!isset($_FILES[$fieldname])) {
 			return false;
+		} else {
+			return true;
 		}
 	}
 

@@ -4,6 +4,7 @@
 		<meta charset="utf-8" />
 
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="{{ path }}/js/jquery.scrollTo.js"></script>
 		<script src="{{ path }}/js/velocity.js"></script>
 
 		<link rel="stylesheet" href="{{ path }}/css/main.css" type="text/css" />
@@ -70,7 +71,13 @@
 		</footer>
 
 		<section id="overlayer" class="overlayer">
-			<div class="overlayer__inner">
+			<div id="overlayer-inner-anchor" class="overlayer__inner">
+				<section id="overlayer-error-message" class="message error">
+					<p>
+					
+					</p>
+				</section>
+
 				<section class="overlayer__content">
 
 				</section>

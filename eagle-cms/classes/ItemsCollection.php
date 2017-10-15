@@ -20,22 +20,10 @@ class ItemsCollection implements LanguagableCollection {
 	}
 
 	public function getContentsByLanguage($lang) {
-		$current;
-		$i = 0;
 		$contents = [];
 
 		foreach($this->items as $item) {
-			$contents[$i]['id'] = $item->getId();
-			$contents[$i]['type'] = $item->type;
-			$contents[$i]['parentId'] = $item->parentId;
-			$contents[$i]['order'] = $item->order;
-			$contents[$i]['visible'] = $item->visible;
-
-			if($current = $item->getContentsByLanguage($lang)) {
-				$contents[$i] = array_merge($contents[$i], $current);
-			}
-
-			$i++;
+			$contents[] = $item->getContentsByLanguage($lang);
 		}
 
 		return $contents;

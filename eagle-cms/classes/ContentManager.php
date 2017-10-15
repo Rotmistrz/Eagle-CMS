@@ -121,6 +121,12 @@ class ContentManager {
 		return $this->twig->render($this->template, array('categoriesCollection' => $categories->getContentsByLanguage($this->lang)));
 	}
 
+	public function getGallery($item_id) {
+		$gallery = GalleryPicturesCollection::load($item_id);
+
+		return $this->twig->render("manage-gallery.tpl", array('itemId' => $item_id, 'picturesCollection' => $gallery->getContentsByLanguage($this->lang)));
+	}
+
 	public static function getTitle($title) {
 		return "<h3>" . $title . "</h3>";
 	}

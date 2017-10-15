@@ -225,6 +225,30 @@ padding: 35px 40px 20080px 40px;
 margin: 0 0 -20000px 0;
 }
 
+.pictures-list {
+padding: 20px 0;
+
+	&__header {
+	padding: 0 0 20px 0;
+	}
+
+	&__title {
+	font-size: $very-large-font-size;
+	font-weight: 700;
+	}
+
+	&__item {
+	float: left;
+	@include box-sizing(border-box);
+	width: 20%;
+	padding: 10px;
+	}
+}
+
+.picture-item {
+
+}
+
 /***** FORMS *****/
 
 button {
@@ -1059,4 +1083,8 @@ text-align: center;
 clear: both;
 padding: 0 5px;
 @include box-sizing(border-box);
+}
+
+.request-link {
+cursor: pointer;
 }

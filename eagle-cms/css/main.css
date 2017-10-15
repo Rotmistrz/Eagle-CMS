@@ -888,6 +888,21 @@ span.line {
   padding: 35px 40px 20080px 40px;
   margin: 0 0 -20000px 0; }
 
+.pictures-list {
+  padding: 20px 0; }
+  .pictures-list__header {
+    padding: 0 0 20px 0; }
+  .pictures-list__title {
+    font-size: 24px;
+    font-weight: 700; }
+  .pictures-list__item {
+    float: left;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 20%;
+    padding: 10px; }
+
 /***** FORMS *****/
 button {
   font-family: Lato, Verdana, sans-serif;
@@ -1567,3 +1582,6 @@ section.medium, footer.medium {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box; }
+
+.request-link {
+  cursor: pointer; }
