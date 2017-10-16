@@ -350,6 +350,70 @@ $(document).ready(function() {
                                         that.sendRequest({ module: 'item', operation: 'delete-gallery-picture', itemId: result.itemId }, { id: item.id, parent_id: item.parent_id, type: item.type });
                                     });
                                 break;
+
+                                case 'gallery-picture-up':
+                                    if(result.item.earlier !== undefined) {
+                                        var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
+                                        var picture = container.find('[data-picture-id="' + result.item.id + '"]');
+
+                                        var earlierPicture = container.find('[data-picture-id="' + result.item.earlier + '"]');
+
+                                        var pictureCopy = picture.clone();
+                                        var earlierPictureCopy = earlierPicture.clone();
+
+                                        pictureCopy.add(earlierPictureCopy).css({ opacity: 0 });
+
+                                        picture.add(earlierPicture).velocity({ opacity: 0 }, {
+                                            duration: 200,
+                                            complete: function() {
+                                                picture.replaceWith(earlierPictureCopy);
+                                                earlierPicture.replaceWith(pictureCopy);
+
+                                                pictureCopy.add(earlierPictureCopy).velocity({ opacity: 1 }, {
+                                                    duration: 200,
+                                                    complete: function() {
+                                                        that.refreshDependencies();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        that.correctMessage.setContent(result.message);
+                                        that.correctMessage.show();
+                                    }
+                                break;
+
+                                case 'gallery-picture-down':
+                                    if(result.item.later !== undefined) {
+                                        var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
+                                        var picture = container.find('[data-picture-id="' + result.item.id + '"]');
+
+                                        var laterPicture = container.find('[data-picture-id="' + result.item.later + '"]');
+
+                                        var pictureCopy = picture.clone();
+                                        var laterPictureCopy = laterPicture.clone();
+
+                                        pictureCopy.add(laterPictureCopy).css({ opacity: 0 });
+
+                                        picture.add(laterPicture).velocity({ opacity: 0 }, {
+                                            duration: 200,
+                                            complete: function() {
+                                                picture.replaceWith(laterPictureCopy);
+                                                laterPicture.replaceWith(pictureCopy);
+
+                                                pictureCopy.add(laterPictureCopy).velocity({ opacity: 1 }, {
+                                                    duration: 200,
+                                                    complete: function() {
+                                                        that.refreshDependencies();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    } else {
+                                        that.correctMessage.setContent(result.message);
+                                        that.correctMessage.show();
+                                    }
+                                break;
                             }
                         }
                     } else {

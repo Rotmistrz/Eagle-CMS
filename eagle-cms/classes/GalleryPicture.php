@@ -90,7 +90,7 @@ class GalleryPicture extends Component {
     }
 
     public function getEarlierOne() {
-        $query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id AND sort <= :sort AND id != :id ORDER BY sort ASC LIMIT 1";
+        $query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id AND sort <= :sort AND id != :id ORDER BY sort DESC LIMIT 1";
 
         $pdo = DataBase::getInstance();
         $loading = $pdo->prepare($query);

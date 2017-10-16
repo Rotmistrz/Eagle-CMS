@@ -124,7 +124,7 @@ class Item extends Component implements Hideable {
 	}
 
 	public function getEarlierOne() {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort ASC LIMIT 1";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort DESC LIMIT 1";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
