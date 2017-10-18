@@ -14,8 +14,10 @@ class GalleryPicturesCollection implements LanguagableCollection {
     public function getContentsByLanguage($lang) {
         $contents = [];
 
-        foreach($this->pictures as $picture) {
-            $contents[] = $picture->getContentsByLanguage($lang);
+        $len = count($this->pictures);
+
+        for($i = 0; $i < $len; $i++) {
+            $contents[] = $this->pictures[$i]->getContentsByLanguage($lang);
         }
 
         return $contents;

@@ -141,11 +141,17 @@ class GalleryPicture extends Component {
         $current;
         $contents = [];
 
-        $contents['id'] = $this->getId();
+        $extension = FileType::getExtension($this->type);
+
+        $contents['id'] = $this->id;
         $contents['type'] = $this->type;
         $contents['itemId'] = $this->itemId;
-        $contents['extension'] = FileType::getExtension($this->type);
+        $contents['extension'] = $extension;
         $contents['order'] = $this->order;
+        $contents['filename'] = [];
+        $contents['filename']['large'] = $this->id . "." . $extension;
+        $contents['filename']['thumbnail'] = $this->id . "-thumbnail." . $extension;
+        $contents['filename']['square'] = $this->id . "-square." . $extension;
 
         if($current = $this->contents->getContentsByLanguage($lang)) {
             $contents = array_merge($contents, $current);

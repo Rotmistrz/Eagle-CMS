@@ -3,6 +3,7 @@
 class Item extends Component implements Hideable {
 	public $parentId;
 	private $categories; // CategoriesList
+	private $gallery; // GalleryPicturesCollection
 
 	const HEADER_1 = 'header_1';
 	const HEADER_2 = 'header_2';
@@ -14,14 +15,14 @@ class Item extends Component implements Hideable {
 	const CONTENT_2 = 'content_2';
 	const CONTENT_3 = 'content_3';
 
-	protected static $fields = [self::HEADER_1, self::HEADER_2, self::HEADER_3, self::HEADER_4, self::HEADER_5,
-	                   self::CONTENT_1, self::CONTENT_2, self::CONTENT_3];
+	protected static $fields = [self::HEADER_1, self::HEADER_2, self::HEADER_3, self::HEADER_4, self::HEADER_5, self::CONTENT_1, self::CONTENT_2, self::CONTENT_3];
 
 	public function __construct($id, $type, $order) {
 		$this->id = $id;
 		$this->type = $type;
 		$this->order = $order;
 		$this->categories = new NoCategory();
+		$this->gallery = new GalleryPicturesCollection();
 		$this->visible = 1;
 		$this->parentId = 0;
 
@@ -30,6 +31,10 @@ class Item extends Component implements Hideable {
 
 	public function setCategories(CategoriesList $categories) {
 		$this->categories = $categories;
+	}
+
+	public function setGallery(GalleryPicturesCollection $gallery) {
+		$this->gallery = $gallery;
 	}
 
 	public function save() {
@@ -235,6 +240,12 @@ class Item extends Component implements Hideable {
 		$contents['parentId'] = $this->parentId;
 		$contents['order'] = $this->order;
 		$contents['visible'] = $this->visible;
+
+		if(get_class($this->gallery) == "NoGalleryPicturesCollection") {
+			$contents['gallery'] = [];
+		} else {
+			$contents['gallery'] = $this->gallery->getContentsByLanguage($lang);
+		}
 
 		if($current = $this->contents->getContentsByLanguage($lang)) {
 			$contents = array_merge($contents, $current);

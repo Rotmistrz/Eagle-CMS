@@ -9,5 +9,8 @@
         		</p>
             </section>
         </article>
+            {% for gallery in item.gallery %}
+                <img src="/uploads/galleries/{{ gallery.filename.square }}" alt="" />
+            {% endfor %}
 
 		{% endfor %}

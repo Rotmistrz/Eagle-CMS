@@ -74,6 +74,7 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'LanguagableCollection' => __DIR__ . '/../..' . '/interfaces/LanguagableCollection.php',
         'Language' => __DIR__ . '/../..' . '/classes/Language.php',
         'NoCategory' => __DIR__ . '/../..' . '/classes/NoCategory.php',
+        'NoGalleryPicturesCollection' => __DIR__ . '/../..' . '/classes/NoGalleryPicturesCollection.php',
         'NoItem' => __DIR__ . '/../..' . '/classes/NoItem.php',
         'NoSuchCategory' => __DIR__ . '/../..' . '/classes/NoSuchCategory.php',
         'NoSuchGalleryPicture' => __DIR__ . '/../..' . '/classes/NoSuchGalleryPicture.php',

@@ -45,6 +45,7 @@ return array(
     'LanguagableCollection' => $baseDir . '/interfaces/LanguagableCollection.php',
     'Language' => $baseDir . '/classes/Language.php',
     'NoCategory' => $baseDir . '/classes/NoCategory.php',
+    'NoGalleryPicturesCollection' => $baseDir . '/classes/NoGalleryPicturesCollection.php',
     'NoItem' => $baseDir . '/classes/NoItem.php',
     'NoSuchCategory' => $baseDir . '/classes/NoSuchCategory.php',
     'NoSuchGalleryPicture' => $baseDir . '/classes/NoSuchGalleryPicture.php',
