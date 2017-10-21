@@ -86,6 +86,16 @@ class FormManager extends Form {
 		return $this;
 	}
 
+	public function addTextEditor($id, $title, $value) {
+		$textEditor = new TextEditor($title);
+		$textEditor->id = $id;
+		$textEditor->value = $value;
+
+		$this->addItem($textEditor);
+
+		return $this;
+	}
+
 	public function addFileField($id, $title) {
 		$filefield = new FileField();
 		$filefield->id = $id;

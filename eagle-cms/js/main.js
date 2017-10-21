@@ -188,6 +188,8 @@ $(document).ready(function() {
                                     that.layer.setContent(result.html);
                                     that.layer.show();
                                     that.refreshDependencies();
+
+                                    $('.trumbowyg').trumbowyg();
                                 break;
 
                                 case 'delete':

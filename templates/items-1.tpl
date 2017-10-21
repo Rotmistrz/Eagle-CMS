@@ -7,6 +7,10 @@
         		<p>
         		{{ item.content_1 }}
         		</p>
+
+                <p>
+                {{ item.content_2 }}
+                </p>
             </section>
         </article>
             {% for gallery in item.gallery %}

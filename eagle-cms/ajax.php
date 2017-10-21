@@ -143,7 +143,8 @@ try {
             if($type == 1) {
                 $FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_1, Language::PL), 'Nagłówek 1', $item->getContent(Language::PL, Item::HEADER_1));
                 $FormManager->addInput(Item::getDatabaseFieldname(Item::HEADER_2, Language::PL), 'Nagłówek 2', $item->getContent(Language::PL, Item::HEADER_2));
-                $FormManager->addTextarea(Item::getDatabaseFieldname(Item::CONTENT_1, Language::PL), 'Treść 1', $item->getContent(Language::PL, Item::CONTENT_1));
+                $FormManager->addTextEditor(Item::getDatabaseFieldname(Item::CONTENT_1, Language::PL), 'Treść 1', $item->getContent(Language::PL, Item::CONTENT_1));
+                $FormManager->addTextEditor(Item::getDatabaseFieldname(Item::CONTENT_2, Language::PL), 'Treść 2', $item->getContent(Language::PL, Item::CONTENT_2));
 
                 $FormManager->addCategories(1, $item->getCategoriesArray());
 

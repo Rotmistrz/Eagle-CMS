@@ -6,10 +6,12 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
 		<script src="{{ path }}/js/jquery.scrollTo.js"></script>
 		<script src="{{ path }}/js/velocity.js"></script>
+		<script src="{{ path }}/js/trumbowyg.js"></script>
 
-		<link rel="stylesheet" href="{{ path }}/css/main.css" type="text/css" />
+		<link rel="stylesheet" href="{{ path }}/css/trumbowyg.css" />
 		<link rel="stylesheet" href="{{ path }}/css/fonts.css" type="text/css" />
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
+		<link rel="stylesheet" href="{{ path }}/css/main.css" type="text/css" />
 
 		<title>{{ title }}</title>
 	</head>

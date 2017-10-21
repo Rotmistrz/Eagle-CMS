@@ -54,6 +54,7 @@ return array(
     'Orderable' => $baseDir . '/interfaces/Orderable.php',
     'Select' => $baseDir . '/classes/Forms/Select.php',
     'TemplateManager' => $baseDir . '/classes/TemplateManager.php',
+    'TextEditor' => $baseDir . '/classes/Forms/TextEditor.php',
     'Textarea' => $baseDir . '/classes/Forms/Textarea.php',
     'TwigTemplateManager' => $baseDir . '/classes/TwigTemplateManager.php',
     'User' => $baseDir . '/classes/User.php',
