@@ -362,6 +362,17 @@ padding: 0;
 	}
 }
 
+.filefield {
+	&__current {
+	padding: 10px 0;
+	
+		img {
+		height: 300px;
+		display: block;
+		}
+	}
+}
+
 .form-login {
 width: 460px;
 margin: 0 auto;

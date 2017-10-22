@@ -69,7 +69,7 @@
 		</main>
 
 		<footer class="site-footer">
-		Copyright 2017 by <a href="http://www.filipmarkiewicz.pl">Filip Markiewicz</a>
+		Copyright 2017 by <a href="http://www.filipmarkiewicz.pl">Filip J. Markiewicz</a>
 		</footer>
 
 		<section id="overlayer" class="overlayer">

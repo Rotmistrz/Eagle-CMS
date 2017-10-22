@@ -989,6 +989,12 @@ button {
       display: block;
       padding: 10px; }
 
+.filefield__current {
+  padding: 10px 0; }
+  .filefield__current img {
+    height: 300px;
+    display: block; }
+
 .form-login {
   width: 460px;
   margin: 0 auto;

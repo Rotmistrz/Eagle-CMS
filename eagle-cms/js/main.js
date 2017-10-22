@@ -491,7 +491,7 @@ $(document).ready(function() {
 
                                 case 'edit':
                                     var callback = function() {
-                                       that.correctMessage.setContent(result.message);
+                                        that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
 
                                         $('[data-item-type="' + result.item.type + '"][data-item-id="' + result.item.id + '"]')
@@ -503,7 +503,9 @@ $(document).ready(function() {
                                                    
                                                    $(this).velocity({ opacity: 1 }, {
                                                     duration: 200
-                                                   }); 
+                                                   });
+
+                                                   that.refreshDependencies();
                                                 }
                                             }); 
                                     }
@@ -541,13 +543,13 @@ $(document).ready(function() {
                                             complete: function() {
                                                 current.replaceWith(row);
                                                 row.velocity({ opacity: 1 });
+
+                                                that.refreshDependencies();
                                             }
                                         });
 
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
-
-                                        that.refreshDependencies();
                                     }
 
                                     that.layer.hide(callback);

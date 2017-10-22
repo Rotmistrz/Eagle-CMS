@@ -148,7 +148,7 @@ try {
 
                 $FormManager->addCategories(1, $item->getCategoriesArray());
 
-                $FormManager->addFileField('file_1', 'Obrazek główny');
+                $FormManager->addFileField('file_1', 'Obrazek główny', new File(FileType::JPG, '/' . ITEMS_DIR . '/1', $item->getId()));
             }
 
             if($type == 2) {
@@ -270,7 +270,7 @@ try {
                 $picture = GalleryPicture::load($id);
                 $nextOperation = "edit-gallery-picture";
             } else {
-                $picture = new GalleryPicture(null, $item_id, null, 0);
+                $picture = new GalleryPicture(null, $item_id, FileType::JPG, 0);
                 $nextOperation = "add-gallery-picture";
             }
 
@@ -279,7 +279,7 @@ try {
             $FormManager->action = "";
             $FormManager->method = "post";
             $FormManager->class = "form request-form";
-            $FormManager->addInputHidden('id', $picture->id);
+            $FormManager->addInputHidden('id', $picture->getId());
             $FormManager->addInputHidden('module', $module);
             $FormManager->addInputHidden('operation', $nextOperation);
             $FormManager->addInputHidden('itemId', $picture->itemId);
@@ -287,7 +287,7 @@ try {
             $FormManager->addInput(GalleryPicture::getDatabaseFieldname(GalleryPicture::TITLE, Language::PL), 'Tytuł', $picture->getContent(Language::PL, GalleryPicture::TITLE));
             $FormManager->addTextarea(GalleryPicture::getDatabaseFieldname(GalleryPicture::DESCRIPTION, Language::PL), 'Opis', $picture->getContent(Language::PL, GalleryPicture::DESCRIPTION));
 
-            $FormManager->addFileField('gallery-picture', 'Obrazek główny');
+            $FormManager->addFileField('gallery-picture', 'Obrazek główny', new File($picture->getType(), '/' . GALLERIES_DIR, $picture->getId()));
 
             $FormManager->addButton('Zatwierdź');
 

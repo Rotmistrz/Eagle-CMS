@@ -96,8 +96,8 @@ class FormManager extends Form {
 		return $this;
 	}
 
-	public function addFileField($id, $title) {
-		$filefield = new FileField();
+	public function addFileField($id, $title, File $file) {
+		$filefield = new FileField($file);
 		$filefield->id = $id;
 
 		$label = new Label();

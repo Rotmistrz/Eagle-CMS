@@ -9,10 +9,20 @@ class File {
         $this->type = $type;
         $this->directory = $directory;
         $this->filename = $filename;
+    }
 
-        if(!file_exists($this->getPath())) {
-            throw new FileNotFoundException();
-        }
+    public function fileExists() {
+        return file_exists($this->getPath());
+    }
+
+    public function getContents() {
+        $contents = [];
+
+        $contents['path'] = $this->getPath();
+        $contents['extension'] = FileType::getExtension($this->type);
+        $contents['isPicture'] = $this->isPicture();
+
+        return $contents;
     }
 
     public function isPicture() {

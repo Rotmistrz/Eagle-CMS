@@ -1,9 +1,9 @@
 <?php
 
 class GalleryPicture extends Component {
-    public $id;
+    protected $id;
     public $itemId;
-    public $type;
+    private $type;
     public $order;
 
     const TITLE = 'title';
@@ -21,6 +21,18 @@ class GalleryPicture extends Component {
         $this->order = $order;
 
         $this->contents = new Contents();
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function setType(FileType $type) {
+        $this->type = $type;
+    }
+
+    public function getType() {
+        return $this->type;
     }
 
     public function save() {
@@ -85,8 +97,16 @@ class GalleryPicture extends Component {
         }
     }
 
-    public function getPath($sufix = '') {
-        return ROOT . "/" . GALLERIES_DIR . "/" . $this->id . $sufix . "." . FileType::getExtension($this->type);
+    public function getPath($sufix = '', $deep = true) {
+        $path = "";
+
+        if($deep) {
+            $path .= ROOT;
+        }
+
+        $path .= "/" . GALLERIES_DIR . "/" . $this->id . $sufix . "." . FileType::getExtension($this->type);
+
+        return $path;
     }
 
     public function getEarlierOne() {
