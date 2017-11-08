@@ -172,9 +172,7 @@ class Item extends Component implements Hideable {
 		if($loading->execute()) {
 			$result = $loading->fetch();
 
-			$item = self::createFromDatabaseRow($result);
-
-			return $item;
+			return self::createFromDatabaseRow($result);
 		} else {
 			return false;
 		}
@@ -222,6 +220,7 @@ class Item extends Component implements Hideable {
 		for($i = 0; $i < $languages_length; $i++) {
 			for($j = 0; $j < $fields_length; $j++) {
 				$field = self::getDatabaseFieldname($fields[$j], $languages[$i]);
+
 				if(isset($row[$field])) {
 					$item->setContent($languages[$i], $fields[$j], $row[$field]);
 				}

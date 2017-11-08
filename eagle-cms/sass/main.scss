@@ -219,10 +219,9 @@ padding: 35px 0 20035px 0;
 margin: 0 0 -20000px 0;
 }
 .content {
-float: right;
-width: 1100px - 230px - 1px - 80px;
-padding: 35px 40px 20080px 40px;
-margin: 0 0 -20000px 0;
+float: none;
+padding: 35px 40px 80px 40px;
+margin: 0;
 }
 
 .pictures-list {
@@ -554,9 +553,8 @@ color: #fff;
 
 /***** TABLES *****/
 
-.items-table {
+.table {
 width: 100%;
-border-collapse: collapse;
 
 	&__cell {
 	padding: 8px 10px;
@@ -576,34 +574,37 @@ border-collapse: collapse;
 	&__row {
 	font-size: $small-font-size;
 	position: relative;
-	
-		.items-table__order-number {
-		text-align: right;
-		}
-
-		.item-visibility--visible {
-		display: inline-block;
-		}
-
-		.item-visibility--hidden {
-		display: none;
-		}
-
-		.item-visibility-toggler--hide {
-		display: inline-block;
-		}
-
-		.item-visibility-toggler--show {
-		display: none;
-		}
 	}
 
 	&__header-row {
 	font-size: $main-font-size;
 	background: $medium-bg-color-02;
 	}
+}
+
+.items-table {
 	
-	&__row--hidden {
+	.items-table__order-number {
+	text-align: right;
+	}
+
+	.item-visibility--visible {
+	display: inline-block;
+	}
+
+	.item-visibility--hidden {
+	display: none;
+	}
+
+	.item-visibility-toggler--hide {
+	display: inline-block;
+	}
+
+	.item-visibility-toggler--show {
+	display: none;
+	}
+	
+	.table__row--hidden {
 		.item-visibility--visible {
 		display: none;
 		}
@@ -618,6 +619,14 @@ border-collapse: collapse;
 
 		.item-visibility-toggler--show {
 		display: inline-block;
+		}
+	}
+
+	.table__header-row {
+	text-align: center;
+	
+		.items-table__order-number {
+		text-align: center;
 		}
 	}
 

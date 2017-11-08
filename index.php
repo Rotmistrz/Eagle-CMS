@@ -11,11 +11,14 @@ try {
 	$module = (isset($_GET['module'])) ? $_GET['module'] : null;
 	$id = (isset($_GET['id'])) ? $_GET['id'] : null;
 	$type = (isset($_GET['type'])) ? $_GET['type'] : null;
+	$lang = (isset($_GET['lang'])) ? $_GET['lang'] : DEFAULT_LANG;
+
+	define('LANG', $lang);
 
 	$content = '';
 
 	$contentManager = new ContentManager($twig);
-	$contentManager->lang = Language::PL;
+	$contentManager->lang = LANG;
 
 	$contentManager->template = 'items-1.tpl';
 	$templateManager->addTemplate('items_1', $contentManager->getAllItemsByType(1));
@@ -32,6 +35,16 @@ $templateManager->addTemplate('title', 'EagleCMS');
 $templateManager->addTemplate('header', $header);
 $templateManager->addTemplate('body', $body);
 
-echo $templateManager->transformFile('body.tpl');
+$result = $templateManager->transformFile('body.tpl');
+
+$constantsCollection = DataCollection::load();
+
+$constants = $constantsCollection->getItems();
+
+foreach($constants as $data) {
+	$templateManager->addTemplate("_" . $data->getCode() . "_", $data->getValue(LANG));
+}
+
+echo $templateManager->transformString($result);
 
 ?>

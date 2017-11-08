@@ -26,11 +26,11 @@
 			<section class="bar">
 				<nav class="main-menu">
 					<ul>
-						<li><a href="{{ path }}/">Home</a></li>
-						<li><a href="{{ path }}/index.php?module=pages">Strony</a></li>
-						<li><a href="{{ path }}/index.php?module=categories">Kategorie</a></li>
+						<!--<li><a href="{{ path }}/">Home</a></li>-->
+						<li><a href="{{ path }}/index.php?module=pages">Home</a></li>
+						<!--<li><a href="{{ path }}/index.php?module=categories">Kategorie</a></li>
 						<li><a href="{{ path }}/index.php?module=data">Dane</a></li>
-						<li><a href="{{ path }}/index.php?module=settings">Ustawienia</a></li>
+						<li><a href="{{ path }}/index.php?module=settings">Ustawienia</a></li>-->
 					</ul>
 				</nav>
 
@@ -40,7 +40,7 @@
 			</section>
 
 			<div class="main-container container">
-				<aside class="sidebar">
+				<!--<aside class="sidebar">
 					<nav class="side-menu">
 						<ul>
 							<li><a href="">Strona główna</a></li>
@@ -48,7 +48,7 @@
 							<li><a href="">Oferta</a></li>
 						</ul>
 					</nav>
-				</aside>
+				</aside>-->
 
 				<section class="content">
 					<section id="correct-message" class="message correct">

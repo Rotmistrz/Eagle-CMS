@@ -30,7 +30,7 @@ class ItemsCollectionFactory {
 	 *
 	**/
 	public function loadGalleries($items) {
-		$query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id IN(:item_ids)";
+		$query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id IN(:item_ids) ORDER BY sort ASC";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);

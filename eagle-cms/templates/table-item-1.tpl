@@ -1,12 +1,12 @@
-            <section class="items-table__row{% if item.visible %}{% else %} items-table__row--hidden{% endif %}" data-item-id="{{ item.id }}" data-item-type="{{ item.type }}">
-                <div class="items-table__cell items-table__order-number">{{ i }}</div>
-                <div class="items-table__cell items-table__title">
+            <section class="table__row{% if item.visible %}{% else %} table__row--hidden{% endif %}" data-item-id="{{ item.id }}" data-item-type="{{ item.type }}">
+                <div class="table__cell items-table__order-number">{{ i }}</div>
+                <div class="table__cell items-table__title">
                     <i class="fa fa-toggle-on item-visibility item-visibility--visible" aria-hidden="true"></i>
                     <i class="fa fa-toggle-off item-visibility item-visibility--hidden" aria-hidden="true"></i>
 
-                    <a class="items-table__item-title" href="index.php?module=item&amp;operation=showcase&amp;type={{ item.type }}&amp;parent_id={{ item.id }}" title="Wyświetl">{{ item.header_1 }}</a>
+                    <a class="items-table__item-title" href="index.php?module=item&amp;operation=showcase&amp;type={{ item.type }}&amp;id={{ item.id }}" title="Wyświetl">{{ item.header_1 }}</a>
                 </div>
-                <div class="items-table__cell items-table__operations">
+                <div class="table__cell items-table__operations">
                     <span class="request-link" data-module="item" data-operation="prepare-edit" data-id="{{ item.id }}" data-parent-id="{{ item.parentId }}" data-type="{{ item.type }}" href="index.php?module=item&amp;operation=edit&amp;type={{ item.type }}&amp;id={{ item.id }}&amp;parent_id={{ item.parentId }}" title="Edytuj"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edytuj</span>
                     <span class="request-link" data-module="item" data-operation="prepare-delete" data-id="{{ item.id }}" data-parent-id="{{ item.parentId }}" data-type="{{ item.type }}" href="index.php?module=item&amp;operation=delete&amp;type={{ item.type }}&amp;id={{ item.id }}&amp;parent_id={{ item.parentId }}" title="Usuń"><i class="fa fa-times" aria-hidden="true"></i> Usuń</span>
                     <span class="request-link" data-module="item" data-operation="item-up" data-id="{{ item.id }}" data-parent-id="{{ item.parentId }}" data-type="{{ item.type }}" title="W górę"><i class="fa fa-caret-square-o-up" aria-hidden="true"></i></span>

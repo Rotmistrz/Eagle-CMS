@@ -16,7 +16,7 @@ class TemplateManager {
         $content = $str;
 
         foreach($this->templates as $pattern => $value) {
-            $content = str_replace("{{ " . $pattern . " }}", $value, $content);
+            $content = str_replace("{@ " . $pattern . " @}", $value, $content);
         }
 
         return $content;
