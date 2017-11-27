@@ -44,10 +44,10 @@ if($U = User::getInstance()) {
 
 		$id = (isset($_GET['id']) && !empty($_GET['id'])) ? $_GET['id'] : null;
 		$type = (isset($_GET['type']) && !empty($_GET['type'])) ? $_GET['type'] : null;
-		$parentId = (isset($_GET['parent_id']) && !empty($_GET['parent_id'])) ? $_GET['parent_id'] : 0;
+		$parent_id = (isset($_GET['parent_id']) && !empty($_GET['parent_id'])) ? $_GET['parent_id'] : 0;
 
-		if($type == null && $parentId != 0) {
-			$current = Item::load($parentId);
+		if($type == null && $parent_id != 0) {
+			$current = Item::load($parent_id);
 			$type = $current->type;
 		}
 
@@ -95,7 +95,7 @@ if($U = User::getInstance()) {
 
 				$FormManager = new FormManager($twig);
 				$FormManager->id = "select-new-element-form";
-				$FormManager->class = "form";
+				$FormManager->class = "form request-form";
 				$FormManager->title = "Dodaj nowy element";
 				$FormManager->action = "index.php";
 				$FormManager->method = "get";
@@ -107,9 +107,9 @@ if($U = User::getInstance()) {
 					$select->addOption(3, "typ 3");
 				}
 
-				$FormManager->addInputHidden('parent_id', $parentId);
+				$FormManager->addInputHidden('parent_id', $id);
 				$FormManager->addInputHidden('module', 'item');
-				$FormManager->addInputHidden('operation', 'add');
+				$FormManager->addInputHidden('operation', 'prepare-add');
 				$FormManager->addSelect('Wybierz typ', $select);
 				$FormManager->addButton('Zatwierdź');
 				$content .= $FormManager->get();

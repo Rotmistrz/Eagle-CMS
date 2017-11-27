@@ -7,29 +7,37 @@ $debug = false;
 if($debug) {
     $item_id = (isset($_GET['item_id'])) ? $_GET['item_id'] : 0;
     $id = (isset($_GET['id'])) ? $_GET['id'] : $_POST['id'];
-    $parent_id = (isset($_GET['parent_id'])) ? $_GET['parent_id'] : $_POST['parent_id'];
+    $parent_id = (isset($_GET['parentId'])) ? $_GET['parentId'] : $_POST['parent_id'];
     $module = (isset($_GET['module'])) ? $_GET['module'] : $_POST['module'];
     $operation = (isset($_GET['operation'])) ? $_GET['operation'] : $_POST['operation'];
     $type = (isset($_GET['type'])) ? $_GET['type'] : $_POST['type'];
 } else {
-    $item_id = (isset($_POST['itemId'])) ? $_POST['itemId'] : 0;
-    $id = (isset($_POST['id'])) ? $_POST['id'] : 0;
-    $parent_id = (isset($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
     $module = $_POST['module'];
     $operation = $_POST['operation'];
+
+    $id = (isset($_POST['id'])) ? $_POST['id'] : 0;
+    $parent_id = (isset($_POST['parent_id'])) ? $_POST['parent_id'] : 0;
     $type = (isset($_POST['type'])) ? $_POST['type'] : 0;
+
+    $item_id = (isset($_POST['item_id'])) ? $_POST['item_id'] : 0;
 }
 
-$json = array();
+$json = [];
 $json['module'] = $module;
 $json['operation'] = $operation;
-$json['itemId'] = $item_id;
 $json['error'] = false;
 
-$json['item'] = array();
-$json['item']['id'] = $id;
-$json['item']['type'] = $type;
-$json['item']['parent_id'] = $parent_id;
+if($module == "item") {
+    $json['item'] = [];
+    $json['item']['id'] = $id;
+    $json['item']['type'] = $type;
+    $json['item']['parent_id'] = $parent_id;
+} else if($module == "gallery-picture") {
+    $json['picture'] = [];
+    $json['picture']['id'] = $id;
+    $json['picture']['item_id'] = $item_id;
+}
+
 
 try {
     $loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);
@@ -263,15 +271,17 @@ try {
             }
 
             echo json_encode($json);
-        } else if($operation == 'prepare-add-gallery-picture' || $operation == 'prepare-edit-gallery-picture') {
+        }
+    } else if($module == 'gallery-picture') {
+        if($operation == 'prepare-add' || $operation == 'prepare-edit') {
             header('Content-type: application/json');
 
-            if($operation == 'prepare-edit-gallery-picture') {
+            if($operation == 'prepare-edit') {
                 $picture = GalleryPicture::load($id);
-                $nextOperation = "edit-gallery-picture";
+                $nextOperation = "edit";
             } else {
                 $picture = new GalleryPicture(null, $item_id, FileType::JPG, 0);
-                $nextOperation = "add-gallery-picture";
+                $nextOperation = "add";
             }
 
             $FormManager = new FormManager($twig);
@@ -282,7 +292,7 @@ try {
             $FormManager->addInputHidden('id', $picture->getId());
             $FormManager->addInputHidden('module', $module);
             $FormManager->addInputHidden('operation', $nextOperation);
-            $FormManager->addInputHidden('itemId', $picture->itemId);
+            $FormManager->addInputHidden('item_id', $picture->itemId);
 
             $FormManager->addInput(GalleryPicture::getDatabaseFieldname(GalleryPicture::TITLE, Language::PL), 'Tytuł', $picture->getContent(Language::PL, GalleryPicture::TITLE));
             $FormManager->addTextarea(GalleryPicture::getDatabaseFieldname(GalleryPicture::DESCRIPTION, Language::PL), 'Opis', $picture->getContent(Language::PL, GalleryPicture::DESCRIPTION));
@@ -294,14 +304,14 @@ try {
             $json['html'] = $FormManager->get();
 
             echo json_encode($json);
-        } else if($operation == 'edit-gallery-picture' || $operation == 'add-gallery-picture') {
+        } else if($operation == 'edit' || $operation == 'add') {
             header('Content-type: application/json');
 
             if(!isset($_FILES['gallery-picture'])) {
                 throw new Exception("Proszę załączyć obrazek.");
             }
 
-            if($operation == 'edit-gallery-picture') {
+            if($operation == 'edit') {
                 $picture = GalleryPicture::load($id);
 
                 $correctMessage = "Poprawnie edytowano zdjęcie.";
@@ -322,7 +332,7 @@ try {
                     if(isset($_POST[Item::getDatabaseFieldname($field, $lang)])) {
                         $value = $_POST[Item::getDatabaseFieldname($field, $lang)];
 
-                        $json['item'][Item::getDatabaseFieldname($field, $lang)] = $value;
+                        $json['picture'][Item::getDatabaseFieldname($field, $lang)] = $value;
                     } else {
                         $value = null;
                     }
@@ -335,7 +345,7 @@ try {
                if($picture->save()) {
                     $json['message'] = $correctMessage;
 
-                    $json['item']['row'] = $twig->render('manage-gallery-item.tpl', ['time' => time(), 'picture' => $picture->getContentsByLanguage(Language::PL)]);
+                    $json['picture']['row'] = $twig->render('manage-gallery-item.tpl', ['time' => time(), 'picture' => $picture->getContentsByLanguage(Language::PL)]);
                 } else {
                     $json['error'] = true;
                     $json['message'] = $errorMessage;
@@ -347,7 +357,7 @@ try {
             
 
             echo json_encode($json);
-        } else if($operation == 'prepare-delete-gallery-picture') {
+        } else if($operation == 'prepare-delete') {
             header('Content-type: application/json');
                 $ChoiceForm = new ChoiceForm($twig);
                 $ChoiceForm->id = "delete-form";
@@ -357,7 +367,7 @@ try {
 
                 $json['html'] = $ChoiceForm->get();
             echo json_encode($json);
-        } else if($operation == 'delete-gallery-picture') {
+        } else if($operation == 'delete') {
             header('Content-type: application/json');
 
             $picture = GalleryPicture::load($id);
@@ -385,7 +395,7 @@ try {
                 $earlier->order = $tmp;
 
                 if($current->save() && $earlier->save()) {
-                    $json['item']['earlier'] = $earlier->getId();
+                    $json['picture']['earlier'] = $earlier->getId();
                     $json['message'] = "Poprawnie zmieniono kolejność.";
                 } else {
                     $json['error'] = true;
@@ -409,7 +419,7 @@ try {
                 $later->order = $tmp;
 
                 if($current->save() && $later->save()) {
-                    $json['item']['later'] = $later->getId();
+                    $json['picture']['later'] = $later->getId();
                     $json['message'] = "Poprawnie zmieniono kolejność.";
                 } else {
                     $json['error'] = true;

@@ -34,6 +34,7 @@ try {
 $templateManager->addTemplate('title', 'EagleCMS');
 $templateManager->addTemplate('header', $header);
 $templateManager->addTemplate('body', $body);
+$templateManager->addTemplate('content', $content);
 
 $result = $templateManager->transformFile('body.tpl');
 

@@ -33,10 +33,14 @@ abstract class Component implements Languagable, Orderable {
 		} else {
 			throw new Exception("Item::setOrder() must receive integer value.");
 		}
+
+		return $this;
 	}
 
 	public function setContent($lang, $field, $value) {
 		$this->contents->set($lang, $field, $value);
+
+		return $this;
 	}
 
 	public function getContent($lang, $field) {

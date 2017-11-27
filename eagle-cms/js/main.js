@@ -6,12 +6,16 @@ $(document).ready(function() {
             return mainObject;
         }
 
+        for (var property in object) {
+            if (object.hasOwnProperty(property)) {
+                result[property] = object[property];
+            }
+        }
+
         for (var property in mainObject) {
             if (mainObject.hasOwnProperty(property)) {
                 result[property] = (object.hasOwnProperty(property)) ? object[property] : mainObject[property];
             }
-
-            //console.log("object." + property + ": " + result[property]);
         }
 
         return result;
@@ -166,23 +170,34 @@ $(document).ready(function() {
         this.errorMessage = new Information($('#error-message'));
         this.overlayerErrorMessage = new Information($('#overlayer-error-message'));
 
-        this.sendRequest = function(request, item) {
+        this.modules = {
+            item: "item",
+            galleryPicture: "gallery-picture",
+            data: "data",
+            page: "page"
+        };
+
+        this.sendRequest = function(generalData, moduleData) {
             var that = this;
 
             that.correctMessage.hide();
             that.errorMessage.hide();
             that.overlayerErrorMessage.container.hide();
 
+            var data = mergeObjects(generalData, moduleData);
+
+            console.log(data);
+
             $.ajax({
                 type: "POST",
                 url: "/eagle-cms/ajax.php",
                 dataType: "json",
-                data: { module: request.module, operation: request.operation, itemId: request.itemId, id: item.id, type: item.type, parent_id: item.parentId },
+                data: data,
                 success: function(result) {
                     console.log(result);
 
                     if(!result.error) {
-                        if(result.module == 'item') {
+                        if(result.module == that.modules.item) {
                             switch(result.operation) {
                                 case 'prepare-edit':
                                     that.layer.setContent(result.html);
@@ -225,20 +240,20 @@ $(document).ready(function() {
 
                                         that.simpleLayer.hide();
 
-                                        that.sendRequest({ module: 'item', operation: 'delete' }, { id: item.id, parent_id: item.parent_id, type: item.type });
+                                        that.sendRequest({ module: that.modules.item, operation: 'delete' }, moduleData);
                                     });
                                 break;
 
                                 case 'hide':
                                     var table = $('[data-table-type="' + result.item.type + '"]');
                                     var row = table.find('[data-item-id="' + result.item.id + '"]');
-                                    row.addClass('items-table__row--hidden');
+                                    row.addClass('table__row--hidden');
                                 break;
 
                                 case 'show':
                                     var table = $('[data-table-type="' + result.item.type + '"]');
                                     var row = table.find('[data-item-id="' + result.item.id + '"]');
-                                    row.removeClass('items-table__row--hidden');
+                                    row.removeClass('table__row--hidden');
                                 break;
 
                                 case 'item-up':
@@ -316,25 +331,27 @@ $(document).ready(function() {
                                         that.correctMessage.show();
                                     }
                                 break;
-
-                                case 'prepare-add-gallery-picture':
-                                case 'prepare-edit-gallery-picture':
+                            }
+                        } else if(result.module == that.modules.galleryPicture) {
+                            switch(result.operation) {
+                                case 'prepare-add':
+                                case 'prepare-edit':
                                     that.layer.setContent(result.html);
                                     that.layer.show();
                                     that.refreshDependencies();
                                 break;
 
-                                case 'delete-gallery-picture':
-                                    var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
-                                    var row = container.find('[data-picture-id="' + result.item.id + '"]');
+                                case 'delete':
+                                    var container = $('[data-item-id="' + result.picture.item_id + '"] .pictures-list__inner .container');
+                                    var row = container.find('[data-gallery-picture-id="' + result.picture.id + '"]');
 
-                                    console.log(container.find('[data-picture-id="' + result.item.id + '"]').length);
-                                    console.log(result.item.id);
+                                    console.log(container.find('[data-gallery-picture-id="' + result.picture.id + '"]').length);
+                                    console.log(result.picture.id);
                                     
                                     row.velocity("fadeOut");
                                 break;
 
-                                case 'prepare-delete-gallery-picture':
+                                case 'prepare-delete':
                                     that.simpleLayer.setContent(result.html);
                                     that.simpleLayer.show();
                                     that.refreshDependencies();
@@ -349,16 +366,16 @@ $(document).ready(function() {
 
                                         that.simpleLayer.hide();
 
-                                        that.sendRequest({ module: 'item', operation: 'delete-gallery-picture', itemId: result.itemId }, { id: item.id, parent_id: item.parent_id, type: item.type });
+                                        that.sendRequest({ module: that.modules.galleryPicture, operation: 'delete' }, moduleData);
                                     });
                                 break;
 
                                 case 'gallery-picture-up':
-                                    if(result.item.earlier !== undefined) {
-                                        var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
-                                        var picture = container.find('[data-picture-id="' + result.item.id + '"]');
+                                    if(result.picture.earlier !== undefined) {
+                                        var container = $('[data-item-id="' + result.picture.item_id + '"] .pictures-list__inner .container');
+                                        var picture = container.find('[data-gallery-picture-id="' + result.picture.id + '"]');
 
-                                        var earlierPicture = container.find('[data-picture-id="' + result.item.earlier + '"]');
+                                        var earlierPicture = container.find('[data-gallery-picture-id="' + result.picture.earlier + '"]');
 
                                         var pictureCopy = picture.clone();
                                         var earlierPictureCopy = earlierPicture.clone();
@@ -386,11 +403,11 @@ $(document).ready(function() {
                                 break;
 
                                 case 'gallery-picture-down':
-                                    if(result.item.later !== undefined) {
-                                        var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
-                                        var picture = container.find('[data-picture-id="' + result.item.id + '"]');
+                                    if(result.picture.later !== undefined) {
+                                        var container = $('[data-item-id="' + result.picture.item_id + '"] .pictures-list__inner .container');
+                                        var picture = container.find('[data-gallery-picture-id="' + result.picture.id + '"]');
 
-                                        var laterPicture = container.find('[data-picture-id="' + result.item.later + '"]');
+                                        var laterPicture = container.find('[data-gallery-picture-id="' + result.picture.later + '"]');
 
                                         var pictureCopy = picture.clone();
                                         var laterPictureCopy = laterPicture.clone();
@@ -458,7 +475,7 @@ $(document).ready(function() {
                     console.log(result);
 
                     if(!result.error) {
-                        if(result.module == 'item') {
+                        if(result.module == that.modules.item) {
                             switch(result.operation) {
                                 case 'prepare-add':
                                     that.layer.setContent(result.html);
@@ -475,7 +492,7 @@ $(document).ready(function() {
                                         var row = $(result.item.row);
                                         row.hide();
 
-                                        var existingRows = table.find('.items-table__row');
+                                        var existingRows = table.find('.table__row');
                                         var followingNumber = existingRows.length + 1;
 
                                         row.find('.items-table__order-number').html(followingNumber);
@@ -512,11 +529,13 @@ $(document).ready(function() {
                                     
                                     that.layer.hide(callback);
                                 break;
-
-                                case 'add-gallery-picture':
+                            }
+                        } else if(result.module == that.modules.galleryPicture) {
+                            switch(result.operation) {
+                                case 'add':
                                     var callback = function() {
-                                        var container = $('[data-item-id="' + result.itemId + '"] .pictures-list__inner .container');
-                                        var row = $(result.item.row);
+                                        var container = $('[data-item-id="' + result.picture.item_id + '"] .pictures-list__inner .container');
+                                        var row = $(result.picture.row);
                                         row.hide();
 
                                         container.append(row);
@@ -531,11 +550,11 @@ $(document).ready(function() {
                                     that.layer.hide(callback);
                                 break;
 
-                                case 'edit-gallery-picture':
+                                case 'edit':
                                     var callback = function() {
-                                        var current = $('[data-picture-id="' + result.item.id + '"]');
+                                        var current = $('[data-gallery-picture-id="' + result.picture.id + '"]');
                                         
-                                        var row = $(result.item.row);
+                                        var row = $(result.picture.row);
                                         row.css({ opacity: 0 });
 
                                         current.velocity({ opacity: 0 }, {
@@ -573,7 +592,7 @@ $(document).ready(function() {
             return this;
         }
 
-        this.loadLayer = function(request, item) {
+        /**this.loadLayer = function(request, item) {
             var that = this;
 
             $.ajax({
@@ -599,7 +618,7 @@ $(document).ready(function() {
             });
 
             return this;
-        }
+        }**/
 
         this.refreshDependencies = function() {
             var that = this;
@@ -613,12 +632,28 @@ $(document).ready(function() {
 
                 var module = $(this).attr('data-module');
                 var operation = $(this).attr('data-operation');
+
                 var id = $(this).attr('data-id');
                 var parent_id = $(this).attr('data-parent-id');
                 var type = $(this).attr('data-type');
                 var item_id = $(this).attr('data-item-id');
 
-                that.sendRequest({ module: module, operation: operation, itemId: item_id }, { id: id, parentId: parent_id, type: type });
+                var moduleData = {};
+
+                if(module == that.modules.item) {
+                    moduleData = {
+                        id: id,
+                        parent_id: parent_id,
+                        type: type
+                    }
+                } else if(module == that.modules.galleryPicture) {
+                    moduleData = {
+                        id: id,
+                        item_id: item_id
+                    }
+                }
+
+                that.sendRequest({ module: module, operation: operation }, moduleData);
             });
 
             this.requestForms.unbind('submit').submit(function(e) {

@@ -2,7 +2,7 @@
     
         <section class="pictures-list" data-item-id="{{ itemId }}">
             <section class="pictures-list__header">
-                <button class="request-link" data-id="0" data-parent-id="0" data-type="0" data-module="item" data-operation="prepare-add-gallery-picture" data-item-id="{{ itemId }}">Dodaj zdjęcie</button>
+                <button class="request-link" data-id="0" data-module="gallery-picture" data-operation="prepare-add" data-item-id="{{ itemId }}">Dodaj zdjęcie</button>
 
                 <h2 class="pictures-list__title">Galeria</h2>
             </section>

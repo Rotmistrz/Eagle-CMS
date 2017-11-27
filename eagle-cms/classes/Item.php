@@ -129,13 +129,14 @@ class Item extends Component implements Hideable {
 	}
 
 	public function getEarlierOne() {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id ORDER BY sort DESC LIMIT 1";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort <= :sort AND id != :id AND parent_id = :parent_id ORDER BY sort DESC LIMIT 1";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
 		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+		$loading->bindValue(':parent_id', $this->parentId, PDO::PARAM_INT);
 		$loading->execute();
 
 		if($row = $loading->fetch()) {
@@ -146,13 +147,14 @@ class Item extends Component implements Hideable {
 	}
 
 	public function getLaterOne() {
-		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort >= :sort AND id != :id ORDER BY sort ASC LIMIT 1";
+		$query = "SELECT * FROM " . ITEMS_TABLE . " WHERE type = :type AND sort >= :sort AND id != :id AND parent_id = :parent_id ORDER BY sort ASC LIMIT 1";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
 		$loading->bindValue(':id', $this->id, PDO::PARAM_INT);
 		$loading->bindValue(':type', $this->type, PDO::PARAM_INT);
 		$loading->bindValue(':sort', $this->order, PDO::PARAM_INT);
+		$loading->bindValue(':parent_id', $this->parentId, PDO::PARAM_INT);
 		$loading->execute();
 
 		if($row = $loading->fetch()) {
