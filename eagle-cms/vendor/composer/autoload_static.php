@@ -85,6 +85,8 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'NoSuchItem' => __DIR__ . '/../..' . '/classes/NoSuchItem.php',
         'Order' => __DIR__ . '/../..' . '/classes/Order.php',
         'Orderable' => __DIR__ . '/../..' . '/interfaces/Orderable.php',
+        'Page' => __DIR__ . '/../..' . '/classes/Page.php',
+        'PageSlugExistsException' => __DIR__ . '/../..' . '/classes/Exceptions/PageSlugExistsException.php',
         'Select' => __DIR__ . '/../..' . '/classes/Forms/Select.php',
         'TemplateManager' => __DIR__ . '/../..' . '/classes/TemplateManager.php',
         'TextEditor' => __DIR__ . '/../..' . '/classes/Forms/TextEditor.php',
@@ -92,7 +94,6 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'TwigTemplateManager' => __DIR__ . '/../..' . '/classes/TwigTemplateManager.php',
         'User' => __DIR__ . '/../..' . '/classes/User.php',
         'UserRegisterException' => __DIR__ . '/../..' . '/classes/UserRegisterException.php',
-        'Viewable' => __DIR__ . '/../..' . '/interfaces/Viewable.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

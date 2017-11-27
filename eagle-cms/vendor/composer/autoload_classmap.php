@@ -56,6 +56,8 @@ return array(
     'NoSuchItem' => $baseDir . '/classes/NoSuchItem.php',
     'Order' => $baseDir . '/classes/Order.php',
     'Orderable' => $baseDir . '/interfaces/Orderable.php',
+    'Page' => $baseDir . '/classes/Page.php',
+    'PageSlugExistsException' => $baseDir . '/classes/Exceptions/PageSlugExistsException.php',
     'Select' => $baseDir . '/classes/Forms/Select.php',
     'TemplateManager' => $baseDir . '/classes/TemplateManager.php',
     'TextEditor' => $baseDir . '/classes/Forms/TextEditor.php',
@@ -63,5 +65,4 @@ return array(
     'TwigTemplateManager' => $baseDir . '/classes/TwigTemplateManager.php',
     'User' => $baseDir . '/classes/User.php',
     'UserRegisterException' => $baseDir . '/classes/UserRegisterException.php',
-    'Viewable' => $baseDir . '/interfaces/Viewable.php',
 );
