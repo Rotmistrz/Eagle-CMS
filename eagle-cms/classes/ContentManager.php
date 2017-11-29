@@ -127,6 +127,12 @@ class ContentManager {
 		return $this->twig->render("manage-gallery.tpl", array('itemId' => $item_id, 'time' => time(), 'picturesCollection' => $gallery->getContentsByLanguage($this->lang)));
 	}
 
+	public function getAllPages() {
+		$pages = PagesCollection::load();
+
+		return $this->twig->render($this->template, array('pagesCollection' => $pages->getContentsByLanguage($this->lang)));
+	}
+
 	public static function getTitle($title) {
 		return "<h3>" . $title . "</h3>";
 	}

@@ -87,6 +87,7 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'Orderable' => __DIR__ . '/../..' . '/interfaces/Orderable.php',
         'Page' => __DIR__ . '/../..' . '/classes/Page.php',
         'PageSlugExistsException' => __DIR__ . '/../..' . '/classes/Exceptions/PageSlugExistsException.php',
+        'PagesCollection' => __DIR__ . '/../..' . '/classes/PagesCollection.php',
         'Select' => __DIR__ . '/../..' . '/classes/Forms/Select.php',
         'TemplateManager' => __DIR__ . '/../..' . '/classes/TemplateManager.php',
         'TextEditor' => __DIR__ . '/../..' . '/classes/Forms/TextEditor.php',

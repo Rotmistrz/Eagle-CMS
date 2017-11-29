@@ -9,6 +9,8 @@ class CategoriesCollection implements LanguagableCollection {
 
 	public function add(Category $category) {
 		$this->categories[] = $category;
+
+		return $this;
 	}
 
 	public function getContentsByLanguage($lang) {

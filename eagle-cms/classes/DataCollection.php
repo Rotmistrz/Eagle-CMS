@@ -9,6 +9,8 @@ class DataCollection implements LanguagableCollection {
 
     public function add(Data $data) {
         $this->data[] = $data;
+
+        return $this;
     }
 
     public function getItems() {

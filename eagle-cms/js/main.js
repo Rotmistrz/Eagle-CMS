@@ -434,6 +434,15 @@ $(document).ready(function() {
                                     }
                                 break;
                             }
+                        } else if(result.module == that.modules.page) {
+                            switch(result.operation) {
+                                case 'prepare-add':
+                                case 'prepare-edit':
+                                    that.layer.setContent(result.html);
+                                    that.layer.show();
+                                    that.refreshDependencies();
+                                break;
+                            }
                         }
                     } else {
                         that.errorMessage.setContent(result.message);
@@ -466,7 +475,7 @@ $(document).ready(function() {
             $.ajax({
                 type: "POST",
                 url: "/eagle-cms/ajax.php",
-                dataType: "json",
+                dataType: "html",
                 data: formdata,
                 cache: false,
                 processData: false, // Don't process the files
@@ -481,6 +490,8 @@ $(document).ready(function() {
                                     that.layer.setContent(result.html);
                                     that.layer.show();
                                     that.refreshDependencies();
+
+                                    $('.trumbowyg').trumbowyg();
                                 break;
 
                                 case 'add':
@@ -574,6 +585,55 @@ $(document).ready(function() {
                                     that.layer.hide(callback);
                                 break;
                             }
+                        } else if(result.module == that.modules.page) {
+                            switch(result.operation) {
+                                case 'add':
+                                    var callback = function() {
+                                        that.correctMessage.setContent(result.message);
+                                        that.correctMessage.show();
+
+                                        var table = $('.pages-table');
+                                        var row = $(result.page.row);
+                                        row.hide();
+
+                                        var existingRows = table.find('.table__row');
+                                        var followingNumber = existingRows.length + 1;
+
+                                        row.find('.pages-table__order-number').html(followingNumber);
+
+                                        table.append(row);
+                                        row.velocity("slideDown");
+
+                                        that.refreshDependencies();
+                                    }
+                                    
+                                    that.layer.hide(callback);
+                                break;
+
+                                case 'edit':
+                                    var callback = function() {
+                                        var current = $('[data-page-id="' + result.page.id + '"]');
+                                        
+                                        var row = $(result.picture.row);
+                                        row.css({ opacity: 0 });
+
+                                        current.velocity({ opacity: 0 }, {
+                                            duration: 200,
+                                            complete: function() {
+                                                current.replaceWith(row);
+                                                row.velocity({ opacity: 1 });
+
+                                                that.refreshDependencies();
+                                            }
+                                        });
+
+                                        that.correctMessage.setContent(result.message);
+                                        that.correctMessage.show();
+                                    }
+
+                                    that.layer.hide(callback);
+                                break;
+                            }
                         }
                     } else {
                         that.overlayerErrorMessage.setContent(result.message);
@@ -583,6 +643,9 @@ $(document).ready(function() {
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR + " " + textStatus + " " + errorThrown);
+
+                    that.overlayerErrorMessage.setContent(jqXHR + " " + textStatus + " " + errorThrown);
+                    that.overlayerErrorMessage.show();
                 },
                 complete: function() {
                     that.spinnerLayer.hide();

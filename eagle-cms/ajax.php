@@ -36,8 +36,13 @@ if($module == "item") {
     $json['picture'] = [];
     $json['picture']['id'] = $id;
     $json['picture']['item_id'] = $item_id;
+} else if($module == "page") {
+    $json['page'] = [];
+    $json['page']['id'] = $id;
 }
 
+$errorMessage = "";
+$errorOccured = false;
 
 try {
     $loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);
@@ -90,15 +95,15 @@ try {
                 $FileUploader->addFile('file_1', '1/' . $item->getId(), array(FileType::JPG), 1000000);
             }
 
-            $errorOccured = 0;
-            $errorMessage = '';
+            $errorOccured = false;
 
             if(!$item->save()) {
+                $errorOccured = true;
                 $errorMessage .= $baseErrorMessage;
             }
 
             if(!$FileUploader->upload()) {
-                $errorOccured = 1;
+                $errorOccured = true;
                 $errors = $FileUploader->getErrors();
 
                 $quantity = count($errors);
@@ -354,7 +359,6 @@ try {
                 $json['error'] = true;
                 $json['message'] = $E->getMessage();
             }
-            
 
             echo json_encode($json);
         } else if($operation == 'prepare-delete') {
@@ -426,6 +430,106 @@ try {
                     $json['message'] = "Wystąpiły problemy podczas zmiany kolejności elementów.";
                 }
             }
+
+            echo json_encode($json);
+        }
+    } else if($module == 'page') {
+        if($operation == 'edit' || $operation == 'add') {
+            header('Content-type: application/json');
+
+            if(isset($_POST['slug']) && !empty($_POST['slug'])) {
+                $slug = $_POST['slug'];
+
+                if($operation == 'edit') {
+                    $page = Page::load($id);
+                    $correctMessage = "Poprawnie edytowano stronę.";
+                    $baseErrorMessage = "Wystąpiły problemy podczas edycji strony.";
+                } else {
+                    $page = Page::create($slug);
+                    $correctMessage = "Poprawnie dodano stronę.";
+                    $baseErrorMessage = "Wystąpiły problemy podczas dodawania strony.";
+                }
+
+                if(!Page::slugExists($slug, $page->getId())) {
+                    $page->setSlug($slug);
+
+                    $fields = Page::getFields();
+                    $languages = Page::getLanguages();
+                    $value;
+
+                    foreach($languages as $lang) {
+                        foreach($fields as $field) {
+                            if(isset($_POST[Page::getDatabaseFieldname($field, $lang)])) {
+                                $value = $_POST[Page::getDatabaseFieldname($field, $lang)];
+
+                                $json['page'][Page::getDatabaseFieldname($field, $lang)] = $value;
+                            } else {
+                                $value = null;
+                            }
+
+                            $page->setContent($lang, $field, $value);
+                        }
+                    }
+
+                    try {
+                        if(!$page->save()) {
+                            $errorOccured = true;
+                            $errorMessage .= $baseErrorMessage;
+                        }
+                    } catch(PageSlugExistsException $e) {
+                        $errorOccured = true;
+                        $errorMessage .= $e->getMessage();
+                    }
+                } else {
+                    $errorOccured = true;
+                    $errorMessage .= "Taki slug już istnieje.";
+                }
+
+                if(!$errorOccured) {
+                    $json['message'] = $correctMessage;
+
+                    $json['page']['row'] = $twig->render('table-page-1.tpl', ['page' => $page->getContentsByLanguage(Language::PL)]);
+                } else {
+                    $json['error'] = true;
+                    $json['message'] = $errorMessage . $slug;
+                }
+            } else {
+                $json['error'] = true;
+                $json['message'] = "Slug podstrony nie może być pusty.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'prepare-edit' || $operation == 'prepare-add') {
+            header('Content-type: application/json');
+
+            if($operation == 'prepare-edit') {
+                $page = Page::load($id);
+                $operation = "edit";
+                $hop = "hop";
+            } else {
+                $page = new Page(null, null);
+                $operation = "add";
+                $hop = "siup";
+            }
+
+            var_dump($page);
+
+            $FormManager = new FormManager($twig);
+            $FormManager->id = "page-edit";
+            $FormManager->action = $hop;
+            $FormManager->method = "post";
+            $FormManager->class = "form request-form";
+            $FormManager->addInputHidden('id', $id);
+            $FormManager->addInputHidden('module', $module);
+            $FormManager->addInputHidden('operation', $operation);
+
+            $FormManager->addInput('slug', 'Slug', $page->getSlug());
+            $FormManager->addInput(Page::getDatabaseFieldname(Page::TITLE, Language::PL), 'Tytuł', $page->getContent(Language::PL, Page::TITLE));
+            $FormManager->addTextarea(Page::getDatabaseFieldname(Page::DESCRIPTION, Language::PL), 'Opis', $page->getContent(Language::PL, Page::DESCRIPTION));
+
+            $FormManager->addButton('Zatwierdź');
+
+            $json['html'] = $FormManager->get();
 
             echo json_encode($json);
         }

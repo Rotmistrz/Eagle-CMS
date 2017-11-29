@@ -9,6 +9,8 @@ class ItemsCollection implements LanguagableCollection {
 
 	public function add(Item $item) {
 		$this->items[] = $item;
+
+		return $this;
 	}
 
 	public function size() {

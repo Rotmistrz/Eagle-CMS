@@ -10,11 +10,70 @@ class Page implements Languagable {
     const DESCRIPTION = 'description';
 
     private static $languages = [Language::PL, Language::EN];
-    private static $fields = [TITLE, DESCRIPTION];
+    private static $fields = [self::TITLE, self::DESCRIPTION];
 
     public function __construct($id, $slug) {
         $this->id = $id;
         $this->slug = $slug;
+
+        $this->contents = new Contents();
+    }
+
+    public function getId() {
+        return $this->id;
+    }
+
+    public function setSlug($slug) {
+        $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function getSlug() {
+        return $this->slug;
+    }
+
+    public function save() {
+        $fields = self::$fields;
+        $languages = self::$languages;
+        $languages_length = count($languages);
+        $fields_length = count($fields);
+        $current;
+
+        if(self::slugExists($this->slug, $this->id)) {
+            throw new PageSlugExistsException();
+        }
+        
+        $pdo = DataBase::getInstance();
+
+        $query = "UPDATE " . PAGES_TABLE . " SET slug = :slug";
+
+        for($i = 0; $i < $languages_length; $i++) {
+            for($j = 0; $j < $fields_length; $j++) {
+                $current = self::getDatabaseFieldname($fields[$j], $languages[$i]);
+                $query .= ", " . $current . " = :" . $current;
+            }
+        }
+
+        $query .= " WHERE id = :id";
+
+        $updating = $pdo->prepare($query);
+        $updating->bindValue(':id', $this->id, PDO::PARAM_INT);
+        $updating->bindValue(':slug', $this->slug, PDO::PARAM_STR);
+
+        for($i = 0; $i < $languages_length; $i++) {
+            for($j = 0; $j < $fields_length; $j++) {
+                $current = $fields[$j] . "_" . $languages[$i];
+
+                $updating->bindValue(':' . $current, $this->contents->get($languages[$i], $fields[$j]), PDO::PARAM_STR);
+            }
+        }
+
+        if($updating->execute()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static function load($id) {
@@ -34,15 +93,11 @@ class Page implements Languagable {
     }
 
     public static function create($slug) {
-        $pdo = DataBase::getInstance();
-
-        $checkingUniqueQuery = "SELECT * FROM " . PAGES_TABLE . " WHERE slug = :slug";
-        $checkingUnique = $pdo->prepare($checkingUniqueQuery);
-        $checkingUnique->bindValue(':slug', $slug, PDO::PARAM_STR);
-        
-        if($checkingUnique->execute()) {
-            
+        if(self::slugExists($slug)) {
+            throw new PageSlugExistsException();
         }
+
+        $pdo = DataBase::getInstance();
 
         $query = "INSERT INTO " . PAGES_TABLE . " (id, slug) VALUES(NULL, :slug)";
         $creating = $pdo->prepare($query);
@@ -52,6 +107,22 @@ class Page implements Languagable {
         $id = $pdo->lastInsertId();
 
         return new self($id, $slug);
+    }
+
+    public static function slugExists($slug, $id = 0) {
+        $pdo = DataBase::getInstance();
+
+        $checkingUniqueQuery = "SELECT * FROM " . PAGES_TABLE . " WHERE slug = :slug AND id != :id";
+        $checkingUnique = $pdo->prepare($checkingUniqueQuery);
+        $checkingUnique->bindValue(':slug', $slug, PDO::PARAM_STR);
+        $checkingUnique->bindValue(':id', $id, PDO::PARAM_INT);
+        $checkingUnique->execute();
+
+        if($checkingUnique->rowCount() > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static function createFromDatabaseRow($row) {
@@ -70,12 +141,12 @@ class Page implements Languagable {
                 $field = self::getDatabaseFieldname($fields[$j], $languages[$i]);
 
                 if(isset($row[$field])) {
-                    $item->setContent($languages[$i], $fields[$j], $row[$field]);
+                    $page->setContent($languages[$i], $fields[$j], $row[$field]);
                 }
             }
         }
 
-        return $item;
+        return $page;
     }
 
     public function setContent($lang, $field, $value) {

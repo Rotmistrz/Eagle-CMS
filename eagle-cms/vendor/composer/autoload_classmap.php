@@ -58,6 +58,7 @@ return array(
     'Orderable' => $baseDir . '/interfaces/Orderable.php',
     'Page' => $baseDir . '/classes/Page.php',
     'PageSlugExistsException' => $baseDir . '/classes/Exceptions/PageSlugExistsException.php',
+    'PagesCollection' => $baseDir . '/classes/PagesCollection.php',
     'Select' => $baseDir . '/classes/Forms/Select.php',
     'TemplateManager' => $baseDir . '/classes/TemplateManager.php',
     'TextEditor' => $baseDir . '/classes/Forms/TextEditor.php',

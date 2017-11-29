@@ -46,11 +46,6 @@ if($U = User::getInstance()) {
 		$type = (isset($_GET['type']) && !empty($_GET['type'])) ? $_GET['type'] : null;
 		$parent_id = (isset($_GET['parent_id']) && !empty($_GET['parent_id'])) ? $_GET['parent_id'] : 0;
 
-		if($type == null && $parent_id != 0) {
-			$current = Item::load($parent_id);
-			$type = $current->type;
-		}
-
 		$correctMessage = '';
 		$errorMessage = '';
 		$errorOccured = 0;
@@ -58,7 +53,12 @@ if($U = User::getInstance()) {
 		$username = $U->getLogin();
 		$TemplateManager->addTemplate('username', $username);
 
-		if($module == 'pages') {
+		if($module == 'contents') {
+			/**if($type == null && $parent_id != 0) {
+				$current = Item::load($parent_id);
+				$type = $current->type;
+			}**/
+
 			$FormManager = new FormManager($twig);
 			$FormManager->id = "select-new-element-form";
 			$FormManager->class = "form request-form";
@@ -124,7 +124,35 @@ if($U = User::getInstance()) {
 					$content .= $ContentManager->getAllItemsByParent($id, 3);
 				}
 			}
-		} 
+		} else if($module == 'pages') {
+			/**$FormManager = new FormManager($twig);
+			$FormManager->id = "select-new-element-form";
+			$FormManager->class = "form request-form";
+			$FormManager->title = "Dodaj nowy element";
+			$FormManager->action = "index.php";
+			$FormManager->method = "get";
+
+			$select = new Select();
+			$select->id = "type";
+			$select->addOption(1, "typ 1");
+			$select->addOption(2, "typ 2");
+			$select->addOption(4, "typ 4");
+
+			$FormManager->addInputHidden('id', 0);
+			$FormManager->addInputHidden('module', 'item');
+			$FormManager->addInputHidden('parent_id', 0);
+			$FormManager->addInputHidden('operation', 'prepare-add');
+			$FormManager->addSelect('Wybierz typ', $select);
+			$FormManager->addButton('Zatwierdź');
+			$content .= $FormManager->get();**/
+
+			$ContentManager->template = 'table-pages-1.tpl';
+
+			$content .= "<button class=\"request-link\" data-id=\"0\" data-module=\"page\" data-operation=\"prepare-add\">Dodaj stronę</button>";
+
+			$content .= ContentManager::getTitle("Strony");
+			$content .= $ContentManager->getAllPages();
+		}
 
 		else if($module == 'categories') {
 			$FormManager = new FormManager($twig);

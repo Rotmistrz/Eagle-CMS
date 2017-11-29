@@ -1226,6 +1226,38 @@ display: block;
     .items-table__operations span:hover {
       color: #419d34; }
 
+.pages-table__order-number {
+  text-align: right; }
+
+.pages-table .table__header-row {
+  text-align: center; }
+  .pages-table .table__header-row .pages-table__order-number {
+    text-align: center; }
+
+.pages-table__order-number {
+  width: 7%; }
+
+.pages-table__slug {
+  width: 25%; }
+
+.pages-table__title {
+  width: 45%; }
+
+.pages-table__operations {
+  width: 23%; }
+  .pages-table__operations a,
+  .pages-table__operations span {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 5px 0 0;
+    -webkit-transition: all 0.2s linear;
+    -moz-transition: all 0.2s linear;
+    -o-transition: all 0.2s linear;
+    transition: all 0.2s linear; }
+    .pages-table__operations a:hover,
+    .pages-table__operations span:hover {
+      color: #419d34; }
+
 /***** LISTS *****/
 /***** HEADER *****/
 .site-header {
