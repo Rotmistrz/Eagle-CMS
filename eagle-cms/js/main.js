@@ -614,18 +614,31 @@ $(document).ready(function() {
                                     var callback = function() {
                                         var current = $('[data-page-id="' + result.page.id + '"]');
                                         
-                                        var row = $(result.page.row);
-                                        row.css({ opacity: 0 });
+                                        current
+                                            .find('.pages-table__slug')
+                                            .velocity({ opacity: 0 }, {
+                                                duration: 200,
+                                                complete: function() {
+                                                   $(this).html(result.page['slug']);
+                                                   
+                                                   $(this).velocity({ opacity: 1 }, {
+                                                    duration: 200
+                                                   });
+                                                }
+                                            });
 
-                                        current.velocity({ opacity: 0 }, {
-                                            duration: 200,
-                                            complete: function() {
-                                                current.replaceWith(row);
-                                                row.velocity({ opacity: 1 });
-
-                                                that.refreshDependencies();
-                                            }
-                                        });
+                                        current
+                                            .find('.pages-table__title')
+                                            .velocity({ opacity: 0 }, {
+                                                duration: 200,
+                                                complete: function() {
+                                                   $(this).html(result.page['title_pl']);
+                                                   
+                                                   $(this).velocity({ opacity: 1 }, {
+                                                    duration: 200
+                                                   });
+                                                }
+                                            });
 
                                         that.correctMessage.setContent(result.message);
                                         that.correctMessage.show();
