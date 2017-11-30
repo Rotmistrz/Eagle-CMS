@@ -475,7 +475,7 @@ $(document).ready(function() {
             $.ajax({
                 type: "POST",
                 url: "/eagle-cms/ajax.php",
-                dataType: "html",
+                dataType: "json",
                 data: formdata,
                 cache: false,
                 processData: false, // Don't process the files
@@ -614,7 +614,7 @@ $(document).ready(function() {
                                     var callback = function() {
                                         var current = $('[data-page-id="' + result.page.id + '"]');
                                         
-                                        var row = $(result.picture.row);
+                                        var row = $(result.page.row);
                                         row.css({ opacity: 0 });
 
                                         current.velocity({ opacity: 0 }, {
@@ -713,6 +713,10 @@ $(document).ready(function() {
                     moduleData = {
                         id: id,
                         item_id: item_id
+                    }
+                } else if(module == that.modules.page) {
+                    moduleData = {
+                        id: id
                     }
                 }
 

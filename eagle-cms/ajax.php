@@ -512,8 +512,6 @@ try {
                 $hop = "siup";
             }
 
-            var_dump($page);
-
             $FormManager = new FormManager($twig);
             $FormManager->id = "page-edit";
             $FormManager->action = $hop;
