@@ -442,6 +442,43 @@ $(document).ready(function() {
                                     that.layer.show();
                                     that.refreshDependencies();
                                 break;
+
+                                case 'delete':
+                                    var table = $('.pages-table');
+                                    var row = table.find('[data-page-id="' + result.page.id + '"]');
+                                    
+                                    row.velocity("slideUp");
+
+                                    var nextRows = row.nextAll();
+                                    nextRows.each(function() {
+                                        var orderCell = $(this).find('.pages-table__order-number');
+
+                                        var orderNumber = parseInt(orderCell.html());
+
+                                        orderCell.html(orderNumber - 1);
+                                    });
+                                break;
+
+                                case 'prepare-delete':
+                                    that.simpleLayer.setContent(result.html);
+                                    that.simpleLayer.show();
+                                    that.refreshDependencies();
+
+                                    that.simpleLayer.layer.find('.choice-form__cancel').click(function() {
+                                        that.simpleLayer.hide();
+                                    });
+
+                                    var thisform = that.simpleLayer.layer.find('.choice-form').first();
+
+                                    that.simpleLayer.layer.find('.choice-form').submit(function(e) {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+
+                                        that.simpleLayer.hide();
+
+                                        that.sendRequest({ module: that.modules.page, operation: 'delete' }, moduleData);
+                                    });
+                                break;
                             }
                         }
                     } else {

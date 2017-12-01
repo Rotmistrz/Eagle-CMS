@@ -530,6 +530,29 @@ try {
             $json['html'] = $FormManager->get();
 
             echo json_encode($json);
+        } else if($operation == 'delete') {
+            header('Content-type: application/json');
+
+            $page = Page::load($id);
+
+            if($page->delete()) {
+                $json['message'] = "Poprawnie usunięto stronę.";
+            } else {
+                $json['error'] = true;
+                $json['message'] = "Wystąpiły problemy podczas usuwania strony.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'prepare-delete') {
+            header('Content-type: application/json');
+                $ChoiceForm = new ChoiceForm($twig);
+                $ChoiceForm->id = "delete-form";
+                $ChoiceForm->action = "/ajax.php";
+                $ChoiceForm->title = "Czy na pewno chcesz usunąć tę stronę?";
+                $ChoiceForm->back = "";
+
+                $json['html'] = $ChoiceForm->get();
+            echo json_encode($json);
         }
     }
 } catch(Exception $E) {

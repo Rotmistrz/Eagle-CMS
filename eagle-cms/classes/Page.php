@@ -76,6 +76,20 @@ class Page implements Languagable {
         }
     }
 
+    public function delete() {
+        $query = "DELETE FROM " . PAGES_TABLE . " WHERE id = :id";
+
+        $pdo = DataBase::getInstance();
+        $deleting = $pdo->prepare($query);
+        $deleting->bindValue(':id', $this->id, PDO::PARAM_INT);
+
+        if($deleting->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static function load($id) {
         $query = "SELECT * FROM " . PAGES_TABLE . " WHERE id = :id";
 
