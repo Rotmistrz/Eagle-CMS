@@ -1,17 +1,21 @@
 <?php
 
-class Data implements Languagable {
+class DataDefined implements Languagable {
     private $id;
     private $code;
-    private $values;
 
+    private $contents;
+
+    const VALUE = 'value';
+
+    protected static $fields = [self::VALUE];
     protected static $languages = [Language::PL, Language::EN];
 
     public function __construct($id, $code) {
         $this->id = $id;
         $this->code = $code;
 
-        $this->values = [];
+        $this->contents = new Contents();
     }
 
     public function getId() {
@@ -23,17 +27,17 @@ class Data implements Languagable {
     }
 
     public function setValue($lang, $value) {
-        $this->values[$lang] = $value;
+        $this->setContent($lang, self::VALUE, $value);
 
         return $this;
     }
 
     public function getValue($lang) {
-        return $this->values[$lang];
+        return $this->getContent($lang, self::VALUE);
     }
 
     public static function load($id) {
-        $query = "SELECT * FROM " . DATA_TABLE . " WHERE id = :id";
+        $query = "SELECT * FROM " . DATA_DEFINED_TABLE . " WHERE id = :id";
 
         $pdo = DataBase::getInstance();
         $loading = $pdo->prepare($query);
@@ -43,7 +47,7 @@ class Data implements Languagable {
         if($result = $loading->fetch()) {
             return self::createFromDatabaseRow($result);
         } else {
-            return new NoSuchData();
+            return new NoSuchDataDefined();
         }
     }
 
@@ -53,30 +57,44 @@ class Data implements Languagable {
 
         $data = new self($id, $code);
 
+        $fields = self::$fields;
         $languages = self::$languages;
+        
+        $fields_length = count($fields);
         $languages_length = count($languages);
 
         for($i = 0; $i < $languages_length; $i++) {
-            $field = self::getDatabaseFieldname('value', $languages[$i]);
+            for($j = 0; $j < $fields_length; $j++) {
+                $field = self::getDatabaseFieldname($fields[$j], $languages[$i]);
 
-            $value = isset($row[$field]) ? $row[$field] : null;
-
-            $data->setValue($languages[$i], $value);
+                if(isset($row[$field])) {
+                    $data->setContent($languages[$i], $fields[$j], $row[$field]);
+                }
+            }
         }
 
         return $data;
     }
 
     public function setContent($lang, $field, $value) {
+        $this->contents->set($lang, $field, $value);
 
+        return $this;
     }
-    
-    public function getContent($lang, $field) {
 
+    public function getContent($lang, $field) {
+        return $this->contents->get($lang, $field);
     }
 
     public function getContentsByLanguage($lang) {
-        return ['id' => $this->id, 'code' => $this->code, 'values' => $this->values];
+        $contents = [];
+
+        $contents['id'] = $this->id;
+        $contents['code'] = $this->code;
+
+        $contents = array_merge($contents, $this->contents->getContentsByLanguage($lang));
+
+        return $contents;
     }
 
     public static function getFields() {

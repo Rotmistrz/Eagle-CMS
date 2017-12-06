@@ -133,6 +133,12 @@ class ContentManager {
 		return $this->twig->render($this->template, array('pagesCollection' => $pages->getContentsByLanguage($this->lang)));
 	}
 
+	public function getAllDataDefined() {
+		$dataDefined = DataDefinedCollection::load();
+
+		return $this->twig->render($this->template, array('dataCollection' => $dataDefined->getContentsByLanguage($this->lang)));
+	}
+
 	public static function getTitle($title) {
 		return "<h3>" . $title . "</h3>";
 	}

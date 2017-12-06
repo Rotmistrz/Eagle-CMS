@@ -53,7 +53,7 @@ if($U = User::getInstance()) {
 		$username = $U->getLogin();
 		$TemplateManager->addTemplate('username', $username);
 
-		if($module == 'contents') {
+		if($module == Modules::ITEMS) {
 			/**if($type == null && $parent_id != 0) {
 				$current = Item::load($parent_id);
 				$type = $current->type;
@@ -89,7 +89,7 @@ if($U = User::getInstance()) {
 			$content .= $ContentManager->getAllItemsByType(2);
 		}
 
-		else if($module == 'item') {
+		else if($module == Modules::ITEM) {
 			if($operation == 'showcase') {
 				$content .= ContentManager::getTitle("Item " . $id);
 
@@ -124,7 +124,7 @@ if($U = User::getInstance()) {
 					$content .= $ContentManager->getAllItemsByParent($id, 3);
 				}
 			}
-		} else if($module == 'pages') {
+		} else if($module == Modules::PAGES) {
 			/**$FormManager = new FormManager($twig);
 			$FormManager->id = "select-new-element-form";
 			$FormManager->class = "form request-form";
@@ -148,10 +148,16 @@ if($U = User::getInstance()) {
 
 			$ContentManager->template = 'table-pages-1.tpl';
 
-			$content .= "<button class=\"request-link\" data-id=\"0\" data-module=\"page\" data-operation=\"prepare-add\">Dodaj stronę</button>";
+			$content .= "<button class=\"request-link\" data-id=\"0\" data-module=\"" . Modules::PAGE . "\" data-operation=\"prepare-add\">Dodaj stronę</button>";
 
 			$content .= ContentManager::getTitle("Strony");
 			$content .= $ContentManager->getAllPages();
+		} else if($module == Modules::DATA_DEFINED_SET) {
+			$content .= "<button class=\"request-link\" data-id=\"0\" data-module=\"" . Modules::DATA_DEFINED . "\" data-operation=\"prepare-add\">Dodaj daną</button>";
+
+			$ContentManager->template = 'table-data-defined-set-1.tpl';
+			$content .= ContentManager::getTitle("Dane zdefiniowane");
+			$content .= $ContentManager->getAllDataDefined();
 		}
 
 		else if($module == 'categories') {

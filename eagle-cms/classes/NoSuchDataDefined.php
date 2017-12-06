@@ -1,6 +1,6 @@
 <?php
 
-class NoSuchData extends Data {
+class NoSuchDataDefined extends DataDefined {
     public function __construct() {}
 }
 

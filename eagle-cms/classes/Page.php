@@ -23,14 +23,34 @@ class Page implements Languagable {
         return $this->id;
     }
 
+    public function getSlug() {
+        return $this->slug;
+    }
+
     public function setSlug($slug) {
         $this->slug = $slug;
 
         return $this;
     }
 
-    public function getSlug() {
-        return $this->slug;
+    public function getTitle($lang) {
+        return $this->getContent($lang, 'title');
+    }
+
+    public function setTitle($lang, $title) {
+        $this->setContent($lang, 'title', $title);
+
+        return $this;
+    }
+
+    public function getDescription($lang) {
+        return $this->getContent($lang, 'description');
+    }
+
+    public function setDescription($lang, $description) {
+        $this->setContent($lang, 'description', $description);
+
+        return $this;
     }
 
     public function save() {
@@ -96,6 +116,22 @@ class Page implements Languagable {
         $pdo = DataBase::getInstance();
         $loading = $pdo->prepare($query);
         $loading->bindValue(':id', $id, PDO::PARAM_INT);
+
+        if($loading->execute()) {
+            $result = $loading->fetch();
+
+            return self::createFromDatabaseRow($result);
+        } else {
+            return false;
+        }
+    }
+
+    public static function loadBySlug($slug) {
+        $query = "SELECT * FROM " . PAGES_TABLE . " WHERE slug = :slug";
+
+        $pdo = DataBase::getInstance();
+        $loading = $pdo->prepare($query);
+        $loading->bindValue(':slug', $slug, PDO::PARAM_STR);
 
         if($loading->execute()) {
             $result = $loading->fetch();

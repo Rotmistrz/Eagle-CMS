@@ -1,13 +1,13 @@
 <?php
 
-class DataCollection implements LanguagableCollection {
+class DataDefinedCollection implements LanguagableCollection {
     private $data;
 
     public function __construct() {
         $this->data = [];
     }
 
-    public function add(Data $data) {
+    public function add(DataDefined $data) {
         $this->data[] = $data;
 
         return $this;
@@ -21,7 +21,7 @@ class DataCollection implements LanguagableCollection {
         $contents = [];
 
         foreach($this->data as $data) {
-            $coontents[] = $data->getContentsByLanguage($lang);
+            $contents[] = $data->getContentsByLanguage($lang);
         }
 
         return $contents;
@@ -32,7 +32,7 @@ class DataCollection implements LanguagableCollection {
     }
 
     public static function load() {
-        $query = "SELECT * FROM " . DATA_TABLE . " ORDER BY code ASC";
+        $query = "SELECT * FROM " . DATA_DEFINED_TABLE . " ORDER BY code ASC";
 
         $pdo = DataBase::getInstance();
         $result = $pdo->query($query);
@@ -40,7 +40,7 @@ class DataCollection implements LanguagableCollection {
         $collection = new self();
 
         foreach($result as $data) {
-            $collection->add(Data::createFromDatabaseRow($data));
+            $collection->add(DataDefined::createFromDatabaseRow($data));
         }
 
         return $collection;

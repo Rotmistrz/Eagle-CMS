@@ -8,14 +8,20 @@ try {
 
 	$templateManager = new TemplateManager(TEMPLATES_DIR);
 
-	$module = (isset($_GET['module'])) ? $_GET['module'] : null;
-	$id = (isset($_GET['id'])) ? $_GET['id'] : null;
-	$type = (isset($_GET['type'])) ? $_GET['type'] : null;
+	$page = (isset($_GET['page'])) ? $_GET['page'] : null;
 	$lang = (isset($_GET['lang'])) ? $_GET['lang'] : DEFAULT_LANG;
 
 	define('LANG', $lang);
 
-	$content = '';
+	if($pageData = Page::loadBySlug($page)) {
+		$slug = $pageData->getSlug();
+		$title = $pageData->getTitle(Language::PL);
+	} else {
+		$slug = "default";
+		$title = "Eagle CMS";
+	}
+
+	$content = $slug;
 
 	$contentManager = new ContentManager($twig);
 	$contentManager->lang = LANG;
@@ -31,14 +37,14 @@ try {
 	$content .= $E->getMessage();
 }
 
-$templateManager->addTemplate('title', 'EagleCMS');
+$templateManager->addTemplate('title', $title);
 $templateManager->addTemplate('header', $header);
 $templateManager->addTemplate('body', $body);
 $templateManager->addTemplate('content', $content);
 
 $result = $templateManager->transformFile('body.tpl');
 
-$constantsCollection = DataCollection::load();
+$constantsCollection = DataDefinedCollection::load();
 
 $constants = $constantsCollection->getItems();
 
