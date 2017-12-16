@@ -174,7 +174,8 @@ $(document).ready(function() {
             item: "item",
             galleryPicture: "gallery-picture",
             data: "data",
-            page: "page"
+            page: "page",
+            dataDefined: "data-defined"
         };
 
         this.sendRequest = function(generalData, moduleData) {
@@ -448,6 +449,45 @@ $(document).ready(function() {
                                     that.sendRequest({ module: that.modules.page, operation: 'delete' }, moduleData);
                                 });
                             }
+                        } else if(result.module == that.modules.dataDefined) {
+                            if(result.operation == 'prepare-add' || result.operation == 'prepare-edit') {
+                                that.layer.setContent(result.html);
+                                that.layer.show();
+                                that.refreshDependencies();
+                            } else if(result.operation == 'delete') {
+                                var table = $('.data-defined-table');
+                                var row = table.find('[data-data-defined-id="' + result.dataDefined.id + '"]');
+                                
+                                row.velocity("slideUp");
+
+                                var nextRows = row.nextAll();
+                                nextRows.each(function() {
+                                    var orderCell = $(this).find('.data-defined-table__order-number');
+
+                                    var orderNumber = parseInt(orderCell.html());
+
+                                    orderCell.html(orderNumber - 1);
+                                });
+                            } else if(result.operation == 'prepare-delete') {
+                                that.simpleLayer.setContent(result.html);
+                                that.simpleLayer.show();
+                                that.refreshDependencies();
+
+                                that.simpleLayer.layer.find('.choice-form__cancel').click(function() {
+                                    that.simpleLayer.hide();
+                                });
+
+                                var thisform = that.simpleLayer.layer.find('.choice-form').first();
+
+                                that.simpleLayer.layer.find('.choice-form').submit(function(e) {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+
+                                    that.simpleLayer.hide();
+
+                                    that.sendRequest({ module: that.modules.dataDefined, operation: 'delete' }, moduleData);
+                                });
+                            }
                         }
                     } else {
                         that.errorMessage.setContent(result.message);
@@ -638,6 +678,64 @@ $(document).ready(function() {
 
                                 that.layer.hide(callback);
                             }
+                        } else if(result.module == that.modules.dataDefined) {
+                            if(result.operation == 'add') {
+                                var callback = function() {
+                                    that.correctMessage.setContent(result.message);
+                                    that.correctMessage.show();
+
+                                    var table = $('.data-defined-table');
+                                    var row = $(result.dataDefined.row);
+                                    row.hide();
+
+                                    var existingRows = table.find('.table__row');
+                                    var followingNumber = existingRows.length + 1;
+
+                                    row.find('.data-defined-table__order-number').html(followingNumber);
+
+                                    table.append(row);
+                                    row.velocity("slideDown");
+
+                                    that.refreshDependencies();
+                                }
+                                
+                                that.layer.hide(callback);
+                            } else if(result.operation == 'edit') {
+                                var callback = function() {
+                                    var current = $('[data-data-defined-id="' + result.dataDefined.id + '"]');
+                                    
+                                    current
+                                        .find('.data-defined-table__code')
+                                        .velocity({ opacity: 0 }, {
+                                            duration: 200,
+                                            complete: function() {
+                                               $(this).html(result.dataDefined['code']);
+                                               
+                                               $(this).velocity({ opacity: 1 }, {
+                                                duration: 200
+                                               });
+                                            }
+                                        });
+
+                                    current
+                                        .find('.data-defined-table__value')
+                                        .velocity({ opacity: 0 }, {
+                                            duration: 200,
+                                            complete: function() {
+                                               $(this).html(result.dataDefined['value_pl']);
+                                               
+                                               $(this).velocity({ opacity: 1 }, {
+                                                duration: 200
+                                               });
+                                            }
+                                        });
+
+                                    that.correctMessage.setContent(result.message);
+                                    that.correctMessage.show();
+                                }
+
+                                that.layer.hide(callback);
+                            }
                         }
                     } else {
                         that.overlayerErrorMessage.setContent(result.message);
@@ -719,6 +817,10 @@ $(document).ready(function() {
                         item_id: item_id
                     }
                 } else if(module == that.modules.page) {
+                    moduleData = {
+                        id: id
+                    }
+                } else if(module == that.modules.dataDefined) {
                     moduleData = {
                         id: id
                     }

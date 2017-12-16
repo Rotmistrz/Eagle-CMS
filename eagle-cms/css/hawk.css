@@ -3,25 +3,21 @@
     -webkit-transform: rotate(0); }
   100% {
     -webkit-transform: rotate(180deg); } }
-
 @keyframes arrowTurnUp {
   0% {
     transform: rotate(0); }
   100% {
     transform: rotate(180deg); } }
-
 @-webkit-keyframes arrowTurnDown {
   0% {
     -webkit-transform: rotate(180deg); }
   100% {
     -webkit-transform: rotate(0); } }
-
 @keyframes arrowTurnDown {
   0% {
     transform: rotate(180deg); }
   100% {
     transform: rotate(0); } }
-
 /***** HEADERS *****/
 /***** TEXT *****/
 /***** LISTS *****/
@@ -117,10 +113,8 @@ ul {
   vertical-align: middle;
   margin: 0 0 0 -5px;
   padding: 0 35px; }
-
 .horizontal-list > li:first-child {
   padding-left: 0; }
-
 .horizontal-list > li:last-child {
   padding-right: 0; }
 
@@ -207,16 +201,13 @@ ul {
     .categorized-items__categories > li.active {
       color: #36802d;
       font-weight: 700; }
-
 .categorized-items__item {
   display: block; }
-
 .categorized-items__no-items {
   float: none;
   display: block;
   padding: 20px;
   text-align: center; }
-
 .categorized-items__content-container {
   -webkit-transition: all 0.2s linear;
   -moz-transition: all 0.2s linear;
@@ -248,7 +239,6 @@ ul {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%; }
-
 .choice-field--radio .choice-field__field {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
@@ -464,11 +454,9 @@ ul {
   -webkit-transform: rotate(135deg);
   -moz-transform: rotate(135deg);
   transform: rotate(135deg); }
-
 .icon-hamburger.open > div:nth-child(2) {
   opacity: 0;
   left: -100%; }
-
 .icon-hamburger.open > div:nth-child(3) {
   top: 7px;
   -webkit-transform: rotate(-135deg);
@@ -700,3 +688,5 @@ ul {
 /** rwd500 **/
 /** rwd420 **/
 /** rwd380 **/
+
+/*# sourceMappingURL=hawk.css.map */

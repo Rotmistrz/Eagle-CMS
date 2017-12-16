@@ -3,7 +3,7 @@
 define('ITEMS_TABLE', 'eagle_items');
 define('CATEGORIES_TABLE', 'eagle_categories');
 define('GALLERIES_TABLE', 'eagle_galleries');
-define('DATA_DEFINED_TABLE', 'eagle_data');
+define('DATA_DEFINED_TABLE', 'eagle_data_defined');
 define('PAGES_TABLE', 'eagle_pages');
 define('USERS_TABLE', 'eagle_users');
 

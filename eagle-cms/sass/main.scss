@@ -704,6 +704,50 @@ width: 100%;
 	}
 }
 
+.data-defined-table {
+	
+	&__order-number {
+	text-align: right;
+	}
+
+	.table__header-row {
+	text-align: left;
+	
+		.data-defined-table__order-number {
+		text-align: left;
+		}
+	}
+
+	&__order-number {
+	width: 7%;
+	}
+
+
+	&__code {
+	width: 25%;
+	}
+
+	&__value {
+	width: 45%;
+	}
+
+	&__operations {
+	width: 23%;
+
+		a,
+		span {
+		cursor: pointer;
+		display: inline-block;
+		margin: 0 5px 0 0;
+		@include transition(all .2s linear);
+
+			&:hover {
+			color: $green;
+			}
+		}
+	}
+}
+
 /***** LISTS *****/
 
 

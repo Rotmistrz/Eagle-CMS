@@ -159,6 +159,10 @@ class Page implements Languagable {
         return new self($id, $slug);
     }
 
+    public static function isSlugCorrect($slug) {
+        
+    }
+
     public static function slugExists($slug, $id = 0) {
         $pdo = DataBase::getInstance();
 

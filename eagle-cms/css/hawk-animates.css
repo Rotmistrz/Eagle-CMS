@@ -3,21 +3,20 @@
     -webkit-transform: rotate(0); }
   100% {
     -webkit-transform: rotate(180deg); } }
-
 @keyframes arrowTurnUp {
   0% {
     transform: rotate(0); }
   100% {
     transform: rotate(180deg); } }
-
 @-webkit-keyframes arrowTurnDown {
   0% {
     -webkit-transform: rotate(180deg); }
   100% {
     -webkit-transform: rotate(0); } }
-
 @keyframes arrowTurnDown {
   0% {
     transform: rotate(180deg); }
   100% {
     transform: rotate(0); } }
+
+/*# sourceMappingURL=hawk-animates.css.map */

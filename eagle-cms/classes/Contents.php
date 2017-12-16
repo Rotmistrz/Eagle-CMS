@@ -23,7 +23,7 @@ class Contents {
 		if(array_key_exists($lang, $this->contents)) {
 			return $this->contents[$lang];
 		} else {
-			return false;
+			return [];
 		}
 	}
 

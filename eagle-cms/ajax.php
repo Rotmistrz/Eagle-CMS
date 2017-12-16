@@ -20,6 +20,9 @@ if($debug) {
     $type = (isset($_POST['type'])) ? $_POST['type'] : 0;
 
     $item_id = (isset($_POST['item_id'])) ? $_POST['item_id'] : 0;
+
+    $code = (isset($_POST['code'])) ? trim($_POST['code']) : "";
+    $slug = (isset($_POST['slug'])) ? trim($_POST['slug']) : "";
 }
 
 $json = [];
@@ -27,18 +30,23 @@ $json['module'] = $module;
 $json['operation'] = $operation;
 $json['error'] = false;
 
-if($module == "item") {
+if($module == Modules::ITEM) {
     $json['item'] = [];
     $json['item']['id'] = $id;
     $json['item']['type'] = $type;
     $json['item']['parent_id'] = $parent_id;
-} else if($module == "gallery-picture") {
+} else if($module == Modules::GALLERY_PICTURE) {
     $json['picture'] = [];
     $json['picture']['id'] = $id;
     $json['picture']['item_id'] = $item_id;
-} else if($module == "page") {
+} else if($module == Modules::PAGE) {
     $json['page'] = [];
     $json['page']['id'] = $id;
+    $json['page']['slug'] = $slug;
+} else if($module == Modules::DATA_DEFINED) {
+    $json['dataDefined'] = [];
+    $json['dataDefined']['id'] = $id;
+    $json['dataDefined']['code'] = $code;
 }
 
 $errorMessage = "";
@@ -48,7 +56,7 @@ try {
     $loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);
     $twig = new Twig_Environment($loader, array('autoescape' => false));
 
-    if($module == 'item') {
+    if($module == Modules::ITEM) {
         if($operation == 'edit' || $operation == 'add') {
             header('Content-type: application/json');
 
@@ -277,7 +285,7 @@ try {
 
             echo json_encode($json);
         }
-    } else if($module == 'gallery-picture') {
+    } else if($module == Modules::GALLERY_PICTURE) {
         if($operation == 'prepare-add' || $operation == 'prepare-edit') {
             header('Content-type: application/json');
 
@@ -433,13 +441,11 @@ try {
 
             echo json_encode($json);
         }
-    } else if($module == 'page') {
+    } else if($module == Modules::PAGE) {
         if($operation == 'edit' || $operation == 'add') {
             header('Content-type: application/json');
 
-            if(isset($_POST['slug']) && !empty($_POST['slug'])) {
-                $slug = $_POST['slug'];
-
+            if(!empty($_POST['slug'])) {
                 if($operation == 'edit') {
                     $page = Page::load($id);
                     $correctMessage = "Poprawnie edytowano stronę.";
@@ -491,7 +497,7 @@ try {
                     $json['page']['row'] = $twig->render('table-page-1.tpl', ['page' => $page->getContentsByLanguage(Language::PL)]);
                 } else {
                     $json['error'] = true;
-                    $json['message'] = $errorMessage . $slug;
+                    $json['message'] = $errorMessage;
                 }
             } else {
                 $json['error'] = true;
@@ -505,16 +511,14 @@ try {
             if($operation == 'prepare-edit') {
                 $page = Page::load($id);
                 $operation = "edit";
-                $hop = "hop";
             } else {
                 $page = new Page(null, null);
                 $operation = "add";
-                $hop = "siup";
             }
 
             $FormManager = new FormManager($twig);
             $FormManager->id = "page-edit";
-            $FormManager->action = $hop;
+            $FormManager->action = "";
             $FormManager->method = "post";
             $FormManager->class = "form request-form";
             $FormManager->addInputHidden('id', $id);
@@ -549,6 +553,122 @@ try {
                 $ChoiceForm->id = "delete-form";
                 $ChoiceForm->action = "/ajax.php";
                 $ChoiceForm->title = "Czy na pewno chcesz usunąć tę stronę?";
+                $ChoiceForm->back = "";
+
+                $json['html'] = $ChoiceForm->get();
+            echo json_encode($json);
+        }
+    } else if($module == Modules::DATA_DEFINED) {
+        if($operation == 'prepare-edit' || $operation == 'prepare-add') {
+            header('Content-type: application/json');
+
+            if($operation == 'prepare-edit') {
+                $dataDefined = DataDefined::load($id);
+                $operation = "edit";
+            } else {
+                $dataDefined = new DataDefined(null, null);
+                $operation = "add";
+            }
+
+            $FormManager = new FormManager($twig);
+            $FormManager->id = "data-defined-edit";
+            $FormManager->action = "";
+            $FormManager->method = "post";
+            $FormManager->class = "form request-form";
+            $FormManager->addInputHidden('id', $id);
+            $FormManager->addInputHidden('module', $module);
+            $FormManager->addInputHidden('operation', $operation);
+
+            $FormManager->addInput('code', 'Kod', $dataDefined->getCode());
+            $FormManager->addInput(DataDefined::getDatabaseFieldname(DataDefined::VALUE, Language::PL), 'Wartość', $dataDefined->getValue(Language::PL));
+
+            $FormManager->addButton('Zatwierdź');
+
+            $json['html'] = $FormManager->get();
+
+            echo json_encode($json);
+        } else if($operation == 'edit' || $operation == 'add') {
+            header('Content-type: application/json');
+
+            if(empty($code)) {
+                $errorOccured = true;
+                $errorMessage .= "Proszę podać kod danej zdefiniowanej.";
+            } else if(!DataDefined::isCodeCorrect($code)) {
+                $errorOccured = true;
+                $errorMessage .= "Kod danej zdefiniowanej jest niepoprawny.";
+            } else if(DataDefined::codeExists($code, $id)) {
+                $errorOccured = true;
+                $errorMessage .= "Taki kod już istnieje.";
+            } else {
+                if($operation == 'edit') {
+                    $dataDefined = DataDefined::load($id);
+                    $correctMessage = "Poprawnie edytowano daną zdefiniowaną.";
+                    $baseErrorMessage = "Wystąpiły problemy podczas edycji danej zdefiniowanej.";
+                } else {
+                    $dataDefined = DataDefined::create($code);
+                    $correctMessage = "Poprawnie dodano daną zdefiniowaną.";
+                    $baseErrorMessage = "Wystąpiły problemy podczas dodawania danej zdefiniowanej.";
+                }
+
+                $fields = DataDefined::getFields();
+                $languages = DataDefined::getLanguages();
+                $value;
+
+                foreach($languages as $lang) {
+                    foreach($fields as $field) {
+                        if(isset($_POST[DataDefined::getDatabaseFieldname($field, $lang)])) {
+                            $value = $_POST[DataDefined::getDatabaseFieldname($field, $lang)];
+
+                            $json['dataDefined'][DataDefined::getDatabaseFieldname($field, $lang)] = $value;
+                        } else {
+                            $value = null;
+                        }
+
+                        $dataDefined->setContent($lang, $field, $value);
+                    }
+                }
+
+                try {
+                    if(!$dataDefined->save()) {
+                        $errorOccured = true;
+                        $errorMessage .= $baseErrorMessage;
+                    }
+                } catch(Exception $e) {
+                    $errorOccured = true;
+                    $errorMessage .= $e->getMessage();
+                }
+                
+            }
+
+            if(!$errorOccured) {
+                $json['message'] = $correctMessage;
+
+                $json['dataDefined']['row'] = $twig->render('table-data-defined-1.tpl', ['data' => $dataDefined->getContentsByLanguage(Language::PL)]);
+            } else {
+                $json['error'] = true;
+                $json['message'] = $errorMessage;
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'delete') {
+            header('Content-type: application/json');
+
+            $dataDefined = DataDefined::load($id);
+
+            if($dataDefined->delete()) {
+                $json['message'] = "Poprawnie usunięto daną zdefiniowaną.";
+            } else {
+                $json['error'] = true;
+                $json['message'] = "Wystąpiły problemy podczas usuwania danej zdefiniowanej.";
+            }
+
+            echo json_encode($json);
+        } else if($operation == 'prepare-delete') {
+            header('Content-type: application/json');
+                $ChoiceForm = new ChoiceForm($twig);
+                $ChoiceForm->id = "delete-form";
+                $ChoiceForm->action = "/ajax.php";
+                $ChoiceForm->title = "Czy na pewno chcesz usunąć tę daną zdefiniowaną?";
                 $ChoiceForm->back = "";
 
                 $json['html'] = $ChoiceForm->get();
