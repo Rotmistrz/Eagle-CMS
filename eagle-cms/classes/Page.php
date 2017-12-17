@@ -54,15 +54,19 @@ class Page implements Languagable {
     }
 
     public function save() {
+        if(self::slugExists($this->slug, $this->id)) {
+            throw new PageSlugExistsException("Taki slug już istnieje.");
+        }
+
+        if(!self::isSlugCorrect($this->slug)) {
+            throw new IncorrectPageSlugException("Niepoprawny slug strony.");
+        }
+
         $fields = self::$fields;
         $languages = self::$languages;
         $languages_length = count($languages);
         $fields_length = count($fields);
         $current;
-
-        if(self::slugExists($this->slug, $this->id)) {
-            throw new PageSlugExistsException();
-        }
         
         $pdo = DataBase::getInstance();
 
@@ -144,7 +148,11 @@ class Page implements Languagable {
 
     public static function create($slug) {
         if(self::slugExists($slug)) {
-            throw new PageSlugExistsException();
+            throw new PageSlugExistsException("Taki slug już istnieje.");
+        }
+
+        if(!self::isSlugCorrect($slug)) {
+            throw new IncorrectPageSlugException("Niepoprawny slug strony.");
         }
 
         $pdo = DataBase::getInstance();
@@ -159,10 +167,6 @@ class Page implements Languagable {
         return new self($id, $slug);
     }
 
-    public static function isSlugCorrect($slug) {
-        
-    }
-
     public static function slugExists($slug, $id = 0) {
         $pdo = DataBase::getInstance();
 
@@ -173,6 +177,16 @@ class Page implements Languagable {
         $checkingUnique->execute();
 
         if($checkingUnique->rowCount() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function isSlugCorrect($slug) {
+        $regex = "/^[a-zA-Z]+([a-zA-Z0-9\-]*[a-zA-Z0-9]+)*$/";
+
+        if(preg_match($regex, $slug)) {
             return true;
         } else {
             return false;

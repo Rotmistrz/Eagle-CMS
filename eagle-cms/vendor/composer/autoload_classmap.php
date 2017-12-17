@@ -38,6 +38,7 @@ return array(
     'GalleryPicturesCollection' => $baseDir . '/classes/GalleryPicturesCollection.php',
     'Hideable' => $baseDir . '/interfaces/Hideable.php',
     'IncorrectDataDefinedCodeException' => $baseDir . '/classes/Exceptions/IncorretDataDefinedCodeException.php',
+    'IncorrectPageSlugException' => $baseDir . '/classes/Exceptions/IncorrectPageSlugException.php',
     'Information' => $baseDir . '/classes/Information.php',
     'InformationManager' => $baseDir . '/classes/InformationManager.php',
     'Input' => $baseDir . '/classes/Forms/Input.php',

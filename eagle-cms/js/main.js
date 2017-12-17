@@ -545,7 +545,7 @@ $(document).ready(function() {
                                     var row = $(result.item.row);
                                     row.hide();
 
-                                    var existingRows = table.find('.table__row');
+                                    var existingRows = table.find('.table__row').filter(':visible');
                                     var followingNumber = existingRows.length + 1;
 
                                     row.find('.items-table__order-number').html(followingNumber);
@@ -630,7 +630,7 @@ $(document).ready(function() {
                                     var row = $(result.page.row);
                                     row.hide();
 
-                                    var existingRows = table.find('.table__row');
+                                    var existingRows = table.find('.table__row').filter(':visible');
                                     var followingNumber = existingRows.length + 1;
 
                                     row.find('.pages-table__order-number').html(followingNumber);
@@ -688,7 +688,7 @@ $(document).ready(function() {
                                     var row = $(result.dataDefined.row);
                                     row.hide();
 
-                                    var existingRows = table.find('.table__row');
+                                    var existingRows = table.find('.table__row').filter(':visible');
                                     var followingNumber = existingRows.length + 1;
 
                                     row.find('.data-defined-table__order-number').html(followingNumber);

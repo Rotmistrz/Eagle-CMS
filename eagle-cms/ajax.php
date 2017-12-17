@@ -445,7 +445,13 @@ try {
         if($operation == 'edit' || $operation == 'add') {
             header('Content-type: application/json');
 
-            if(!empty($_POST['slug'])) {
+            if(Page::slugExists($slug, $id)) {
+                $errorOccured = true;
+                $errorMessage .= "Taki slug juz istnieje.";
+            } else if(!Page::isSlugCorrect($slug)) {
+                $errorOccured = true;
+                $errorMessage .= "Niepoprawny slug.";
+            } else {
                 if($operation == 'edit') {
                     $page = Page::load($id);
                     $correctMessage = "Poprawnie edytowano stronę.";
@@ -456,52 +462,44 @@ try {
                     $baseErrorMessage = "Wystąpiły problemy podczas dodawania strony.";
                 }
 
-                if(!Page::slugExists($slug, $page->getId())) {
-                    $page->setSlug($slug);
+                $page->setSlug($slug);
 
-                    $fields = Page::getFields();
-                    $languages = Page::getLanguages();
-                    $value;
+                $fields = Page::getFields();
+                $languages = Page::getLanguages();
+                $value;
 
-                    foreach($languages as $lang) {
-                        foreach($fields as $field) {
-                            if(isset($_POST[Page::getDatabaseFieldname($field, $lang)])) {
-                                $value = $_POST[Page::getDatabaseFieldname($field, $lang)];
+                foreach($languages as $lang) {
+                    foreach($fields as $field) {
+                        if(isset($_POST[Page::getDatabaseFieldname($field, $lang)])) {
+                            $value = $_POST[Page::getDatabaseFieldname($field, $lang)];
 
-                                $json['page'][Page::getDatabaseFieldname($field, $lang)] = $value;
-                            } else {
-                                $value = null;
-                            }
-
-                            $page->setContent($lang, $field, $value);
+                            $json['page'][Page::getDatabaseFieldname($field, $lang)] = $value;
+                        } else {
+                            $value = null;
                         }
+
+                        $page->setContent($lang, $field, $value);
                     }
+                }
 
-                    try {
-                        if(!$page->save()) {
-                            $errorOccured = true;
-                            $errorMessage .= $baseErrorMessage;
-                        }
-                    } catch(PageSlugExistsException $e) {
+                try {
+                    if(!$page->save()) {
                         $errorOccured = true;
-                        $errorMessage .= $e->getMessage();
+                        $errorMessage .= $baseErrorMessage;
                     }
-                } else {
+                } catch(Exception $e) {
                     $errorOccured = true;
-                    $errorMessage .= "Taki slug już istnieje.";
+                    $errorMessage .= $e->getMessage();
                 }
+            }
 
-                if(!$errorOccured) {
-                    $json['message'] = $correctMessage;
+            if(!$errorOccured) {
+                $json['message'] = $correctMessage;
 
-                    $json['page']['row'] = $twig->render('table-page-1.tpl', ['page' => $page->getContentsByLanguage(Language::PL)]);
-                } else {
-                    $json['error'] = true;
-                    $json['message'] = $errorMessage;
-                }
+                $json['page']['row'] = $twig->render('table-page-1.tpl', ['page' => $page->getContentsByLanguage(Language::PL)]);
             } else {
                 $json['error'] = true;
-                $json['message'] = "Slug podstrony nie może być pusty.";
+                $json['message'] = $errorMessage;
             }
 
             echo json_encode($json);
