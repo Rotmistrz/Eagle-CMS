@@ -2,16 +2,16 @@
     "name": "rotmistrz/eagle-cms",
     "authors": [
         {
-            "name": "Filip Markiewicz",
+            "name": "Filip J. Markiewicz",
             "email": "filip.markiewicz96@gmail.com"
         }
     ],
     "require": {
         "twig/twig": "~1.0",
-        "eventviva/php-image-resize": "1.6.*"
+        "eventviva/php-image-resize": "1.6.*",
+        "phpunit/phpunit": "^6.5"
     },
     "autoload": {
-        "classmap": ["classes/", "interfaces/"],
-        "files": ["eagle-config.php"]
+        "classmap": ["classes/", "interfaces/"]
     }
 }

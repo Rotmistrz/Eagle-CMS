@@ -33,7 +33,7 @@ $(document).ready(function() {
 
         options = mergeObjects(defaultOptions, options);
 
-        setTimeout(function(){
+        setTimeout(function() {
             $(options.container).scrollTo(options.anchor, options.duration, {'axis': 'y', 'offset': options.offset, onAfter: function() { options.callback(); } });
         }, options.delay);
 

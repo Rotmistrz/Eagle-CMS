@@ -2,7 +2,8 @@
 
 session_start();
 
-require 'vendor/autoload.php';
+require 'eagle-dependencies.php';
+
 try {
 	if($U = User::getInstance()) {
 		if($U->logout()) {

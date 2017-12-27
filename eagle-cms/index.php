@@ -2,7 +2,7 @@
 
 session_start();
 
-require 'vendor/autoload.php';
+require 'eagle-dependencies.php';
 
 try {
 	$loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);

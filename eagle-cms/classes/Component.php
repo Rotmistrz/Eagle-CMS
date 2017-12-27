@@ -37,6 +37,10 @@ abstract class Component implements Languagable, Orderable {
 		return $this;
 	}
 
+	public function getOrder() {
+		return $this->order;
+	}
+
 	public function setContent($lang, $field, $value) {
 		$this->contents->set($lang, $field, $value);
 

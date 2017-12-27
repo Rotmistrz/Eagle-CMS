@@ -31,10 +31,14 @@ class Item extends Component implements Hideable {
 
 	public function setCategories(CategoriesList $categories) {
 		$this->categories = $categories;
+
+		return $this;
 	}
 
 	public function setGallery(GalleryPicturesCollection $gallery) {
 		$this->gallery = $gallery;
+
+		return $this;
 	}
 
 	public function save() {

@@ -1,6 +1,6 @@
 <?php
 
-require 'eagle-cms/vendor/autoload.php';
+require 'eagle-cms/eagle-dependencies.php';
 
 try {
 	$loader = new Twig_Loader_Filesystem(TEMPLATES_DIR);

@@ -1,6 +1,6 @@
 <?php
 
-require 'vendor/autoload.php';
+require 'eagle-dependencies.php';
 
 $debug = false;
 
