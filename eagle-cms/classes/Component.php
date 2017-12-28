@@ -1,16 +1,9 @@
 <?php
 
-abstract class Component implements Languagable, Orderable {
+abstract class Component extends LanguagableElement {
 	protected $id;
 	public $order;
 	public $visible;
-	protected $contents;
-
-	protected static $languages = [Language::PL, Language::EN];
-	protected static $fields = [];
-
-	abstract public function getEarlierOne();
-	abstract public function getLaterOne();
 
 	abstract public function save();
 	abstract public function delete();
@@ -39,32 +32,6 @@ abstract class Component implements Languagable, Orderable {
 
 	public function getOrder() {
 		return $this->order;
-	}
-
-	public function setContent($lang, $field, $value) {
-		$this->contents->set($lang, $field, $value);
-
-		return $this;
-	}
-
-	public function getContent($lang, $field) {
-		return $this->contents->get($lang, $field);
-	}
-
-	public function getContentsByLanguage($lang) {
-		return $this->contents->getContentsByLanguage($lang);
-	}
-
-	public static function getFields() {
-		return static::$fields;
-	}
-
-	public static function getDatabaseFieldname($field, $lang) {
-		return $field . '_' . $lang;
-	}
-
-	public static function getLanguages() {
-		return static::$languages;
 	}
 
 	public function getId() {

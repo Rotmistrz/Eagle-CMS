@@ -1,9 +1,9 @@
 <?php
 
-class GalleryPicture extends Component {
+class GalleryPicture extends Component implements Orderable, Editable {
     protected $id;
     public $itemId;
-    private $type;
+    private $type; // FileType
     public $order;
 
     const TITLE = 'title';

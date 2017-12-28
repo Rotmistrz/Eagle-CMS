@@ -154,6 +154,23 @@ class Category extends Component implements Languagable, Orderable {
 		return new self($id, $type, $order);
 	}
 
+	public function getContentsByLanguage($lang) {
+		$current;
+		$contents = [];
+
+		$contents['id'] = $this->getId();
+		$contents['type'] = $this->type;
+		$contents['parentId'] = $this->parentId;
+		$contents['order'] = $this->order;
+		$contents['visible'] = $this->visible;
+
+		if($current = $this->contents->getContentsByLanguage($lang)) {
+			$contents = array_merge($contents, $current);
+		}
+
+		return $contents;
+	}
+
 	public static function createFromDatabaseRow($row) {
 		$fields = self::$fields;
 		$languages = self::$languages;

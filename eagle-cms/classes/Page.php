@@ -1,22 +1,19 @@
 <?php
 
-class Page implements Languagable {
+class Page extends LanguagableElement implements Editable {
     private $id;
     private $slug;
-
-    private $contents; // Contents
 
     const TITLE = 'title';
     const DESCRIPTION = 'description';
 
-    private static $languages = [Language::PL, Language::EN];
-    private static $fields = [self::TITLE, self::DESCRIPTION];
+    protected static $fields = [self::TITLE, self::DESCRIPTION];
 
     public function __construct($id, $slug) {
+        parent::__construct();
+
         $this->id = $id;
         $this->slug = $slug;
-
-        $this->contents = new Contents();
     }
 
     public function getId() {
@@ -217,16 +214,6 @@ class Page implements Languagable {
         return $page;
     }
 
-    public function setContent($lang, $field, $value) {
-        $this->contents->set($lang, $field, $value);
-
-        return $this;
-    }
-
-    public function getContent($lang, $field) {
-        return $this->contents->get($lang, $field);
-    }
-
     public function getContentsByLanguage($lang) {
         $current;
         $contents = [];
@@ -239,18 +226,6 @@ class Page implements Languagable {
         }
 
         return $contents;
-    }
-
-    public static function getFields() {
-        return self::$fields;
-    }
-
-    public static function getDatabaseFieldname($field, $lang) {
-        return $field . "_" . $lang;
-    }
-
-    public static function getLanguages() {
-        return self::$languages;
     }
 }
 

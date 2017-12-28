@@ -10,22 +10,14 @@ class FileType {
     public static function getExtension($type) {
         $extension;
 
-        switch($type) {
-            case self::JPG:
-                $extension = "jpg";
-            break;
-
-            case self::PNG:
-                $extension = "png";
-            break;
-
-            case self::GIF:
-                $extension = "gif";
-            break;
-
-            default:
-                $extension = self::UNDEFINED;
-            break;
+        if ($type == self::JPG) {
+            $extension = "jpg";
+        } else if ($type == self::PNG) {
+            $extension = "png";
+        } else if ($type == self::GIF) {
+            $extension = "gif";
+        } else {
+            $extension = self::UNDEFINED;
         }
 
         return $extension;

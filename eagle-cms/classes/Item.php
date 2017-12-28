@@ -1,7 +1,8 @@
 <?php
 
-class Item extends Component implements Hideable {
+class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 	public $parentId;
+	private $type;
 	private $categories; // CategoriesList
 	private $gallery; // GalleryPicturesCollection
 
@@ -18,6 +19,8 @@ class Item extends Component implements Hideable {
 	protected static $fields = [self::HEADER_1, self::HEADER_2, self::HEADER_3, self::HEADER_4, self::HEADER_5, self::CONTENT_1, self::CONTENT_2, self::CONTENT_3];
 
 	public function __construct($id, $type, $order) {
+		parent::__construct();
+
 		$this->id = $id;
 		$this->type = $type;
 		$this->order = $order;
@@ -25,8 +28,10 @@ class Item extends Component implements Hideable {
 		$this->gallery = new GalleryPicturesCollection();
 		$this->visible = 1;
 		$this->parentId = 0;
+	}
 
-		$this->contents = new Contents();
+	public function getId() {
+		return $this->id;
 	}
 
 	public function setCategories(CategoriesList $categories) {
