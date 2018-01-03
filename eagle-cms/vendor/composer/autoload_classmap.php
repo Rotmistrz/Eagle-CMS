@@ -41,6 +41,7 @@ return array(
     'GalleryPicture' => $baseDir . '/classes/GalleryPicture.php',
     'GalleryPicturesCollection' => $baseDir . '/classes/GalleryPicturesCollection.php',
     'Hideable' => $baseDir . '/interfaces/Hideable.php',
+    'IllegalArgumentException' => $baseDir . '/classes/Exceptions/IllegalArgumentException.php',
     'IncorrectDataDefinedCodeException' => $baseDir . '/classes/Exceptions/IncorretDataDefinedCodeException.php',
     'IncorrectPageSlugException' => $baseDir . '/classes/Exceptions/IncorrectPageSlugException.php',
     'Information' => $baseDir . '/classes/Information.php',

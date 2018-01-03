@@ -108,6 +108,7 @@ class ComposerStaticInit4ce1519f0248db1f18213ea0b34ac731
         'GalleryPicture' => __DIR__ . '/../..' . '/classes/GalleryPicture.php',
         'GalleryPicturesCollection' => __DIR__ . '/../..' . '/classes/GalleryPicturesCollection.php',
         'Hideable' => __DIR__ . '/../..' . '/interfaces/Hideable.php',
+        'IllegalArgumentException' => __DIR__ . '/../..' . '/classes/Exceptions/IllegalArgumentException.php',
         'IncorrectDataDefinedCodeException' => __DIR__ . '/../..' . '/classes/Exceptions/IncorretDataDefinedCodeException.php',
         'IncorrectPageSlugException' => __DIR__ . '/../..' . '/classes/Exceptions/IncorrectPageSlugException.php',
         'Information' => __DIR__ . '/../..' . '/classes/Information.php',

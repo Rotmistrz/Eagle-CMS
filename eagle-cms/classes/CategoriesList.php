@@ -12,7 +12,11 @@ class CategoriesList {
 	}
 
 	public static function createFromDatabaseFormat($string) {
-		return new self(explode(',', $string));
+		if(strlen($string) > 0) {
+			return new self(explode(',', $string));
+		} else {
+			return new NoCategory();
+		}
 	}
 
 	public function getDatabaseFormat() {

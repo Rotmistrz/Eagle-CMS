@@ -5,6 +5,7 @@ interface Orderable {
 
 	public function getEarlierOne();
 	public function getLaterOne();
+    public function getOrder();
 }
 
 ?>

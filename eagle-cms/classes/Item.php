@@ -5,6 +5,8 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 	private $type;
 	private $categories; // CategoriesList
 	private $gallery; // GalleryPicturesCollection
+	private $order;
+	private $visible;
 
 	const HEADER_1 = 'header_1';
 	const HEADER_2 = 'header_2';
@@ -26,12 +28,20 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 		$this->order = $order;
 		$this->categories = new NoCategory();
 		$this->gallery = new GalleryPicturesCollection();
-		$this->visible = 1;
+		$this->visible = true;
 		$this->parentId = 0;
 	}
 
 	public function getId() {
 		return $this->id;
+	}
+
+	public function getOrder() {
+		return $this->order;
+	}
+
+	public function isVisible() {
+		return (bool) $this->visible;
 	}
 
 	public function setCategories(CategoriesList $categories) {
@@ -110,6 +120,8 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 	}
 
 	public function hide() {
+		$this->visible = false;
+
 		$query = "UPDATE " . ITEMS_TABLE . " SET visible = 0 WHERE id = :id";
 
 		$pdo = DataBase::getInstance();
@@ -124,6 +136,8 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 	}
 
 	public function show() {
+		$this->visible = true;
+
 		$query = "UPDATE " . ITEMS_TABLE . " SET visible = 1 WHERE id = :id";
 
 		$pdo = DataBase::getInstance();
@@ -192,12 +206,7 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 	public static function create($type) {
 		$pdo = DataBase::getInstance();
 
-		$gettingSortQuery = "SELECT MAX(sort) as recent FROM " . ITEMS_TABLE . " WHERE type = :type";
-		$gettingSort = $pdo->prepare($gettingSortQuery);
-		$gettingSort->bindValue(':type', $type, PDO::PARAM_INT);
-		$gettingSort->execute();
-		$result = $gettingSort->fetch();
-		$order = $result['recent'] + 10;
+		$order = self::getFollowingOrder($type);
 
 		$query = "INSERT INTO " . ITEMS_TABLE . " (id, type, sort) VALUES(NULL, :type, :sort)";
 		$creating = $pdo->prepare($query);
@@ -210,18 +219,31 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 		return new self($id, $type, $order);
 	}
 
+	public static function getFollowingOrder($type) {
+		$pdo = DataBase::getInstance();
+
+		$query = "SELECT MAX(sort) as recent FROM " . ITEMS_TABLE . " WHERE type = :type";
+		$gettingOrder = $pdo->prepare($query);
+		$gettingOrder->bindValue(':type', $type, PDO::PARAM_INT);
+		$gettingOrder->execute();
+
+		$result = $gettingOrder->fetch();
+
+		return $result['recent'] + Orderable::ORDER_STEP;
+	}
+
 	public static function createFromDatabaseRow($row) {
 		$fields = self::$fields;
 		$languages = self::$languages;
 		$languages_length = count($languages);
 		$fields_length = count($fields);
 
-		$id = $row['id'];
-		$parent_id = $row['parent_id'];
-		$type = $row['type'];
+		$id = (int) $row['id'];
+		$parent_id = (int) $row['parent_id'];
+		$type = (int) $row['type'];
 		$categories = CategoriesList::createFromDatabaseFormat($row['category']);
-		$order = $row['sort'];
-		$visible = $row['visible'];
+		$order = (int) $row['sort'];
+		$visible = (bool) $row['visible'];
 
 		$item = new self($id, $type, $order);
 		$item->parentId = $parent_id;
@@ -269,7 +291,7 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 	}
 
 	public function __toString() {
-		return "#" . $this->id . "[" . $this->type . " - ". $this->getContent(Language::PL, 'header_1') . " (" . $this->order . ")]";
+		return "#" . $this->id . "[" . $this->type . " - ". $this->getContent(Language::PL, self::HEADER_1) . " (" . $this->order . ")]";
 	}
 }
 
