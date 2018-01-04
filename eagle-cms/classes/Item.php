@@ -227,9 +227,15 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 		$gettingOrder->bindValue(':type', $type, PDO::PARAM_INT);
 		$gettingOrder->execute();
 
-		$result = $gettingOrder->fetch();
+		$followingOrder;
 
-		return $result['recent'] + Orderable::ORDER_STEP;
+		if($result = $gettingOrder->fetch()) {
+			$followingOrder = $result['recent'] + Orderable::ORDER_STEP;
+		} else  {
+			$followingOrder = Orderable::INITIAL_ORDER;
+		}
+
+		return $followingOrder;
 	}
 
 	public static function createFromDatabaseRow($row) {

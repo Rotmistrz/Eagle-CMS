@@ -7,7 +7,9 @@ use PHPUnit\Framework\TestCase;
 class ItemTest extends TestCase {
     private $testType = 100;
     private $firstItemHeader = "Lorem ipsum";
-    private $secondItemContent = "Dolorsit amet";
+    private $firstItemContent = "Dolor sit amet";
+    private $secondItemHeader = "Dolor sit amet";
+    private $secondItemContent = "Lorem ipsum";
 
     private $firstItem;
     private $secondItem;
@@ -21,12 +23,19 @@ class ItemTest extends TestCase {
 
         $pdo = DataBase::getInstance();
 
-        $query = "INSERT INTO " . ITEMS_TABLE . " (id, type, sort) VALUES (:id_00, :type, :sort_00), (:id_01, :type, :sort_01)";
+        $query = "INSERT INTO " . ITEMS_TABLE . " (id, type, " . LanguagableElement::getDatabaseFieldname(Item::HEADER_1, Language::PL) . ", " . LanguagableElement::getDatabaseFieldname(Item::CONTENT_1, Language::EN) . ", sort) VALUES (:id_00, :type, :header_00, :content_00, :sort_00), (:id_01, :type, :header_01, :content_01, :sort_01)";
+
         $inserting = $pdo->prepare($query);
-        $inserting->bindValue(':id_00', $firstItemId, PDO::PARAM_INT);
         $inserting->bindValue(':type', $this->testType, PDO::PARAM_INT);
+
+        $inserting->bindValue(':id_00', $firstItemId, PDO::PARAM_INT);
+        $inserting->bindValue(':header_00', $this->firstItemHeader, PDO::PARAM_STR);
+        $inserting->bindValue(':content_00', $this->firstItemContent, PDO::PARAM_STR);
         $inserting->bindValue(':sort_00', $firstItemOrder, PDO::PARAM_INT);
+
         $inserting->bindValue(':id_01', $secondItemId, PDO::PARAM_INT);
+        $inserting->bindValue(':header_01', $this->secondItemHeader, PDO::PARAM_STR);
+        $inserting->bindValue(':content_01', $this->secondItemContent, PDO::PARAM_STR);
         $inserting->bindValue(':sort_01', $secondItemOrder, PDO::PARAM_INT);
 
         if($inserting->execute() != 2) {
@@ -34,7 +43,12 @@ class ItemTest extends TestCase {
         }
 
         $this->firstItem = new Item($firstItemId, $this->testType, $firstItemOrder);
+        $this->firstItem->setContent(Language::PL, Item::HEADER_1, $this->firstItemHeader);
+        $this->firstItem->setContent(Language::EN, Item::CONTENT_1, $this->firstItemContent);
+
         $this->secondItem = new Item($secondItemId, $this->testType, $secondItemOrder);
+        $this->secondItem->setContent(Language::PL, Item::HEADER_1, $this->secondItemHeader);
+        $this->secondItem->setContent(Language::EN, Item::CONTENT_1, $this->secondItemContent);
     }
 
     public function tearDown() {

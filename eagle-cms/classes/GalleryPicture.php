@@ -181,14 +181,9 @@ class GalleryPicture extends Component implements Orderable, Editable {
     }
 
     public static function create($item_id) {
-        $pdo = DataBase::getInstance();
+        $order = self::getFollowingOrder($item_id);
 
-        $gettingSortQuery = "SELECT MAX(sort) as recent FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id";
-        $gettingSort = $pdo->prepare($gettingSortQuery);
-        $gettingSort->bindValue(':item_id', $item_id, PDO::PARAM_INT);
-        $gettingSort->execute();
-        $result = $gettingSort->fetch();
-        $order = $result['recent'] + 10;
+        $pdo = DataBase::getInstance();
 
         $date = date('Y-m-d H:i:s');
 
@@ -202,6 +197,27 @@ class GalleryPicture extends Component implements Orderable, Editable {
         $id = $pdo->lastInsertId();
 
         return new self($id, $item_id, null, $order);
+    }
+
+    public static function getFollowingOrder($type) {
+        $item_id = $type;
+
+        $pdo = DataBase::getInstance();
+
+        $gettingSortQuery = "SELECT MAX(sort) as recent FROM " . GALLERIES_TABLE . " WHERE item_id = :item_id";
+        $gettingSort = $pdo->prepare($gettingSortQuery);
+        $gettingSort->bindValue(':item_id', $item_id, PDO::PARAM_INT);
+        $gettingSort->execute();
+
+        $followingOrder;
+        
+        if ($result = $gettingSort->fetch()) {
+            $followingOrder = $result['recent'] + Orderable::ORDER_STEP;
+        } else {
+            $followingOrder = Orderable::INITIAL_ORDER;
+        }
+
+        return $followingOrder;
     }
 
     public static function load($id) {
