@@ -131,7 +131,16 @@ class Category extends Component implements Languagable, Orderable {
 	public static function create($type) {
 		$pdo = DataBase::getInstance();
 
-		$order = self::getFollowingOrder($type);
+		$gettingSortQuery = "SELECT MAX(sort) as recent FROM " . CATEGORIES_TABLE . " WHERE type = :type";
+		$gettingSort = $pdo->prepare($gettingSortQuery);
+		$gettingSort->bindValue(':type', $type, PDO::PARAM_INT);
+		$gettingSort->execute();
+
+		if($result = $gettingSort->fetch()) {
+			$order = $result['recent'] + 10;
+		} else {
+			$order = 10;
+		}
 		
 
 		$query = "INSERT INTO " . CATEGORIES_TABLE . " (id, type, sort) VALUES(NULL, :type, :sort)";
@@ -143,25 +152,6 @@ class Category extends Component implements Languagable, Orderable {
 		$id = $pdo->lastInsertId();
 
 		return new self($id, $type, $order);
-	}
-
-	public static function getFollowingOrder($type) {
-		$pdo = DataBase::getInstance();
-
-		$gettingSortQuery = "SELECT MAX(sort) as recent FROM " . CATEGORIES_TABLE . " WHERE type = :type";
-		$gettingSort = $pdo->prepare($gettingSortQuery);
-		$gettingSort->bindValue(':type', $type, PDO::PARAM_INT);
-		$gettingSort->execute();
-
-		$followingOrder;
-
-		if($result = $gettingSort->fetch()) {
-			$followingOrder = $result['recent'] + Orderable::ORDER_STEP;
-		} else {
-			$followingOrder = Orderable::INITIAL_ORDER;
-		}
-
-		return $followingOrder;
 	}
 
 	public function getContentsByLanguage($lang) {
