@@ -133,7 +133,6 @@ class Category extends Component implements Languagable, Orderable {
 
 		$order = self::getFollowingOrder($type);
 		
-
 		$query = "INSERT INTO " . CATEGORIES_TABLE . " (id, type, sort) VALUES(NULL, :type, :sort)";
 		$creating = $pdo->prepare($query);
 		$creating->bindValue(':type', $type, PDO::PARAM_INT);

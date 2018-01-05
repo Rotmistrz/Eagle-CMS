@@ -36,6 +36,10 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 		return $this->id;
 	}
 
+	public function getParentId() {
+		return $this->parentId;
+	}
+
 	public function getOrder() {
 		return $this->order;
 	}
