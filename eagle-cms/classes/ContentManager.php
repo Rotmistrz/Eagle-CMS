@@ -11,7 +11,7 @@ class ContentManager {
 		$this->twig = $twig;
 		$this->lang = Language::PL;
 
-		$this->orderType = Order::ASC;
+		$this->orderType = Orderable::ASC;
 		$this->loadHiddenItems = false;
 	}
 
@@ -20,23 +20,24 @@ class ContentManager {
 	}
 
 	public function setAscendingOrder() {
-		$this->orderType = Order::ASC;
+		$this->orderType = Orderable::ASC;
 
 		return $this;
 	}
 
 	public function setDescendingOrder() {
-		$this->orderType = Order::DESC;
+		$this->orderType = Orderable::DESC;
 
 		return $this;
 	}
 
-	public function getItemsByType($type, $after, $limit) {
-		$itemsFactory = new ItemsCollectionFactory($this->loadHiddenItems);
-		$itemsFactory->after = $after;
-		$itemsFactory->limit = $limit;
+	public function getItemsByType($type, $offset, $limit) {
+		$itemsFactory = new ItemsCollectionFactory();
+		$itemsFactory->setLoadHiddenItems($this->loadHiddenItems);
+		$itemsFactory->setOffset($offset);
+		$itemsFactory->setLimit($limit);
 
-		if($this->orderType == Order::DESC) {
+		if($this->orderType == Orderable::DESC) {
 			$itemsFactory->setDescendingOrder();
 		}
 
@@ -46,9 +47,10 @@ class ContentManager {
 	}
 
 	public function getAllItemsByType($type) {
-		$itemsFactory = new ItemsCollectionFactory($this->loadHiddenItems);
+		$itemsFactory = new ItemsCollectionFactory();
+		$itemsFactory->setLoadHiddenItems($this->loadHiddenItems);
 
-		if($this->orderType == Order::DESC) {
+		if($this->orderType == Orderable::DESC) {
 			$itemsFactory->setDescendingOrder();
 		}
 
@@ -57,12 +59,13 @@ class ContentManager {
 		return $this->twig->render($this->template, array('type' => $type, 'itemsCollection' => $items->getContentsByLanguage($this->lang)));
 	}
 
-	public function getItemsByParent($parent, $type, $after, $limit) {
-		$itemsFactory = new ItemsCollectionFactory($this->loadHiddenItems);
-		$itemsFactory->after = $after;
-		$itemsFactory->limit = $limit;
+	public function getItemsByParent($parent, $type, $offset, $limit) {
+		$itemsFactory = new ItemsCollectionFactory();
+		$itemsFactory->setLoadHiddenItems($this->loadHiddenItems);
+		$itemsFactory->setOffset($offset);
+		$itemsFactory->setLimit($limit);
 
-		if($this->orderType == Order::DESC) {
+		if($this->orderType == Orderable::DESC) {
 			$itemsFactory->setDescendingOrder();
 		}
 

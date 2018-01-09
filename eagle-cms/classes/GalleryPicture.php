@@ -27,6 +27,10 @@ class GalleryPicture extends Component implements Orderable, Editable {
         return $this->id;
     }
 
+    public function getItemId() {
+        return $this->itemId;
+    }
+
     public function setType(FileType $type) {
         $this->type = $type;
     }

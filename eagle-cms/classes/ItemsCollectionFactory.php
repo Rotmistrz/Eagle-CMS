@@ -1,40 +1,23 @@
 <?php
 
-class ItemsCollectionFactory {
-	public $after = -1;
-	public $limit = -1;
-
-	public $loadHiddenItems = false; // boolean
-	private $orderType;
-
-	public function __construct($loadHiddenItems = false) {
-		$this->loadHiddenItems = $loadHiddenItems;
-		$this->orderType = Order::ASC;
-	}
-
-	public function setDescendingOrder() {
-		$this->orderType = Order::DESC;
-
-		return $this;
-	}
-
-	public function setAscendingOrder() {
-		$this->orderType = Order::ASC;
-
-		return $this;
-	}
-
+class ItemsCollectionFactory extends CollectionFactory {
 	/**
 	 *
 	 * @param $items - item id's array
 	 *
 	**/
 	public function loadGalleries($items) {
-		$query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id IN(:item_ids) ORDER BY sort ASC";
+		$query = "SELECT * FROM " . GALLERIES_TABLE . " WHERE item_id IN(" . implode(', ', array_fill(0, count($items), '?')) . ") ORDER BY sort ASC";
 
 		$pdo = DataBase::getInstance();
 		$loading = $pdo->prepare($query);
-		$loading->bindValue(':item_ids', implode(',', $items), PDO::PARAM_STR);
+		
+		$i = 1;
+
+		foreach($items as $id) {
+			$loading->bindValue($i++, $id);
+		}
+		
 		$loading->execute();
 
 		$galleries = [];
@@ -42,7 +25,7 @@ class ItemsCollectionFactory {
 		while($result = $loading->fetch()) {
 			$gallery = GalleryPicture::createFromDatabaseRow($result);
 
-			if(array_key_exists($result['item_id'], $galleries)) {
+			if(array_key_exists($gallery->getItemId(), $galleries)) {
 				$collection = $galleries[$result['item_id']];
 				$collection->add($gallery);
 			} else {
@@ -59,29 +42,6 @@ class ItemsCollectionFactory {
 			}
 		}
 
-		/**$query = "SELECT " . GALLERIES_TABLE . ".*, " . ITEMS_TABLE . ".id as i_id, type, " . ITEMS_TABLE . ".sort as i_sort FROM " . GALLERIES_TABLE . " LEFT JOIN " . ITEMS_TABLE . " ON item_id = i_id WHERE type = :type ORDER BY i_sort ASC";
-
-		$pdo = DataBase::getInstance();
-		$loading = $pdo->prepare($query);
-		$loading->bindValue(':type', $type, PDO::PARAM_INT);
-		$loading->execute();
-
-		$galleries = [];
-
-		while($result = $loading->fetch()) {
-			$gallery = GalleryPicture::createFromDatabaseRow($result);
-
-			if(!empty($result['item_id'])) {
-				$collection = $galleries[$result['item_id']];
-				$collection->add($gallery);
-			} else {
-				$collection = new GalleryPicturesCollection();
-				$collection->add($gallery);
-
-				$galleries[$result['i_id']] = $collection;
-			}
-		}**/
-
 		return $galleries;
 	}
 
@@ -94,10 +54,12 @@ class ItemsCollectionFactory {
 
 		$query .= " ORDER BY sort " . $this->orderType;
 
-		if($this->after > -1 && $this->limit > -1) {
-			$query .= " LIMIT " . $this->after . ", " . $this->limit;
-		} else if($this->limit > -1) {
+		if($this->limit != self::NO_LIMIT) {
 			$query .= " LIMIT " . $this->limit;
+		}
+
+		if($this->offset != self::NO_OFFSET) {
+			$query .= " OFFSET " . $this->offset;
 		}
 
 		$pdo = DataBase::getInstance();
@@ -116,13 +78,8 @@ class ItemsCollectionFactory {
 		$items = [];
 
 		while($result = $loading->fetch()) {
-			//$item = Item::createFromDatabaseRow($result);
-			//$item->setGallery($galleries[$item->getId()]);
-
 			$ids[] = $result['id'];
 			$items[] = $result;
-
-			//$collection->add($item);
 		}
 
 		$galleries = $this->loadGalleries($ids);
@@ -156,10 +113,12 @@ class ItemsCollectionFactory {
 
 		$query .= " ORDER BY sort " . $this->orderType;
 
-		if($this->after > -1 && $this->limit > -1) {
-			$query .= " LIMIT " . $this->after . ", " . $this->limit;
-		} else if($this->limit > -1) {
+		if($this->limit != self::NO_LIMIT) {
 			$query .= " LIMIT " . $this->limit;
+		}
+
+		if($this->offset != self::NO_OFFSET) {
+			$query .= " OFFSET " . $this->offset;
 		}
 
 		$pdo = DataBase::getInstance();
@@ -199,10 +158,12 @@ class ItemsCollectionFactory {
 
 		$query .= " ORDER BY sort " . $this->orderType;
 
-		if($this->after > -1 && $this->limit > -1) {
-			$query .= " LIMIT " . $this->after . ", " . $this->limit;
-		} else if($this->limit > -1) {
+		if($this->limit != self::NO_LIMIT) {
 			$query .= " LIMIT " . $this->limit;
+		}
+
+		if($this->offset != self::NO_OFFSET) {
+			$query .= " OFFSET " . $this->offset;
 		}
 		
 		$pdo = DataBase::getInstance();
@@ -222,8 +183,24 @@ class ItemsCollectionFactory {
 		$languages_length = count($languages);
 		$fields_length = count($fields);
 
+		$ids = [];
+		$items = [];
+
 		while($result = $loading->fetch()) {
+			//$item = Item::createFromDatabaseRow($result);
+			//$item->setGallery($galleries[$item->getId()]);
+
+			$ids[] = $result['id'];
+			$items[] = $result;
+
+			//$collection->add($item);
+		}
+
+		$galleries = $this->loadGalleries($ids);
+
+		foreach($items as $result) {
 			$item = Item::createFromDatabaseRow($result);
+			$item->setGallery($galleries[$result['id']]);
 
 			$collection->add($item);
 		}

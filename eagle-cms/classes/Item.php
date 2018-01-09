@@ -27,7 +27,7 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 		$this->type = $type;
 		$this->order = $order;
 		$this->categories = new NoCategory();
-		$this->gallery = new GalleryPicturesCollection();
+		$this->gallery = new NoGalleryPicturesCollection();
 		$this->visible = true;
 		$this->parentId = 0;
 	}
@@ -38,6 +38,16 @@ class Item extends LanguagableElement implements Editable, Orderable, Hideable {
 
 	public function getParentId() {
 		return $this->parentId;
+	}
+
+	public function getType() {
+		return $this->type;
+	}
+
+	public function setParentId($id) {
+		$this->parentId = $id;
+
+		return $this;
 	}
 
 	public function getOrder() {
